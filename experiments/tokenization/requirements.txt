@@ -1,0 +1,4 @@
+tiktoken>=0.7
+tokenizers>=0.19
+sentencepiece>=0.2
+wordfreq>=3.1
