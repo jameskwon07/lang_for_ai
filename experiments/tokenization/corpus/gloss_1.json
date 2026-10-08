@@ -1,0 +1,840 @@
+{
+ "assumptions": [
+  "기준 텍스트: 각 메시지의 en 필드(en_terse 아님)를 글로스했다. en 의 정보는 모두 담되, 이 언어의 문법 범주가 이미 담는 말(please, likely, seems, fairly confident, Confidence: high, so far 등)은 해당 접사로 흡수하고 낱말을 따로 만들지 않았다. 버리거나 근사한 부분은 메시지 notes 에 적었다. 관사와 계사는 없다.",
+  "합계: total_strict = roots + affixes + number_morphemes + marker_morphemes. total_elided = total_strict - (기본값인 화용 접사 수). 외래 문자열의 원문(RAW:)은 형태소로 세지 않고 foreign_strings 에 따로 적었다(토큰 비용은 따로 잴 것). ZERO: 라벨(생략된 논항)은 세지 않는다.",
+  "라벨: ROOT:x 어근, VAR:x 변수(어근 자리에 오므로 roots 에 넣고, 몇 개인지는 variables 필드에 따로 적음), AFF:x 접사, NUM 수 표지 + DIG:d 숫자 + DIG:point 소수점(number_morphemes), MRK:Q< / MRK:Q> 외래 문자열 경계, MRK:CL< / MRK:CL> 보문, MRK:REL< / MRK:REL> 관계절(marker_morphemes). main_clauses 는 화용 접사를 받는 주절 수다.",
+  "어근 판정(빈도 규칙): 개념에 해당하는 영어 낱말의 wordfreq zipf(원형과 -s/-ed/-ing 형 중 최대값)가 4.7 이상이면 코어 어근 1개로 본다. 근거로 잰 값: wordfreq 영어 상위 1만 단어에서 기능어를 빼고 굴절형을 대충 합친 목록에서 1,000번째 낱말의 zipf 는 4.88, 1,200번째는 4.80이었고, zipf 4.7 이상은 1,482개였다. 이 목록에는 고유명사, 속어, 합치지 못한 굴절형이 섞여 있어(1,300~1,400위 구간을 눈으로 본 결과) 실제 개념 수는 이보다 적다고 보고 4.7 을 코어 1,000개 안팎의 경계로 잡았다. 이 경계는 대략값이다.",
+  "분야 어근: 코어 1,000개 중 약 100개를 컴퓨팅/AI 작업 분야 개념에 배정한다고 가정하고, 분야 개념이면서 zipf 4.2 이상 4.7 미만인 것도 어근 1개로 셌다. 이 코퍼스에서 이 규칙으로 들어간 어근은 20개다: branch, bug, column, context, database, document, error, input, integration, log, loop, output, patch, row, summary, task, tool, translation, update, warn.",
+  "코어 밖 개념: (a) 맥락에서 뜻이 거의 같은 코어 어근이 있으면 그것으로 바꿨다(예: polite -> respect+ATR, folder -> place, dictionary -> map). (b) 없으면 코어 어근 2개(필요하면 3개)의 합성어로 셌다. docs/01 L2 에 따라 합성어는 어근 사이마다 연결 접사 LNK 를 하나씩 넣는다(n어근 합성 = n 어근 + n-1 접사). 이 코퍼스에서 LNK 는 50개다. 대체와 합성은 모두 메시지 notes 에 적었다.",
+  "외래 문자열: 약어(SQL, API, HTTP, GPU, ID), 고유명사(인명, 지명, Python, numpy), 경로, 파일명, 함수명, 브랜치명, URL, 통화 이름(euro)은 열기 표지 + 원문 + 닫기 표지로 적었다. a-z 밖의 글자(숫자, 대문자, 구두점, 공백)도 원문 그대로 둔다고 가정했다(docs/01 L3 에서 미정인 부분). 인명은 이름 전체를 문자열 하나로 했다. 같은 고유명사가 두 번 나오면(m33 Australia) 두 번 적었다.",
+  "어근은 품사 중립이다. 같은 어근이 술어, 논항, 수식어로 쓰이므로 명사화 접사를 두지 않았다. 타동 어근 + ATR 은 기본적으로 수동·결과 분사(chosen papers, removed modules)로 읽는다. 능동 행위자 명사(reviewer, traveler)는 파생 접사 AGNT 를 붙였다.",
+  "수식: 수식어 낱말 = 어근 + ATR(머리 뒤에 온다). 소유와 of 는 GEN. 공간 관계(in front of, near)는 관계 어근 + LOC + 대상 GEN 으로 적었다.",
+  "절 구조: 역할 접사가 없는 낱말이 술어이고 새 절을 시작한다. 논항에는 모두 역할 접사가 붙는다. 쓴 역할 접사: AGT, PAT, THM(상태·비대격 술어의 주어), REC, BEN, INS, COM, LOC, SRC, GOAL, TIME, AFTER, UNTIL, BY(기한, within), TOP(about, on), BAS(근거, at the rate, based on), MAN(부사), PURP, COND(with N rows), STD(비교 기준), GEN, ATR. 명사·고유명사 술어에는 계사를 쓰지 않는다. '~에 있다' 는 술어 exist.",
+  "주절과 종속절은 영어 문장 구조를 따랐다. 독립절(제 주어가 있는 등위절 포함)은 주절이며 화용 접사를 받는다. 부사절(because, if, before, until, unless, instead of, to 목적)과 주어를 공유하는 동사구 병렬(and, or, then)은 연결 접사 하나가 붙은 연쇄절이다. 연쇄절은 화용 접사가 없고 주절의 화행, 확신도, 증거성, 시제, 양태를 물려받는다. 열기·닫기 표지는 보문(절이 논항인 경우)과 관계절에만 쓰고, 표지 2개에 관계 접사 1개(보문은 역할 접사, 관계절은 공백(gap)의 역할 접사)를 더 붙였다. 자기 논항이 하나뿐인 동사 보문은 표지 없이 명사로 쓴 어근 + 역할로 적고 그 논항에 GEN 을 붙였다(m31 dropping the outliers, m37 updating test_auth.py).",
+  "주절 사이 연결: and 는 형태소 없이 나란히 둔다. but = CONTR, so = CONSEQ, then = SEQ, or = ALT 로 각각 접사 하나다. 같은 역할 논항이 연달아 나오면 and 로 읽고(형태소 없음), or 는 둘째 논항에 ALT 를 붙였다.",
+  "생략된 행위자(두 변형 공통): 단언절이면 화자, 요청·명령절이면 청자, 제안절이면 우리(청자 포함)가 기본값이고, 질문절에는 기본값이 없다(생략하면 미지정). 연쇄절의 생략된 행위자는 주절의 행위자를 따른다. 단언절에서 행위자가 기본값이 아닌데 드러나지 않는 영어 수동문은 IMPERS 접사 1개로 적었다(5회). 생략한 행위자는 gloss 에 ZERO:AGT=self/you/we 로 표시했고(39곳: self 19, you 12, we 8) 세지 않았다. 모두 명시하면 한 곳마다 VAR + AGT = 2형태소가 더 든다.",
+  "대명사: 선행사의 머리 명사가 어근 하나면 그 어근을 다시 쓴다(1형태소, 묶기 비용 없음). 선행사가 여러 형태소면 처음 나올 때 묶기 접사 BINDn 1개, 가리킬 때마다 VAR:n 1개를 쓴다(m03, m21, m31). 나, 너, 우리, 앞 명제(this, that)는 묶지 않아도 되는 고정 변수 VAR:self, VAR:you, VAR:we, VAR:prev 다.",
+  "화용 접사: 주절마다 화행(SA), 확신도(CF), 증거성(EV) 접사를 하나씩 붙인다. STRICT 는 모든 주절에 3개를 붙인다. 요청, 질문, 제안 절에도 기본값으로 채웠다. ELIDED 는 기본값 SA=assert, CF=high, EV=observed 를 생략한다. 기본값이 아닌 값은 주절마다 다시 적는다(앞 절에서 물려받지 않는다).",
+  "증거성 판정: 영어에 출처 단서가 있을 때만 기본값이 아닌 값을 썼다. 도구에서 얻은 정보(검색, 파일 스캔, 계산기, 테스트 실행, 디렉터리 조회, API 응답, 번역 단계 오류, 웹·백과사전 조회)는 tool-result, 판단·평가·예측(seems, likely, should finish, 리뷰 판정)은 inferred, 사용자에게서 온 선호와 제약은 user-said, 일반 지식은 prior-knowledge 다. 화자 자신의 행동과 상태, 직접 읽은 내용은 observed(기본값)다. 확신도는 m36 의 low 하나를 빼고 모두 high 다(fairly confident, Confidence is high 포함).",
+  "시제·상·양태: 현재는 무표다. PST, PRF, PROG, FUT, CONT(still), ITER(re-, again)는 필요할 때 접사 하나씩 붙인다. 상태 술어가 지금도 참이면 시제를 표시하지 않았다. 양태 접사는 ABIL(can/could)과 OBL(should)이다. 화행으로 나타나는 양태(let's, we could, we should)는 SA.propose 에 흡수했다.",
+  "수: 수 표지 1개에 자릿수마다 1개, 소수점 1개를 더한다. 자릿수 쉼표는 없다(1,200 = 5형태소, 100,000 = 7형태소, 4.2.1 = 6형태소). 명사 뒤 수 낱말은 개수로 읽고, 이름 용도(version 4.2.1, HTTP 503, 브랜치명)에는 ID 접사를 붙였다. 서수는 수 + ORD 이고, first 만 코어 어근이다. 횟수(twice, three times)는 수 + FREQ, about 은 APPROX, at most 는 MAX, '2 more' 는 수 + COMP 다. 경로·URL 안의 숫자는 외래 문자열 원문에 남겼다.",
+  "수나 양화 접사(ALL, NONE, EACH)가 있으면 복수 PL 을 붙이지 않았다.",
+  "그 밖의 문법 접사(각각 형태소 1개): 비교·정도 COMP, LESS, SUPL, EXCESS(too), ATTEN(slightly). 양화 ALL(all, whole, both, every), SOME, NONE, EACH, MOST(mostly), ONLY, WH(which). 지시 DEM(this). 파생 AGNT(-er), CAUS(사동). 부정 NEG. 쓰인 서로 다른 접사 라벨은 75개로, docs/01 L1 의 VC 접사 칸 105개 안에 들어간다.",
+  "잰 것과 재지 않은 것: 형태소 수와 어근의 영어 zipf 만 쟀다. 실제 철자, 토큰 수, LLM 이 이 글로스대로 읽고 쓸 수 있는지는 재지 않았다. 어근 판정, 동의어 대체, 증거성 값은 사람(추정자)의 판단이 들어가 있어서 다른 추정자와 메시지마다 몇 형태소씩 차이가 날 수 있다."
+ ],
+ "messages": [
+  {
+   "id": "m01",
+   "gloss_strict": "ROOT:structure AFF:LNK ROOT:change AFF:SA.request AFF:CF.high AFF:EV.observed ZERO:AGT=you ROOT:try AFF:ITER AFF:LNK ROOT:code AFF:PAT MRK:Q< RAW:\"src/net/client.py\" MRK:Q> AFF:LOC ROOT:wait AFF:LNK ROOT:grow AFF:INS ROOT:double AFF:ATR ROOT:try AFF:COM NUM DIG:5 AFF:MAX ROOT:change AFF:NEG AFF:SA.command AFF:CF.high AFF:EV.observed ZERO:AGT=you ROOT:link AFF:LNK ROOT:face AFF:PAT ROOT:public AFF:ATR",
+   "roots": 12,
+   "affixes": 20,
+   "number_morphemes": 2,
+   "marker_morphemes": 2,
+   "foreign_strings": [
+    "src/net/client.py"
+   ],
+   "total_strict": 36,
+   "total_elided": 32,
+   "notes": [
+    "refactor = structure+change 합성(2어근)",
+    "retry = try+ITER(재시도 접사)",
+    "logic -> code 로 대체(R2)",
+    "exponential backoff = wait+grow 합성 + double 수식(3어근). 'exponential'을 '두 배씩'으로 근사",
+    "'to use X' 는 도구격(INS) 한 접사로 바꿈",
+    "keep X unchanged -> change+NEG 로 바꿈",
+    "interface = link+face 합성(2어근)"
+   ],
+   "main_clauses": 2,
+   "variables": 0
+  },
+  {
+   "id": "m02",
+   "gloss_strict": "ROOT:find AFF:SA.command AFF:CF.high AFF:EV.observed ZERO:AGT=you ROOT:study AFF:PL AFF:PAT ROOT:recent AFF:ATR ROOT:science AFF:LNK ROOT:review AFF:ATR MRK:CL< ROOT:effect ROOT:sleep AFF:LNK ROOT:lack AFF:AGT ROOT:work AFF:LNK ROOT:memory AFF:PAT MRK:CL> AFF:TOP ROOT:return AFF:SA.command AFF:CF.high AFF:EV.observed ZERO:AGT=you ROOT:relate AFF:SUPL AFF:PAT NUM DIG:5 ROOT:summary AFF:COM AFF:EACH ROOT:line AFF:ATR NUM DIG:1",
+   "roots": 14,
+   "affixes": 21,
+   "number_morphemes": 4,
+   "marker_morphemes": 2,
+   "foreign_strings": [],
+   "total_strict": 41,
+   "total_elided": 37,
+   "notes": [
+    "peer-reviewed = science+review 합성(2어근), peer(zipf 4.14)는 코어 밖",
+    "sleep deprivation = sleep+lack, working memory = work+memory (각 2어근)",
+    "'how X affects Y' 는 내포절(CL<..CL>+TOP)로 표시. affect -> effect 어근",
+    "relevant(4.61) -> relate 로 대체",
+    "sentence(4.58) -> line 으로 대체(one-line summary)"
+   ],
+   "main_clauses": 2,
+   "variables": 0
+  },
+  {
+   "id": "m03",
+   "gloss_strict": "ROOT:change AFF:SEQ ZERO:AGT=you ROOT:question AFF:PAT ROOT:user AFF:GEN ROOT:data AFF:LNK ROOT:question AFF:GOAL AFF:BIND1 MRK:Q< RAW:\"SQL\" MRK:Q> AFF:ATR ROOT:database AFF:LOC ROOT:sale AFF:ATR ROOT:run AFF:SA.command AFF:CF.high AFF:EV.observed ZERO:AGT=you VAR:1 AFF:PAT ROOT:report AFF:SA.command AFF:CF.high AFF:EV.observed ZERO:AGT=you ROOT:result AFF:PAT AFF:ONLY VAR:1 AFF:PAT AFF:NEG",
+   "roots": 12,
+   "affixes": 20,
+   "number_morphemes": 0,
+   "marker_morphemes": 2,
+   "foreign_strings": [
+    "SQL"
+   ],
+   "total_strict": 34,
+   "total_elided": 30,
+   "notes": [
+    "query(3.64) = data+question 합성(2어근)",
+    "'it', 'the query' 는 변수 @1 로 받음(묶기 접사 1개 + 참조 2회)",
+    "database 는 분야 어근(4.31)",
+    "SQL 은 약어라 외래 문자열"
+   ],
+   "main_clauses": 2,
+   "variables": 2
+  },
+  {
+   "id": "m04",
+   "gloss_strict": "ROOT:write AFF:SA.command AFF:CF.high AFF:EV.observed ZERO:AGT=you ROOT:answer AFF:PAT ROOT:respect AFF:ATR MRK:REL< AFF:AGT ROOT:accept AFF:NEG ROOT:meet AFF:LNK ROOT:request AFF:PAT ROOT:suggest AFF:AND ROOT:time AFF:PAT NUM DIG:2 ROOT:other AFF:ATR ROOT:week AFF:TIME AFF:DEM ROOT:late AFF:ATR MRK:REL>",
+   "roots": 11,
+   "affixes": 15,
+   "number_morphemes": 2,
+   "marker_morphemes": 2,
+   "foreign_strings": [],
+   "total_strict": 30,
+   "total_elided": 28,
+   "notes": [
+    "draft(4.61) -> write, reply(4.50) -> answer, polite(3.92) -> respect+ATR 로 대체",
+    "decline -> accept+NEG",
+    "meeting request = meet+request 합성",
+    "later this week = week+TIME+DEM + late 수식(근사)"
+   ],
+   "main_clauses": 1,
+   "variables": 0
+  },
+  {
+   "id": "m05",
+   "gloss_strict": "ROOT:process AFF:PRF AFF:SA.assert AFF:CF.high AFF:EV.observed ZERO:AGT=self ROOT:record AFF:PAT NUM DIG:1 DIG:2 DIG:0 DIG:0 NUM DIG:3 DIG:0 DIG:0 DIG:0 AFF:SRC ROOT:finish AFF:FUT AFF:SA.assert AFF:CF.high AFF:EV.inferred ROOT:job AFF:THM ROOT:rate AFF:BAS ROOT:current AFF:ATR ROOT:minute AFF:AFTER NUM DIG:2 DIG:5 AFF:APPROX",
+   "roots": 7,
+   "affixes": 15,
+   "number_morphemes": 13,
+   "marker_morphemes": 0,
+   "foreign_strings": [],
+   "total_strict": 35,
+   "total_elided": 30,
+   "notes": [
+    "'so far' 는 완료상(PRF)에 포함된 것으로 보고 따로 적지 않음",
+    "'should finish' 의 추정 의미는 FUT + EV.inferred 로 표시(별도 조동사 없음)",
+    "'1,200 of 3,000' 은 수 두 개 + 출처격(SRC)"
+   ],
+   "main_clauses": 2,
+   "variables": 0
+  },
+  {
+   "id": "m06",
+   "gloss_strict": "ROOT:finish AFF:PRF AFF:SA.assert AFF:CF.high AFF:EV.observed ROOT:paper AFF:LNK ROOT:search AFF:THM ROOT:read AFF:PROG AFF:SA.assert AFF:CF.high AFF:EV.observed ZERO:AGT=self ROOT:paper AFF:PL AFF:PAT ROOT:choose AFF:ATR ROOT:block AFF:COM AFF:NONE ROOT:now AFF:UNTIL",
+   "roots": 8,
+   "affixes": 16,
+   "number_morphemes": 0,
+   "marker_morphemes": 0,
+   "foreign_strings": [],
+   "total_strict": 24,
+   "total_elided": 18,
+   "notes": [
+    "literature(4.62) -> paper 로 대체해 paper+search 합성",
+    "shortlisted -> choose+ATR(수동 분사 기본값)",
+    "blocker -> block 어근(범주 중립)",
+    "'now' 는 진행상(PROG)과 겹쳐 생략"
+   ],
+   "main_clauses": 2,
+   "variables": 0
+  },
+  {
+   "id": "m07",
+   "gloss_strict": "ROOT:pass AFF:SA.assert AFF:CF.high AFF:EV.tool-result ROOT:unit AFF:LNK ROOT:test AFF:THM AFF:ALL ROOT:local AFF:LOC ROOT:wait AFF:PROG AFF:SA.assert AFF:CF.high AFF:EV.observed ZERO:AGT=self ROOT:finish AFF:UNTIL ROOT:integration AFF:LNK ROOT:test AFF:PL AFF:THM ROOT:open AFF:BEFORE ROOT:pull AFF:LNK ROOT:request AFF:PAT",
+   "roots": 11,
+   "affixes": 18,
+   "number_morphemes": 0,
+   "marker_morphemes": 0,
+   "foreign_strings": [],
+   "total_strict": 29,
+   "total_elided": 24,
+   "notes": [
+    "unit test, integration test, pull request 는 각 2어근 합성(integration 은 분야 어근 4.22)",
+    "테스트 실행 결과는 증거성 tool-result 로 표시",
+    "'waiting for X to finish', 'before opening' 은 연결 접사가 붙은 종속절(UNTIL, BEFORE)"
+   ],
+   "main_clauses": 2,
+   "variables": 0
+  },
+  {
+   "id": "m08",
+   "gloss_strict": "ROOT:finish AFF:PRF AFF:SA.assert AFF:CF.high AFF:EV.observed ROOT:version AFF:THM ROOT:first AFF:ATR ROOT:report AFF:GEN ROOT:cover AFF:SA.assert AFF:CF.high AFF:EV.observed ROOT:version AFF:THM ROOT:background AFF:PAT ROOT:method AFF:PL AFF:PAT ROOT:result AFF:PL AFF:PAT ROOT:miss AFF:CONT AFF:SA.assert AFF:CF.high AFF:EV.observed ROOT:discussion AFF:LNK ROOT:section AFF:THM",
+   "roots": 12,
+   "affixes": 22,
+   "number_morphemes": 0,
+   "marker_morphemes": 0,
+   "foreign_strings": [],
+   "total_strict": 34,
+   "total_elided": 25,
+   "notes": [
+    "draft(명사) -> version 으로 대체",
+    "'It' 은 머리 명사 어근 반복(version)으로 받음",
+    "같은 역할 논항의 나열은 'and' 형태소 없이 병렬로 해석",
+    "still -> CONT(계속상) 접사"
+   ],
+   "main_clauses": 3,
+   "variables": 0
+  },
+  {
+   "id": "m09",
+   "gloss_strict": "ROOT:return AFF:PST AFF:SA.assert AFF:CF.high AFF:EV.tool-result ROOT:search AFF:AGT ROOT:result AFF:PAT NUM DIG:1 DIG:4 ROOT:change AFF:LNK ROOT:list AFF:SA.assert AFF:CF.high AFF:EV.tool-result ROOT:official AFF:ATR MRK:Q< RAW:\"https://docs.python.org/3/whatsnew/3.13.html\" MRK:Q> AFF:LOC ROOT:relate AFF:SUPL AFF:THM MRK:REL< AFF:AGT ROOT:list ROOT:code AFF:LNK ROOT:part AFF:PL AFF:PAT ROOT:remove AFF:ATR MRK:REL>",
+   "roots": 11,
+   "affixes": 19,
+   "number_morphemes": 3,
+   "marker_morphemes": 4,
+   "foreign_strings": [
+    "https://docs.python.org/3/whatsnew/3.13.html"
+   ],
+   "total_strict": 37,
+   "total_elided": 33,
+   "notes": [
+    "changelog = change+list 합성(2어근)",
+    "module(3.89) = code+part 합성(2어근)",
+    "명사 술어(copula 없음): changelog 가 술어, 'the most relevant' 가 THM",
+    "URL 은 외래 문자열(원문 그대로)"
+   ],
+   "main_clauses": 2,
+   "variables": 0
+  },
+  {
+   "id": "m10",
+   "gloss_strict": "ROOT:find AFF:PST AFF:SA.assert AFF:CF.high AFF:EV.tool-result ROOT:file AFF:LNK ROOT:check AFF:AGT ROOT:item AFF:PAT AFF:NONE ROOT:copy AFF:ATR ROOT:miss AFF:SA.assert AFF:CF.high AFF:EV.tool-result ROOT:value AFF:PL AFF:THM ROOT:column AFF:LOC NUM DIG:3 ROOT:field AFF:LOC AFF:MOST ROOT:address AFF:ATR",
+   "roots": 10,
+   "affixes": 18,
+   "number_morphemes": 2,
+   "marker_morphemes": 0,
+   "foreign_strings": [],
+   "total_strict": 30,
+   "total_elided": 26,
+   "notes": [
+    "scan -> check, entry(4.67) -> item, duplicate(3.59) -> copy+ATR 로 대체",
+    "'three columns have missing values' 를 'values are missing in 3 columns' 로 바꿈",
+    "mostly -> MOST 양화 접사"
+   ],
+   "main_clauses": 2,
+   "variables": 0
+  },
+  {
+   "id": "m11",
+   "gloss_strict": "ROOT:fit AFF:SA.assert AFF:CF.high AFF:EV.tool-result ROOT:cost AFF:THM ROOT:total AFF:ATR ROOT:budget AFF:LOC ROOT:count AFF:LNK ROOT:tool AFF:SRC ROOT:small AFF:CONTR AFF:SA.assert AFF:CF.high AFF:EV.tool-result ROOT:remain AFF:THM",
+   "roots": 8,
+   "affixes": 13,
+   "number_morphemes": 0,
+   "marker_morphemes": 0,
+   "foreign_strings": [],
+   "total_strict": 21,
+   "total_elided": 17,
+   "notes": [
+    "calculator = count+tool 합성",
+    "'X confirms that ...' 는 내포절 대신 EV.tool + 출처격(SRC) 논항으로 표시",
+    "'within budget' -> fit + budget LOC",
+    "remaining margin -> remain(범주 중립 명사 '남은 것')"
+   ],
+   "main_clauses": 2,
+   "variables": 0
+  },
+  {
+   "id": "m12",
+   "gloss_strict": "ROOT:own AFF:SA.assert AFF:CF.high AFF:EV.tool-result MRK:Q< RAW:\"Maria Lopez\" MRK:Q> AFF:AGT ROOT:bill AFF:LNK ROOT:service AFF:PAT ROOT:company AFF:LNK ROOT:list AFF:SRC ROOT:engineer AFF:SA.assert AFF:CF.high AFF:EV.tool-result MRK:Q< RAW:\"Kenji Sato\" MRK:Q> AFF:THM ROOT:second AFF:ATR ROOT:call AFF:LNK ROOT:ready AFF:ATR",
+   "roots": 9,
+   "affixes": 15,
+   "number_morphemes": 0,
+   "marker_morphemes": 4,
+   "foreign_strings": [
+    "Maria Lopez",
+    "Kenji Sato"
+   ],
+   "total_strict": 28,
+   "total_elided": 24,
+   "notes": [
+    "directory(3.93) -> company+list 합성",
+    "billing -> bill 어근",
+    "backup -> second+ATR 로 대체",
+    "on-call = call+ready 합성(2어근)",
+    "인명은 외래 문자열(이름 전체를 문자열 하나로)"
+   ],
+   "main_clauses": 2,
+   "variables": 0
+  },
+  {
+   "id": "m13",
+   "gloss_strict": "ROOT:target AFF:OBL AFF:SA.question AFF:CF.high AFF:EV.observed ROOT:summary AFF:THM ROOT:manager AFF:PL AFF:PAT ROOT:engineer AFF:PL AFF:PAT AFF:ALT ROOT:base AFF:SA.assert AFF:CF.high AFF:EV.prior-knowledge ROOT:level AFF:THM ROOT:detail AFF:GEN ROOT:technical AFF:ATR ROOT:audience AFF:SRC",
+   "roots": 9,
+   "affixes": 17,
+   "number_morphemes": 0,
+   "marker_morphemes": 0,
+   "foreign_strings": [],
+   "total_strict": 26,
+   "total_elided": 22,
+   "notes": [
+    "executives(4.03) -> manager 로 근사",
+    "depends on(4.56) -> base(based on) 로 대체",
+    "'or' 는 둘째 논항의 ALT 접사",
+    "일반 지식 진술이라 EV.prior-knowledge"
+   ],
+   "main_clauses": 2,
+   "variables": 0
+  },
+  {
+   "id": "m14",
+   "gloss_strict": "ROOT:change AFF:OBL AFF:SA.question AFF:CF.high AFF:EV.observed VAR:self AFF:AGT MRK:Q< RAW:\"parse_config()\" MRK:Q> AFF:PAT ROOT:direct AFF:MAN ROOT:add AFF:ALT ROOT:function AFF:PAT ROOT:new AFF:ATR ROOT:keep AFF:AND ROOT:old AFF:PAT ROOT:old AFF:LNK ROOT:fit AFF:PURP",
+   "roots": 10,
+   "affixes": 14,
+   "number_morphemes": 0,
+   "marker_morphemes": 2,
+   "foreign_strings": [
+    "parse_config()"
+   ],
+   "total_strict": 26,
+   "total_elided": 24,
+   "notes": [
+    "backward compatibility = old+fit 합성(2어근)",
+    "질문에는 기본 행위자가 없어 'I' 를 @self 로 명시",
+    "공유 주어 동사구 병렬은 연결 접사(ALT, AND)가 붙은 연쇄절, 화용 접사는 주절에만",
+    "'the old one' -> old 어근을 논항으로"
+   ],
+   "main_clauses": 1,
+   "variables": 1
+  },
+  {
+   "id": "m15",
+   "gloss_strict": "ROOT:mean AFF:SA.question AFF:CF.high AFF:EV.observed VAR:you AFF:AGT ROOT:quarter AFF:TOP ROOT:last AFF:ATR ROOT:quarter AFF:PAT ROOT:recent AFF:SUPL AFF:ATR ROOT:year AFF:LNK ROOT:normal AFF:ATR ROOT:quarter AFF:PAT AFF:ALT ROOT:money AFF:LNK ROOT:year AFF:ATR ROOT:company AFF:GEN",
+   "roots": 12,
+   "affixes": 16,
+   "number_morphemes": 0,
+   "marker_morphemes": 0,
+   "foreign_strings": [],
+   "total_strict": 28,
+   "total_elided": 26,
+   "notes": [
+    "calendar(4.30) quarter -> year+normal 합성 수식",
+    "fiscal(4.26) -> money+year 합성 수식",
+    "인용된 'last quarter' 는 외래 문자열이 아니라 번역(quarter + last)"
+   ],
+   "main_clauses": 1,
+   "variables": 1
+  },
+  {
+   "id": "m16",
+   "gloss_strict": "ROOT:give AFF:SA.assert AFF:CF.high AFF:EV.observed ROOT:document AFF:AGT ROOT:source AFF:ATR NUM DIG:2 ROOT:time AFF:LNK ROOT:limit AFF:PL AFF:PAT ROOT:different AFF:ATR ROOT:trust AFF:OBL AFF:SA.question AFF:CF.high AFF:EV.observed VAR:self AFF:AGT ROOT:document AFF:PAT AFF:WH",
+   "roots": 9,
+   "affixes": 16,
+   "number_morphemes": 2,
+   "marker_morphemes": 0,
+   "foreign_strings": [],
+   "total_strict": 27,
+   "total_elided": 22,
+   "notes": [
+    "deadline(3.38) = time+limit 합성",
+    "'treat as authoritative' -> trust 로 근사",
+    "which one -> WH 접사"
+   ],
+   "main_clauses": 2,
+   "variables": 1
+  },
+  {
+   "id": "m17",
+   "gloss_strict": "ROOT:fail AFF:PST AFF:SA.assert AFF:CF.high AFF:EV.tool-result ROOT:request AFF:THM MRK:Q< RAW:\"API\" MRK:Q> AFF:GOAL ROOT:pay AFF:ATR MRK:Q< RAW:\"HTTP\" MRK:Q> AFF:INS NUM DIG:5 DIG:0 DIG:3 AFF:ID NUM DIG:3 AFF:FREQ ROOT:straight AFF:MAN ROOT:stop AFF:PST AFF:SA.assert AFF:CF.high AFF:EV.observed ZERO:AGT=self ROOT:try AFF:ITER AFF:PAT ROOT:reach AFF:NEG AFF:PURP ROOT:rate AFF:LNK ROOT:limit AFF:PAT",
+   "roots": 9,
+   "affixes": 21,
+   "number_morphemes": 6,
+   "marker_morphemes": 4,
+   "foreign_strings": [
+    "API",
+    "HTTP"
+   ],
+   "total_strict": 40,
+   "total_elided": 35,
+   "notes": [
+    "API, HTTP 는 약어라 외래 문자열",
+    "'HTTP 503' 의 503 은 개수가 아니라 이름이므로 ID 접사",
+    "three times -> 수 + FREQ 접사, in a row -> straight+MAN",
+    "'to avoid hitting' -> reach+NEG+PURP 로 바꿈",
+    "rate limit = rate+limit 합성"
+   ],
+   "main_clauses": 2,
+   "variables": 0
+  },
+  {
+   "id": "m18",
+   "gloss_strict": "ROOT:open AFF:ABIL AFF:NEG AFF:PST AFF:SA.assert AFF:CF.high AFF:EV.observed ZERO:AGT=self MRK:Q< RAW:\"data/2024/q3_sales.csv\" MRK:Q> AFF:PAT ROOT:exist AFF:NEG AFF:CAUSE ROOT:file AFF:THM ROOT:move AFF:PST AFF:SA.question AFF:CF.high AFF:EV.observed ROOT:file AFF:PAT ROOT:place AFF:GOAL ROOT:other AFF:ATR",
+   "roots": 7,
+   "affixes": 17,
+   "number_morphemes": 0,
+   "marker_morphemes": 2,
+   "foreign_strings": [
+    "data/2024/q3_sales.csv"
+   ],
+   "total_strict": 26,
+   "total_elided": 21,
+   "notes": [
+    "could not -> ABIL+NEG+PST (접사 3개)",
+    "folder(3.74) -> place 로 대체",
+    "because 절은 CAUSE 연결 접사가 붙은 종속절",
+    "질문의 생략된 행위자 = 미지정이라 수동 표지 불필요"
+   ],
+   "main_clauses": 2,
+   "variables": 0
+  },
+  {
+   "id": "m19",
+   "gloss_strict": "ROOT:fail AFF:PST AFF:SA.assert AFF:CF.high AFF:EV.tool-result ROOT:translation AFF:LNK ROOT:step AFF:THM ROOT:pass AFF:PST AFF:CAUSE ROOT:input AFF:AGT ROOT:context AFF:LNK ROOT:limit AFF:PAT ROOT:cut AFF:ABIL AFF:SA.assert AFF:CF.high AFF:EV.observed ZERO:AGT=self ROOT:document AFF:PAT ROOT:part AFF:PL AFF:GOAL ROOT:try AFF:ITER AFF:AND ROOT:continue AFF:OBL AFF:SA.question AFF:CF.high AFF:EV.observed VAR:self AFF:AGT",
+   "roots": 13,
+   "affixes": 25,
+   "number_morphemes": 0,
+   "marker_morphemes": 0,
+   "foreign_strings": [],
+   "total_strict": 38,
+   "total_elided": 31,
+   "notes": [
+    "translate(4.39), input, context 는 분야 어근",
+    "exceed(3.76) -> pass 로 대체",
+    "split(4.65) -> cut, chunk -> part 로 대체",
+    "go ahead -> continue"
+   ],
+   "main_clauses": 3,
+   "variables": 1
+  },
+  {
+   "id": "m20",
+   "gloss_strict": "ROOT:wrong AFF:SA.assert AFF:CF.high AFF:EV.observed ROOT:answer AFF:THM ROOT:previous AFF:ATR VAR:self AFF:GEN ROOT:mix AFF:PST AFF:CAUSE ROOT:data AFF:LNK ROOT:set AFF:PAT NUM DIG:2 ROOT:exist AFF:SA.assert AFF:CF.high AFF:EV.observed ROOT:figure AFF:PL AFF:THM ROOT:correct AFF:ATR ROOT:table AFF:LOC ROOT:update AFF:ATR",
+   "roots": 12,
+   "affixes": 18,
+   "number_morphemes": 2,
+   "marker_morphemes": 0,
+   "foreign_strings": [],
+   "total_strict": 32,
+   "total_elided": 26,
+   "notes": [
+    "dataset(2.84) = data+set 합성",
+    "'is in' 위치 술어 -> exist",
+    "'previous' 가 있어 'was wrong' 의 과거 시제는 표시하지 않음",
+    "corrected/updated -> 어근+ATR"
+   ],
+   "main_clauses": 2,
+   "variables": 1
+  },
+  {
+   "id": "m21",
+   "gloss_strict": "ROOT:get AFF:SA.propose AFF:CF.high AFF:EV.observed ROOT:customer AFF:LNK ROOT:problem AFF:LNK ROOT:report AFF:PL AFF:PAT AFF:BIND1 ROOT:group AFF:SEQ VAR:1 AFF:PAT ROOT:subject AFF:BAS ROOT:order AFF:SEQ ROOT:subject AFF:PL AFF:PAT ROOT:count AFF:BAS ROOT:hard AFF:SUPL AFF:SA.assert AFF:CF.high AFF:EV.inferred ROOT:group AFF:THM ROOT:want AFF:CONSEQ AFF:SA.assert AFF:CF.high AFF:EV.observed ZERO:AGT=self ROOT:review AFF:AGNT AFF:PAT NUM DIG:2 AFF:ORD ROOT:group AFF:LOC ROOT:start AFF:FUT AFF:SA.assert AFF:CF.high AFF:EV.observed ZERO:AGT=self ROOT:get AFF:PAT ROOT:agree AFF:NEG AFF:UNLESS VAR:you AFF:AGT ROOT:expect AFF:SA.command AFF:CF.high AFF:EV.observed ZERO:AGT=you ROOT:result AFF:PL AFF:PAT ROOT:first AFF:ATR ROOT:hour AFF:BY",
+   "roots": 23,
+   "affixes": 43,
+   "number_morphemes": 2,
+   "marker_morphemes": 0,
+   "foreign_strings": [],
+   "total_strict": 68,
+   "total_elided": 56,
+   "notes": [
+    "'I propose three steps:' 는 SA.propose + SEQ 로 이은 세 동사구로 표시(단계 수는 나열로 전달)",
+    "customer complaints = customer+problem+report 합성(3어근)",
+    "collect(4.63) -> get, theme -> subject, rank -> order, frequency -> count 로 대체",
+    "'them' 은 변수 @1",
+    "reviewer = review+AGNT 파생",
+    "unless you object -> agree+NEG+UNLESS"
+   ],
+   "main_clauses": 5,
+   "variables": 2
+  },
+  {
+   "id": "m22",
+   "gloss_strict": "ROOT:update AFF:SA.propose AFF:CF.high AFF:EV.observed ZERO:AGT=we MRK:Q< RAW:\"numpy\" MRK:Q> AFF:PAT NUM DIG:2 DIG:point DIG:1 AFF:GOAL ROOT:fix AFF:SEQ ROOT:remove AFF:LNK ROOT:plan AFF:LNK ROOT:warn AFF:PL AFF:PAT ROOT:raise AFF:SEQ AFF:ONLY ROOT:version AFF:PAT ROOT:low AFF:SUPL AFF:ATR MRK:Q< RAW:\"Python\" MRK:Q> AFF:GEN NUM DIG:3 DIG:point DIG:1 DIG:1 AFF:GOAL",
+   "roots": 8,
+   "affixes": 17,
+   "number_morphemes": 9,
+   "marker_morphemes": 4,
+   "foreign_strings": [
+    "numpy",
+    "Python"
+   ],
+   "total_strict": 38,
+   "total_elided": 36,
+   "notes": [
+    "deprecation warning = remove+plan+warn 합성(3어근)",
+    "upgrade -> update(분야 어근)",
+    "minimum -> low+SUPL",
+    "'first' 는 뒤 절의 SEQ 접사로 순서가 정해져 생략",
+    "버전 2.1, 3.11 은 수 형태소 + 소수점 형태소"
+   ],
+   "main_clauses": 1,
+   "variables": 0
+  },
+  {
+   "id": "m23",
+   "gloss_strict": "ROOT:write AFF:ITER AFF:INSTEAD ROOT:code AFF:LNK ROOT:part AFF:PAT AFF:ALL ROOT:add AFF:SA.propose AFF:CF.high AFF:EV.observed ZERO:AGT=we ROOT:fast AFF:LNK ROOT:store AFF:PAT ROOT:front AFF:LOC ROOT:data AFF:LNK ROOT:question AFF:PL AFF:GEN ROOT:slow AFF:ATR ROOT:risk AFF:LESS AFF:SA.assert AFF:CF.high AFF:EV.inferred VAR:prev AFF:THM ROOT:easy AFF:AND ROOT:remove AFF:THM",
+   "roots": 14,
+   "affixes": 22,
+   "number_morphemes": 0,
+   "marker_morphemes": 0,
+   "foreign_strings": [],
+   "total_strict": 36,
+   "total_elided": 32,
+   "notes": [
+    "cache = fast+store 합성, 'layer' 는 생략(의미 유지된다고 판단)",
+    "queries = data+question 합성",
+    "module = code+part 합성",
+    "in front of -> front+LOC + GEN",
+    "revert -> remove 로 근사",
+    "'we could' 의 제안은 SA.propose 로 흡수"
+   ],
+   "main_clauses": 2,
+   "variables": 1
+  },
+  {
+   "id": "m24",
+   "gloss_strict": "ROOT:share AFF:SA.propose AFF:CF.high AFF:EV.observed ZERO:AGT=we ROOT:work AFF:PAT ROOT:handle AFF:SA.propose AFF:CF.high AFF:EV.observed VAR:self AFF:AGT ROOT:data AFF:LNK ROOT:clean AFF:PAT ROOT:handle AFF:SA.propose AFF:CF.high AFF:EV.observed VAR:you AFF:AGT ROOT:data AFF:LNK ROOT:picture AFF:PL AFF:PAT ROOT:join AFF:SA.propose AFF:CF.high AFF:EV.observed ZERO:AGT=we ROOT:result AFF:PL AFF:PAT ROOT:end AFF:TIME ROOT:agree AFF:SA.propose AFF:CF.high AFF:EV.observed ZERO:AGT=we ROOT:column AFF:LNK ROOT:name AFF:PL AFF:TOP ROOT:first AFF:MAN ROOT:agree AFF:SA.question AFF:CF.high AFF:EV.observed VAR:you AFF:AGT",
+   "roots": 19,
+   "affixes": 34,
+   "number_morphemes": 0,
+   "marker_morphemes": 0,
+   "foreign_strings": [],
+   "total_strict": 53,
+   "total_elided": 41,
+   "notes": [
+    "주어가 다른 독립절 3개는 각각 주절이라 SA.propose 가 생략형에서도 반복됨",
+    "visualizations = data+picture 합성, data cleaning = data+clean 합성",
+    "merge(3.75) -> join, split -> share 로 대체",
+    "'Does that work for you?' -> 'Do you agree?' 로 바꿈"
+   ],
+   "main_clauses": 6,
+   "variables": 3
+  },
+  {
+   "id": "m25",
+   "gloss_strict": "ROOT:correct AFF:SA.assert AFF:CF.high AFF:EV.inferred ROOT:patch AFF:THM ROOT:square AFF:LNK ROOT:grow AFF:CONTR AFF:SA.assert AFF:CF.high AFF:EV.inferred ROOT:loop AFF:THM MRK:Q< RAW:\"merge_records()\" MRK:Q> AFF:LOC ROOT:slow AFF:EXCESS AFF:FUT AFF:SA.assert AFF:CF.high AFF:EV.inferred ROOT:loop AFF:THM ROOT:row AFF:COND NUM DIG:1 DIG:0 DIG:0 DIG:0 DIG:0 DIG:0 ROOT:consider AFF:CONSEQ AFF:SA.command AFF:CF.high AFF:EV.observed ZERO:AGT=you ROOT:map AFF:PAT ROOT:key AFF:COM MRK:Q< RAW:\"ID\" MRK:Q> AFF:ATR",
+   "roots": 11,
+   "affixes": 25,
+   "number_morphemes": 7,
+   "marker_morphemes": 4,
+   "foreign_strings": [
+    "merge_records()",
+    "ID"
+   ],
+   "total_strict": 47,
+   "total_elided": 39,
+   "notes": [
+    "quadratic(2.98) = square+grow 합성",
+    "patch, loop, row 는 분야 어근",
+    "dictionary(4.02) -> map 으로 대체",
+    "ID 는 약어라 외래 문자열",
+    "'keyed by ID' -> key+COM + ID 수식",
+    "평가 진술은 EV.inferred"
+   ],
+   "main_clauses": 4,
+   "variables": 0
+  },
+  {
+   "id": "m26",
+   "gloss_strict": "ROOT:strong AFF:SA.assert AFF:CF.high AFF:EV.inferred ROOT:reason AFF:THM ROOT:support AFF:CONTR AFF:SA.assert AFF:CF.high AFF:EV.observed ROOT:claim AFF:PAT NUM DIG:2 AFF:ORD ROOT:source AFF:AGT AFF:NONE ROOT:mention AFF:ATR ROOT:add AFF:SA.command AFF:CF.high AFF:EV.observed ZERO:AGT=you ROOT:source AFF:PAT ROOT:strong AFF:LESS AFF:CAUS AFF:ALT ROOT:claim AFF:PAT",
+   "roots": 10,
+   "affixes": 21,
+   "number_morphemes": 2,
+   "marker_morphemes": 0,
+   "foreign_strings": [],
+   "total_strict": 33,
+   "total_elided": 26,
+   "notes": [
+    "persuasive -> strong, argument(4.64) -> reason, cited -> mention+ATR 로 대체",
+    "'not supported by any' -> NONE 양화 접사 하나",
+    "soften -> strong+LESS+CAUS (soft 4.68, weak 4.66 은 코어 밖)"
+   ],
+   "main_clauses": 3,
+   "variables": 0
+  },
+  {
+   "id": "m27",
+   "gloss_strict": "ROOT:good AFF:SA.assert AFF:CF.high AFF:EV.inferred ROOT:summary AFF:THM ROOT:overall AFF:MAN ROOT:long AFF:EXCESS AFF:ATTEN AFF:SA.assert AFF:CF.high AFF:EV.inferred ROOT:summary AFF:THM ROOT:cut AFF:COND AFF:IMPERS ROOT:background AFF:LNK ROOT:section AFF:PAT ROOT:fit AFF:FUT AFF:SA.assert AFF:CF.high AFF:EV.inferred ROOT:summary AFF:THM ROOT:limit AFF:LOC",
+   "roots": 11,
+   "affixes": 21,
+   "number_morphemes": 0,
+   "marker_morphemes": 0,
+   "foreign_strings": [],
+   "total_strict": 32,
+   "total_elided": 26,
+   "notes": [
+    "slightly too long -> long+EXCESS+ATTEN",
+    "paragraph(4.03) -> section 으로 근사",
+    "'cutting X will bring it within the limit' -> 조건 연쇄절 + fit",
+    "'It' 은 summary 어근 반복"
+   ],
+   "main_clauses": 3,
+   "variables": 0
+  },
+  {
+   "id": "m28",
+   "gloss_strict": "ROOT:check AFF:PST AFF:SA.assert AFF:CF.high AFF:EV.observed ZERO:AGT=self ROOT:count AFF:PAT VAR:you AFF:GEN ROOT:find AFF:AND ROOT:error AFF:PAT ROOT:step AFF:LOC NUM DIG:3 AFF:ORD ROOT:add AFF:PST AFF:IMPERS AFF:SA.assert AFF:CF.high AFF:EV.observed ROOT:tax AFF:PAT NUM DIG:2 AFF:FREQ ROOT:low AFF:COMP AFF:OBL AFF:SA.assert AFF:CF.high AFF:EV.inferred ROOT:amount AFF:THM ROOT:final AFF:ATR ROOT:correct AFF:SA.assert AFF:CF.high AFF:EV.observed ROOT:other AFF:THM AFF:ALL",
+   "roots": 13,
+   "affixes": 29,
+   "number_morphemes": 4,
+   "marker_morphemes": 0,
+   "foreign_strings": [],
+   "total_strict": 46,
+   "total_elided": 35,
+   "notes": [
+    "calculation -> count, applied -> add 로 대체",
+    "twice -> 수 2 + FREQ (수사는 수 체계로)",
+    "행위자가 감춰진 수동문은 IMPERS 접사(단언문의 생략 행위자 기본값이 '나'이므로)",
+    "everything else -> other+ALL"
+   ],
+   "main_clauses": 4,
+   "variables": 1
+  },
+  {
+   "id": "m29",
+   "gloss_strict": "ROOT:agree AFF:SA.assert AFF:CF.high AFF:EV.observed ZERO:AGT=self ROOT:plan AFF:TOP VAR:you AFF:GEN ROOT:change AFF:COM NUM DIG:1 ROOT:run AFF:SA.propose AFF:CF.high AFF:EV.observed ZERO:AGT=we ROOT:model AFF:PAT ROOT:cheap AFF:COMP AFF:ATR ROOT:first AFF:MAN ROOT:use AFF:AND ROOT:large AFF:COMP AFF:PAT ROOT:case AFF:PL AFF:LOC AFF:ONLY ROOT:hard AFF:ATR",
+   "roots": 12,
+   "affixes": 20,
+   "number_morphemes": 2,
+   "marker_morphemes": 0,
+   "foreign_strings": [],
+   "total_strict": 34,
+   "total_elided": 29,
+   "notes": [
+    "the larger one -> large+COMP 를 논항 머리로",
+    "변경 내용은 SA.propose 절로 표시"
+   ],
+   "main_clauses": 2,
+   "variables": 1
+  },
+  {
+   "id": "m30",
+   "gloss_strict": "ROOT:take AFF:ABIL AFF:SA.assert AFF:CF.high AFF:EV.observed ZERO:AGT=self ROOT:task AFF:PL AFF:PAT ROOT:front AFF:LNK ROOT:end AFF:ATR ROOT:need AFF:CONTR AFF:SA.assert AFF:CF.high AFF:EV.observed ZERO:AGT=self ROOT:day AFF:PAT NUM DIG:2 AFF:COMP ROOT:suggest AFF:STD VAR:you AFF:GEN ROOT:late AFF:EXCESS AFF:COND VAR:prev AFF:THM ROOT:give AFF:ABIL AFF:SA.assert AFF:CF.high AFF:EV.observed ZERO:AGT=self ROOT:version AFF:PAT ROOT:part AFF:ATR ROOT:date AFF:BY ROOT:original AFF:ATR",
+   "roots": 15,
+   "affixes": 27,
+   "number_morphemes": 2,
+   "marker_morphemes": 0,
+   "foreign_strings": [],
+   "total_strict": 44,
+   "total_elided": 35,
+   "notes": [
+    "frontend(2.48) = front+end 합성",
+    "'than you proposed' -> suggest(명사화)+STD + @you GEN",
+    "deliver(4.62) -> give, partial(4.17) -> part+ATR 로 대체",
+    "'that' 은 앞 명제를 가리키는 @prev"
+   ],
+   "main_clauses": 3,
+   "variables": 2
+  },
+  {
+   "id": "m31",
+   "gloss_strict": "ROOT:agree AFF:NEG AFF:SA.assert AFF:CF.high AFF:EV.observed ZERO:AGT=self ROOT:drop AFF:TOP ROOT:far AFF:LNK ROOT:value AFF:PL AFF:GEN AFF:BIND1 ROOT:come AFF:SA.assert AFF:CF.high AFF:EV.observed VAR:1 AFF:THM ROOT:error AFF:SRC ROOT:real AFF:ATR ROOT:sense AFF:LNK ROOT:tool AFF:GEN ROOT:mark AFF:CONSEQ AFF:SA.propose AFF:CF.high AFF:EV.observed ZERO:AGT=we VAR:1 AFF:PAT ROOT:remove AFF:INSTEAD VAR:1 AFF:PAT",
+   "roots": 14,
+   "affixes": 24,
+   "number_morphemes": 0,
+   "marker_morphemes": 0,
+   "foreign_strings": [],
+   "total_strict": 38,
+   "total_elided": 30,
+   "notes": [
+    "outlier(2.83) = far+value 합성, 두 번 다시 가리켜 변수 @1 로 묶음",
+    "sensor = sense+tool 합성, fault -> error",
+    "'dropping the outliers' -> drop(범주 중립 명사)+TOP + 목적어 GEN",
+    "flag -> mark, delete -> remove"
+   ],
+   "main_clauses": 3,
+   "variables": 3
+  },
+  {
+   "id": "m32",
+   "gloss_strict": "ROOT:high AFF:SA.assert AFF:CF.high AFF:EV.inferred ROOT:guess AFF:THM VAR:you AFF:GEN ROOT:hour AFF:TOP NUM DIG:4 DIG:0 MRK:Q< RAW:\"GPU\" MRK:Q> AFF:ATR ROOT:enough AFF:SA.assert AFF:CF.high AFF:EV.inferred NUM DIG:2 DIG:5 AFF:THM ROOT:test AFF:BAS VAR:self AFF:GEN ROOT:middle AFF:LNK ROOT:agree AFF:SA.propose AFF:CF.high AFF:EV.observed ZERO:AGT=we NUM DIG:3 DIG:0 AFF:TOP ROOT:check AFF:ITER AFF:AND ROOT:run AFF:AFTER ROOT:first AFF:ATR",
+   "roots": 12,
+   "affixes": 22,
+   "number_morphemes": 9,
+   "marker_morphemes": 2,
+   "foreign_strings": [
+    "GPU"
+   ],
+   "total_strict": 45,
+   "total_elided": 39,
+   "notes": [
+    "estimate(4.62) -> guess, measurement(4.67) -> test 로 대체",
+    "'seems ... to me' 는 EV.inferred 로 흡수",
+    "compromise(4.15) = middle+agree 합성",
+    "revisit -> check+ITER",
+    "'can we ...?' 는 형태가 질문이지만 SA.propose 로 표시",
+    "GPU 는 약어라 외래 문자열"
+   ],
+   "main_clauses": 3,
+   "variables": 2
+  },
+  {
+   "id": "m33",
+   "gloss_strict": "MRK:Q< RAW:\"Canberra\" MRK:Q> AFF:SA.assert AFF:CF.high AFF:EV.tool-result ROOT:capital AFF:THM MRK:Q< RAW:\"Australia\" MRK:Q> AFF:GEN ROOT:website AFF:SRC ROOT:government AFF:ATR MRK:Q< RAW:\"Australia\" MRK:Q> AFF:ATR ROOT:know AFF:LNK ROOT:book AFF:SRC NUM DIG:2 MRK:Q< RAW:\"Sydney\" MRK:Q> AFF:NEG AFF:CONTR",
+   "roots": 5,
+   "affixes": 12,
+   "number_morphemes": 2,
+   "marker_morphemes": 8,
+   "foreign_strings": [
+    "Canberra",
+    "Australia",
+    "Australia",
+    "Sydney"
+   ],
+   "total_strict": 27,
+   "total_elided": 25,
+   "notes": [
+    "'Confidence is high' 는 CF.high 로만 표시(기본값이라 생략형에서는 0형태소)",
+    "출처는 EV.tool + 출처격(SRC) 논항으로",
+    "encyclopedia(2.60) = know+book 합성",
+    "'not Sydney' 는 NEG+CONTR 연쇄 술어",
+    "고유명사(Canberra, Australia x2, Sydney)는 외래 문자열"
+   ],
+   "main_clauses": 1,
+   "variables": 0
+  },
+  {
+   "id": "m34",
+   "gloss_strict": "ROOT:cause AFF:SA.assert AFF:CF.high AFF:EV.inferred ROOT:log AFF:LNK ROOT:setting AFF:AGT ROOT:new AFF:ATR MRK:REL< AFF:AGT ROOT:write ROOT:request AFF:PAT AFF:ALL ROOT:store AFF:GOAL MRK:REL> ROOT:slow AFF:PAT ROOT:output AFF:BAS ROOT:time AFF:LNK ROOT:check AFF:GEN ROOT:test AFF:NEG AFF:PRF AFF:CONTR AFF:SA.assert AFF:CF.high AFF:EV.observed ZERO:AGT=self ROOT:fix AFF:PAT",
+   "roots": 13,
+   "affixes": 21,
+   "number_morphemes": 0,
+   "marker_morphemes": 2,
+   "foreign_strings": [],
+   "total_strict": 36,
+   "total_elided": 31,
+   "notes": [
+    "'most likely', 'fairly confident' -> CF.high + EV.inferred 로 흡수",
+    "'based on the profiler output' -> output+BAS 논항",
+    "profiler(2.59) = time+check 합성",
+    "logging configuration = log+setting 합성",
+    "disk(4.01) -> store 로 대체",
+    "not ... yet -> NEG+PRF"
+   ],
+   "main_clauses": 2,
+   "variables": 0
+  },
+  {
+   "id": "m35",
+   "gloss_strict": "ROOT:fix AFF:PST AFF:IMPERS AFF:SA.assert AFF:CF.high AFF:EV.tool-result ROOT:bug AFF:PAT ROOT:version AFF:LOC NUM DIG:4 DIG:point DIG:2 DIG:point DIG:1 AFF:ID ROOT:change AFF:LNK ROOT:list AFF:SRC MRK:Q< RAW:\"https://github.com/example-org/tilemap/blob/main/CHANGELOG.md\" MRK:Q> AFF:LOC ROOT:test AFF:PST AFF:SA.assert AFF:CF.high AFF:EV.observed ZERO:AGT=self ROOT:fix AFF:PAT ROOT:local AFF:LOC",
+   "roots": 8,
+   "affixes": 17,
+   "number_morphemes": 6,
+   "marker_morphemes": 2,
+   "foreign_strings": [
+    "https://github.com/example-org/tilemap/blob/main/CHANGELOG.md"
+   ],
+   "total_strict": 33,
+   "total_elided": 28,
+   "notes": [
+    "'Yes,' 는 긍정 단언과 겹쳐 생략",
+    "버전 4.2.1 = 수 표지 + 숫자 3 + 소수점 2, 이름 용도라 ID 접사",
+    "'confirms it' 은 출처격(SRC) 논항으로",
+    "reproduced(3.46) -> test 로 근사",
+    "'Confidence: high' 는 CF.high"
+   ],
+   "main_clauses": 2,
+   "variables": 0
+  },
+  {
+   "id": "m36",
+   "gloss_strict": "ROOT:find AFF:ABIL AFF:NEG AFF:PST AFF:SA.assert AFF:CF.high AFF:EV.observed ZERO:AGT=self ROOT:answer AFF:PAT ROOT:trust AFF:ATR ROOT:agree AFF:NEG AFF:SA.assert AFF:CF.high AFF:EV.observed ROOT:source AFF:AGT NUM DIG:2 ROOT:find AFF:ATR ROOT:support AFF:SA.assert AFF:CF.low AFF:EV.observed ROOT:new AFF:COMP AFF:AGT ROOT:option AFF:PAT NUM DIG:2 AFF:ORD",
+   "roots": 9,
+   "affixes": 21,
+   "number_morphemes": 4,
+   "marker_morphemes": 0,
+   "foreign_strings": [],
+   "total_strict": 34,
+   "total_elided": 26,
+   "notes": [
+    "reliable(4.29) -> trust+ATR",
+    "contradict each other -> agree+NEG (상호 의미는 술어에 포함)",
+    "'but my confidence is low' 는 별도 절 대신 CF.low 로 흡수(범위가 '새 출처가 2번을 지지' 절에 걸리는 근사)",
+    "'sources I found' -> find+ATR 분사"
+   ],
+   "main_clauses": 3,
+   "variables": 0
+  },
+  {
+   "id": "m37",
+   "gloss_strict": "ROOT:give AFF:PROG AFF:SA.assert AFF:CF.high AFF:EV.observed ZERO:AGT=self ROOT:task AFF:PAT ROOT:exist AFF:SA.assert AFF:CF.high AFF:EV.observed ROOT:fix AFF:THM ROOT:branch AFF:LOC MRK:Q< RAW:\"fix/login-timeout\" MRK:Q> AFF:ID ROOT:remain AFF:SA.assert AFF:CF.high AFF:EV.observed ROOT:update AFF:THM MRK:Q< RAW:\"test_auth.py\" MRK:Q> AFF:GEN MRK:Q< RAW:\"test_session_expiry\" MRK:Q> AFF:SA.assert AFF:CF.high AFF:EV.observed ROOT:test AFF:THM ROOT:chance AFF:LNK ROOT:fail AFF:ATR MRK:REL< AFF:AGT ROOT:fail NUM DIG:1 AFF:FREQ AFF:APPROX ROOT:run AFF:SRC NUM DIG:1 DIG:0 MRK:REL>",
+   "roots": 12,
+   "affixes": 26,
+   "number_morphemes": 5,
+   "marker_morphemes": 8,
+   "foreign_strings": [
+    "fix/login-timeout",
+    "test_auth.py",
+    "test_session_expiry"
+   ],
+   "total_strict": 51,
+   "total_elided": 39,
+   "notes": [
+    "handing off -> give+PROG + task",
+    "flaky(2.87) = chance+fail 합성",
+    "'one run in ten' -> 수 1 FREQ + run SRC 수 10",
+    "branch, update, test 는 분야 어근",
+    "식별자 3개는 외래 문자열"
+   ],
+   "main_clauses": 4,
+   "variables": 0
+  },
+  {
+   "id": "m38",
+   "gloss_strict": "ROOT:context AFF:SA.assert AFF:CF.high AFF:EV.observed ROOT:agent AFF:BEN ROOT:next AFF:ATR ROOT:like AFF:SA.assert AFF:CF.high AFF:EV.user-said ROOT:user AFF:AGT ROOT:answer AFF:PL AFF:PAT ROOT:short AFF:ATR ROOT:accept AFF:NEG AFF:PRF AFF:SA.assert AFF:CF.high AFF:EV.observed ROOT:user AFF:AGT ROOT:design AFF:PAT NUM DIG:2 ROOT:first AFF:ATR ROOT:like AFF:PST AFF:SA.assert AFF:CF.high AFF:EV.observed ROOT:user AFF:AGT ROOT:color AFF:PL AFF:PAT NUM DIG:3 AFF:ORD AFF:GEN ROOT:like AFF:NEG AFF:CONTR ROOT:structure AFF:PAT ROOT:set AFF:PRF AFF:SA.assert AFF:CF.high AFF:EV.user-said ROOT:budget AFF:THM ROOT:ask AFF:NEG AFF:ITER AFF:CONSEQ AFF:SA.command AFF:CF.high AFF:EV.observed ZERO:AGT=you ROOT:budget AFF:TOP",
+   "roots": 20,
+   "affixes": 44,
+   "number_morphemes": 4,
+   "marker_morphemes": 0,
+   "foreign_strings": [],
+   "total_strict": 68,
+   "total_elided": 53,
+   "notes": [
+    "머리말 'Context for the next agent:' 도 명사 술어 절로 셈",
+    "prefer(4.57) -> like, rejected -> accept+NEG",
+    "'already' 는 완료상(PRF)에 포함",
+    "color scheme -> color+PL, layout(4.08) -> structure 로 근사",
+    "'They' 는 user 어근 반복",
+    "사용자 진술에서 온 정보는 EV.user-said"
+   ],
+   "main_clauses": 6,
+   "variables": 0
+  },
+  {
+   "id": "m39",
+   "gloss_strict": "ROOT:state AFF:SA.assert AFF:CF.high AFF:EV.observed ROOT:now AFF:UNTIL ROOT:buy AFF:PRF AFF:IMPERS AFF:SA.assert AFF:CF.high AFF:EV.observed ROOT:flight AFF:PL AFF:PAT MRK:Q< RAW:\"Lisbon\" MRK:Q> AFF:GOAL ROOT:travel AFF:AGNT AFF:BEN AFF:ALL ROOT:buy AFF:NEG AFF:PRF AFF:IMPERS AFF:CONTR AFF:SA.assert AFF:CF.high AFF:EV.observed ROOT:hotel AFF:PAT ROOT:remain AFF:SA.assert AFF:CF.high AFF:EV.observed MRK:Q< RAW:\"euro\" MRK:Q> AFF:THM NUM DIG:8 DIG:5 DIG:0 ROOT:budget AFF:GEN ROOT:want AFF:SA.assert AFF:CF.high AFF:EV.user-said ROOT:user AFF:AGT MRK:CL< ROOT:stay ROOT:near AFF:LOC ROOT:town AFF:GEN ROOT:old AFF:ATR MRK:CL> AFF:PAT",
+   "roots": 15,
+   "affixes": 36,
+   "number_morphemes": 4,
+   "marker_morphemes": 6,
+   "foreign_strings": [
+    "Lisbon",
+    "euro"
+   ],
+   "total_strict": 61,
+   "total_elided": 47,
+   "notes": [
+    "booked -> buy 로 근사",
+    "traveler = travel+AGNT 파생, both -> ALL",
+    "'the hotel is not' 의 생략된 술어를 다시 적음",
+    "euro 는 통화 이름이라 외래 문자열",
+    "'wants to stay near X' 는 자기 논항이 있는 보문이라 CL<..CL>"
+   ],
+   "main_clauses": 5,
+   "variables": 0
+  },
+  {
+   "id": "m40",
+   "gloss_strict": "ROOT:return AFF:PROG AFF:SA.assert AFF:CF.high AFF:EV.observed ZERO:AGT=self ROOT:task AFF:PAT AFF:DEM VAR:you AFF:REC ROOT:need AFF:CAUSE ROOT:task AFF:THM ROOT:allow AFF:PAT ROOT:human AFF:GEN ROOT:ready AFF:SA.assert AFF:CF.high AFF:EV.observed ROOT:thing AFF:THM AFF:ALL ROOT:miss AFF:SA.assert AFF:CF.high AFF:EV.observed ROOT:accept AFF:THM AFF:ONLY ROOT:final AFF:ATR",
+   "roots": 12,
+   "affixes": 22,
+   "number_morphemes": 0,
+   "marker_morphemes": 0,
+   "foreign_strings": [],
+   "total_strict": 34,
+   "total_elided": 25,
+   "notes": [
+    "passing back -> return",
+    "approval(4.64) -> allow, confirmation(4.67) -> accept 로 근사",
+    "prepared -> ready",
+    "everything -> thing+ALL"
+   ],
+   "main_clauses": 3,
+   "variables": 1
+  }
+ ]
+}

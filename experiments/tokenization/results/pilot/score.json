@@ -1,0 +1,95 @@
+{
+ "nospace/default": {
+  "design": "nospace",
+  "segmentation": "20/20",
+  "gloss": "20/20",
+  "generate": "20/20",
+  "errors": []
+ },
+ "nospace/haiku-low": {
+  "design": "nospace",
+  "segmentation": "20/20",
+  "gloss": "20/20",
+  "generate": "20/20",
+  "errors": []
+ },
+ "spaced/default": {
+  "design": "spaced",
+  "segmentation": "20/20",
+  "gloss": "20/20",
+  "generate": "20/20",
+  "errors": []
+ },
+ "spaced/haiku-low": {
+  "design": "spaced",
+  "segmentation": "20/20",
+  "gloss": "15/20",
+  "generate": "20/20",
+  "errors": [
+   {
+    "id": "p2",
+    "want": "delete-INFR plan-PL-PAT agent-PL-REC user-INS result-SRC",
+    "got": "delete-INFR plan-PL-PAT agent-PL-REC user-INS file-SRC"
+   },
+   {
+    "id": "p3",
+    "want": "check-NEG-INFR server-AGT task-PL-PAT message-new-PL-REC result-new-SRC",
+    "got": "check-NEG-INFR server-AGT task-PL-PAT message-new-PL-REC file-new-SRC"
+   },
+   {
+    "id": "p7",
+    "want": "check-PST-CERT-Q result-PL-AGT server-PL-REC server-PL-INS tool-PL-SRC",
+    "got": "check-PST-CERT-Q file-PL-AGT server-PL-REC server-PL-INS tool-PL-SRC"
+   },
+   {
+    "id": "p15",
+    "want": "find-FUT-INFR message-old-PL-AGT tool-PAT error-PL-REC result-large-SRC",
+    "got": "find-FUT-INFR message-old-PL-AGT tool-PAT error-PL-REC file-large-SRC"
+   },
+   {
+    "id": "p17",
+    "want": "read-NEG-CERT result-AGT result-PAT error-small-INS message-SRC",
+    "got": "read-NEG-CERT file-AGT file-PAT error-small-INS message-SRC"
+   }
+  ]
+ },
+ "wordspaced/default": {
+  "design": "wordspaced",
+  "segmentation": "20/20",
+  "gloss": "20/20",
+  "generate": "20/20",
+  "errors": []
+ },
+ "wordspaced/haiku-low": {
+  "design": "wordspaced",
+  "segmentation": "20/20",
+  "gloss": "20/20",
+  "generate": "20/20",
+  "errors": []
+ },
+ "camel/default": {
+  "design": "camel",
+  "segmentation": "20/20",
+  "gloss": "20/20",
+  "generate": "20/20",
+  "errors": []
+ },
+ "camel/haiku-low": {
+  "design": "camel",
+  "segmentation": "20/20",
+  "gloss": "18/20",
+  "generate": "20/20",
+  "errors": [
+   {
+    "id": "p0",
+    "want": "fix-CERT result-PL-INS",
+    "got": "fix-CERT result-PL-AGT"
+   },
+   {
+    "id": "p4",
+    "want": "write-CERT file-PL-INS",
+    "got": "write-CERT file-PL-AGT"
+   }
+  ]
+ }
+}

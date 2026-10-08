@@ -1,0 +1,465 @@
+{
+ "meta": {
+  "scenarios": [
+   "S0_strict",
+   "S1_elided",
+   "S2_fused",
+   "S3_positional",
+   "S4_no_linker",
+   "S5_raw_digits"
+  ],
+  "n_messages": 40,
+  "n_candidate_forms": 100240,
+  "n_closed_slots": 150,
+  "root_lexicon": 1000,
+  "form_cost_top": {
+   "closed_per_tokenizer": {
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "roots_per_tokenizer": {
+    "o200k": 1.067,
+    "cl100k": 1.573,
+    "claude_legacy": 1.818,
+    "llama3": 1.448,
+    "llama4": 1.087,
+    "mistral_tekken": 1.219,
+    "mistral_sp": 1.932
+   }
+  },
+  "runtime_sec": 30.4
+ },
+ "baseline": {
+  "o200k": {
+   "en": 1160,
+   "en_terse": 848
+  },
+  "cl100k": {
+   "en": 1164,
+   "en_terse": 851
+  },
+  "claude_legacy": {
+   "en": 1179,
+   "en_terse": 855
+  },
+  "llama3": {
+   "en": 1164,
+   "en_terse": 851
+  },
+  "llama4": {
+   "en": 1159,
+   "en_terse": 848
+  },
+  "mistral_tekken": {
+   "en": 1202,
+   "en_terse": 899
+  },
+  "mistral_sp": {
+   "en": 1268,
+   "en_terse": 969
+  }
+ },
+ "glosses": {
+  "1": {
+   "S0_strict": {
+    "morphemes": 1480,
+    "morphemes_per_msg": 37.0,
+    "tokens": {
+     "o200k": 1608,
+     "cl100k": 1733,
+     "claude_legacy": 1880,
+     "llama3": 1687,
+     "llama4": 1603,
+     "mistral_tekken": 1659,
+     "mistral_sp": 1970
+    },
+    "ratio_vs_en": {
+     "o200k": 1.3862068965517242,
+     "cl100k": 1.488831615120275,
+     "claude_legacy": 1.5945716709075488,
+     "llama3": 1.4493127147766323,
+     "llama4": 1.383088869715272,
+     "mistral_tekken": 1.380199667221298,
+     "mistral_sp": 1.553627760252366
+    },
+    "ratio_vs_en_terse": {
+     "o200k": 1.8962264150943395,
+     "cl100k": 2.036427732079906,
+     "claude_legacy": 2.198830409356725,
+     "llama3": 1.9823736780258518,
+     "llama4": 1.8903301886792452,
+     "mistral_tekken": 1.8453837597330367,
+     "mistral_sp": 2.0330237358101133
+    }
+   },
+   "S1_elided": {
+    "morphemes": 1229,
+    "morphemes_per_msg": 30.725,
+    "tokens": {
+     "o200k": 1357,
+     "cl100k": 1482,
+     "claude_legacy": 1629,
+     "llama3": 1436,
+     "llama4": 1352,
+     "mistral_tekken": 1408,
+     "mistral_sp": 1719
+    },
+    "ratio_vs_en": {
+     "o200k": 1.1698275862068965,
+     "cl100k": 1.2731958762886597,
+     "claude_legacy": 1.381679389312977,
+     "llama3": 1.2336769759450172,
+     "llama4": 1.1665228645383952,
+     "mistral_tekken": 1.1713810316139768,
+     "mistral_sp": 1.3556782334384858
+    },
+    "ratio_vs_en_terse": {
+     "o200k": 1.6002358490566038,
+     "cl100k": 1.7414806110458285,
+     "claude_legacy": 1.9052631578947368,
+     "llama3": 1.6874265569917744,
+     "llama4": 1.5943396226415094,
+     "mistral_tekken": 1.5661846496106786,
+     "mistral_sp": 1.7739938080495357
+    }
+   },
+   "S2_fused": {
+    "morphemes": 1229,
+    "morphemes_per_msg": 30.725,
+    "tokens": {
+     "o200k": 1357,
+     "cl100k": 1482,
+     "claude_legacy": 1629,
+     "llama3": 1436,
+     "llama4": 1352,
+     "mistral_tekken": 1408,
+     "mistral_sp": 1719
+    },
+    "ratio_vs_en": {
+     "o200k": 1.1698275862068965,
+     "cl100k": 1.2731958762886597,
+     "claude_legacy": 1.381679389312977,
+     "llama3": 1.2336769759450172,
+     "llama4": 1.1665228645383952,
+     "mistral_tekken": 1.1713810316139768,
+     "mistral_sp": 1.3556782334384858
+    },
+    "ratio_vs_en_terse": {
+     "o200k": 1.6002358490566038,
+     "cl100k": 1.7414806110458285,
+     "claude_legacy": 1.9052631578947368,
+     "llama3": 1.6874265569917744,
+     "llama4": 1.5943396226415094,
+     "mistral_tekken": 1.5661846496106786,
+     "mistral_sp": 1.7739938080495357
+    }
+   },
+   "S3_positional": {
+    "morphemes": 1074,
+    "morphemes_per_msg": 26.85,
+    "tokens": {
+     "o200k": 1202,
+     "cl100k": 1327,
+     "claude_legacy": 1474,
+     "llama3": 1281,
+     "llama4": 1197,
+     "mistral_tekken": 1253,
+     "mistral_sp": 1564
+    },
+    "ratio_vs_en": {
+     "o200k": 1.0362068965517242,
+     "cl100k": 1.1400343642611683,
+     "claude_legacy": 1.2502120441051738,
+     "llama3": 1.1005154639175259,
+     "llama4": 1.0327868852459017,
+     "mistral_tekken": 1.0424292845257903,
+     "mistral_sp": 1.2334384858044165
+    },
+    "ratio_vs_en_terse": {
+     "o200k": 1.4174528301886793,
+     "cl100k": 1.5593419506462984,
+     "claude_legacy": 1.7239766081871346,
+     "llama3": 1.5052878965922445,
+     "llama4": 1.411556603773585,
+     "mistral_tekken": 1.3937708565072302,
+     "mistral_sp": 1.6140350877192982
+    }
+   },
+   "S4_no_linker": {
+    "morphemes": 966,
+    "morphemes_per_msg": 24.15,
+    "tokens": {
+     "o200k": 1094,
+     "cl100k": 1218,
+     "claude_legacy": 1365,
+     "llama3": 1172,
+     "llama4": 1088,
+     "mistral_tekken": 1145,
+     "mistral_sp": 1456
+    },
+    "ratio_vs_en": {
+     "o200k": 0.9431034482758621,
+     "cl100k": 1.0463917525773196,
+     "claude_legacy": 1.1577608142493638,
+     "llama3": 1.006872852233677,
+     "llama4": 0.9387402933563417,
+     "mistral_tekken": 0.9525790349417638,
+     "mistral_sp": 1.1482649842271293
+    },
+    "ratio_vs_en_terse": {
+     "o200k": 1.2900943396226414,
+     "cl100k": 1.4312573443008225,
+     "claude_legacy": 1.5964912280701755,
+     "llama3": 1.3772032902467686,
+     "llama4": 1.2830188679245282,
+     "mistral_tekken": 1.2736373748609566,
+     "mistral_sp": 1.502579979360165
+    }
+   },
+   "S5_raw_digits": {
+    "morphemes": 868,
+    "morphemes_per_msg": 21.7,
+    "tokens": {
+     "o200k": 1075,
+     "cl100k": 1200,
+     "claude_legacy": 1310,
+     "llama3": 1154,
+     "llama4": 1070,
+     "mistral_tekken": 1145,
+     "mistral_sp": 1456
+    },
+    "ratio_vs_en": {
+     "o200k": 0.9267241379310345,
+     "cl100k": 1.0309278350515463,
+     "claude_legacy": 1.1111111111111112,
+     "llama3": 0.9914089347079038,
+     "llama4": 0.9232096635030198,
+     "mistral_tekken": 0.9525790349417638,
+     "mistral_sp": 1.1482649842271293
+    },
+    "ratio_vs_en_terse": {
+     "o200k": 1.267688679245283,
+     "cl100k": 1.4101057579318448,
+     "claude_legacy": 1.5321637426900585,
+     "llama3": 1.3560517038777908,
+     "llama4": 1.2617924528301887,
+     "mistral_tekken": 1.2736373748609566,
+     "mistral_sp": 1.502579979360165
+    }
+   }
+  },
+  "2": {
+   "S0_strict": {
+    "morphemes": 1442,
+    "morphemes_per_msg": 36.05,
+    "tokens": {
+     "o200k": 1565,
+     "cl100k": 1690,
+     "claude_legacy": 1856,
+     "llama3": 1657,
+     "llama4": 1562,
+     "mistral_tekken": 1619,
+     "mistral_sp": 1929
+    },
+    "ratio_vs_en": {
+     "o200k": 1.3491379310344827,
+     "cl100k": 1.4518900343642611,
+     "claude_legacy": 1.5742154368108567,
+     "llama3": 1.4235395189003437,
+     "llama4": 1.3477135461604832,
+     "mistral_tekken": 1.3469217970049916,
+     "mistral_sp": 1.5212933753943219
+    },
+    "ratio_vs_en_terse": {
+     "o200k": 1.8455188679245282,
+     "cl100k": 1.9858989424206817,
+     "claude_legacy": 2.1707602339181284,
+     "llama3": 1.9471210340775558,
+     "llama4": 1.8419811320754718,
+     "mistral_tekken": 1.8008898776418243,
+     "mistral_sp": 1.9907120743034055
+    }
+   },
+   "S1_elided": {
+    "morphemes": 1169,
+    "morphemes_per_msg": 29.225,
+    "tokens": {
+     "o200k": 1292,
+     "cl100k": 1417,
+     "claude_legacy": 1583,
+     "llama3": 1384,
+     "llama4": 1289,
+     "mistral_tekken": 1346,
+     "mistral_sp": 1656
+    },
+    "ratio_vs_en": {
+     "o200k": 1.1137931034482758,
+     "cl100k": 1.2173539518900343,
+     "claude_legacy": 1.3426632739609838,
+     "llama3": 1.1890034364261168,
+     "llama4": 1.1121656600517689,
+     "mistral_tekken": 1.119800332778702,
+     "mistral_sp": 1.3059936908517351
+    },
+    "ratio_vs_en_terse": {
+     "o200k": 1.5235849056603774,
+     "cl100k": 1.665099882491187,
+     "claude_legacy": 1.8514619883040935,
+     "llama3": 1.626321974148061,
+     "llama4": 1.5200471698113207,
+     "mistral_tekken": 1.4972191323692992,
+     "mistral_sp": 1.7089783281733746
+    }
+   },
+   "S2_fused": {
+    "morphemes": 1167,
+    "morphemes_per_msg": 29.175,
+    "tokens": {
+     "o200k": 1290,
+     "cl100k": 1415,
+     "claude_legacy": 1581,
+     "llama3": 1382,
+     "llama4": 1287,
+     "mistral_tekken": 1344,
+     "mistral_sp": 1654
+    },
+    "ratio_vs_en": {
+     "o200k": 1.1120689655172413,
+     "cl100k": 1.215635738831615,
+     "claude_legacy": 1.340966921119593,
+     "llama3": 1.1872852233676976,
+     "llama4": 1.1104400345125107,
+     "mistral_tekken": 1.1181364392678868,
+     "mistral_sp": 1.304416403785489
+    },
+    "ratio_vs_en_terse": {
+     "o200k": 1.5212264150943395,
+     "cl100k": 1.662749706227967,
+     "claude_legacy": 1.8491228070175438,
+     "llama3": 1.6239717978848414,
+     "llama4": 1.517688679245283,
+     "mistral_tekken": 1.4949944382647387,
+     "mistral_sp": 1.7069143446852426
+    }
+   },
+   "S3_positional": {
+    "morphemes": 1018,
+    "morphemes_per_msg": 25.45,
+    "tokens": {
+     "o200k": 1141,
+     "cl100k": 1266,
+     "claude_legacy": 1432,
+     "llama3": 1233,
+     "llama4": 1138,
+     "mistral_tekken": 1195,
+     "mistral_sp": 1505
+    },
+    "ratio_vs_en": {
+     "o200k": 0.9836206896551725,
+     "cl100k": 1.0876288659793814,
+     "claude_legacy": 1.2145886344359627,
+     "llama3": 1.059278350515464,
+     "llama4": 0.9818809318377912,
+     "mistral_tekken": 0.9941763727121464,
+     "mistral_sp": 1.1869085173501577
+    },
+    "ratio_vs_en_terse": {
+     "o200k": 1.3455188679245282,
+     "cl100k": 1.4876615746180963,
+     "claude_legacy": 1.6748538011695906,
+     "llama3": 1.4488836662749707,
+     "llama4": 1.3419811320754718,
+     "mistral_tekken": 1.3292547274749722,
+     "mistral_sp": 1.5531475748194015
+    }
+   },
+   "S4_no_linker": {
+    "morphemes": 1001,
+    "morphemes_per_msg": 25.025,
+    "tokens": {
+     "o200k": 1124,
+     "cl100k": 1249,
+     "claude_legacy": 1415,
+     "llama3": 1216,
+     "llama4": 1121,
+     "mistral_tekken": 1178,
+     "mistral_sp": 1488
+    },
+    "ratio_vs_en": {
+     "o200k": 0.9689655172413794,
+     "cl100k": 1.0730240549828178,
+     "claude_legacy": 1.2001696352841391,
+     "llama3": 1.0446735395189004,
+     "llama4": 0.9672131147540983,
+     "mistral_tekken": 0.9800332778702163,
+     "mistral_sp": 1.1735015772870663
+    },
+    "ratio_vs_en_terse": {
+     "o200k": 1.3254716981132075,
+     "cl100k": 1.4676850763807285,
+     "claude_legacy": 1.654970760233918,
+     "llama3": 1.4289071680376029,
+     "llama4": 1.321933962264151,
+     "mistral_tekken": 1.3103448275862069,
+     "mistral_sp": 1.5356037151702786
+    }
+   },
+   "S5_raw_digits": {
+    "morphemes": 903,
+    "morphemes_per_msg": 22.575,
+    "tokens": {
+     "o200k": 1105,
+     "cl100k": 1230,
+     "claude_legacy": 1359,
+     "llama3": 1197,
+     "llama4": 1102,
+     "mistral_tekken": 1178,
+     "mistral_sp": 1488
+    },
+    "ratio_vs_en": {
+     "o200k": 0.9525862068965517,
+     "cl100k": 1.056701030927835,
+     "claude_legacy": 1.1526717557251909,
+     "llama3": 1.0283505154639174,
+     "llama4": 0.9508196721311475,
+     "mistral_tekken": 0.9800332778702163,
+     "mistral_sp": 1.1735015772870663
+    },
+    "ratio_vs_en_terse": {
+     "o200k": 1.303066037735849,
+     "cl100k": 1.445358401880141,
+     "claude_legacy": 1.5894736842105264,
+     "llama3": 1.4065804935370152,
+     "llama4": 1.2995283018867925,
+     "mistral_tekken": 1.3103448275862069,
+     "mistral_sp": 1.5356037151702786
+    }
+   }
+  }
+ },
+ "examples_m01": {
+  "en": "Please refactor the retry logic in src/net/client.py to use exponential backoff with at most 5 attempts. Keep the public interface unchanged.",
+  "en_terse": "Refactor retry logic in src/net/client.py -> exponential backoff, max 5 attempts. Keep public interface unchanged.",
+  "gloss_1": {
+   "S0_strict": "phim vibr cer desc bicy murm trig phen vibr pix kidn dign src/net/client.py migr sequ spol vibr pav cust pinc togg trig magn rhet fost pert cer slic sigu bicy murm lesz vibr sufr kidn kuri togg",
+   "S1_elided": "phim liqu cer pert trig susp liqu pix bicy rhet src/net/client.py puzz dign spol liqu pav dict pinc kidn trig llam togg scal sle cer migr squ lesz liqu sufr bicy kuri kidn",
+   "S2_fused": "phim liqu cer whe trig susp liqu pix bicy rhet src/net/client.py puzz dign spol liqu pav dict pinc kidn trig llam togg scal salv cer migr squ lesz liqu sufr bicy kuri kidn",
+   "S3_positional": "phim kidn cer clo trig cref kidn pix togg src/net/client.py vibr rhet spol kidn pav gle pinc bicy trig phen liqu virt tob cer puzz requ lesz kidn sufr kuri bicy",
+   "S4_no_linker": "phim cer surg trig redu pix liqu src/net/client.py murm vibr spol pav larg pinc trig scal bicy mamm kle cer horm slic lesz sufr kuri",
+   "S5_raw_digits": "phim cer buf trig forg pix kidn src/net/client.py liqu togg spol pav hasn pinc trig redu 5 dict cer vibr dign lesz sufr kuri"
+  },
+  "gloss_2": {
+   "S0_strict": "duyg turb fos prec bicy kidn taxp fost dets liqu migr src/net/client.py dign cosm kuj turb kho csal decl vibr mant desc cung cust fos vacc cogn bicy kidn wod leth liqu",
+   "S1_elided": "duyg resc fos shar taxp scal dets bicy puzz src/net/client.py rhet slic kuj resc kho csal cogn liqu surv pert cung dict fos furn vacc wod leth bicy",
+   "S2_fused": "duyg resc fos desc taxp scal dets bicy puzz src/net/client.py rhet slic kuj resc kho csal cogn liqu surv lum cung dict fos furn cosm wod leth bicy",
+   "S3_positional": "duyg horm fos pert taxp virt dets vibr src/net/client.py togg migr kuj horm kho csal vacc bicy nost salv cung gle fos turb slic wod leth",
+   "S4_no_linker": "duyg fos whe taxp cref dets vibr src/net/client.py togg dign kuj kho csal cosm bicy fost surg cung clar fos migr sequ wod leth",
+   "S5_raw_digits": "duyg fos dest taxp sigu dets togg src/net/client.py murm rhet kuj kho csal sequ 5 buf cung pict fos puzz dign wod leth"
+  }
+ }
+}

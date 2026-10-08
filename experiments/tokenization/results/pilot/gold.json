@@ -1,0 +1,1474 @@
+{
+ "lexicon": {
+  "roots": {
+   "user": "vik",
+   "file": "kef",
+   "server": "rur",
+   "task": "geg",
+   "error": "zim",
+   "tool": "kig",
+   "result": "fek",
+   "agent": "vab",
+   "message": "zud",
+   "plan": "vum",
+   "send": "reb",
+   "read": "lup",
+   "write": "zaz",
+   "find": "vef",
+   "fix": "tep",
+   "run": "kog",
+   "check": "tuf",
+   "delete": "pof",
+   "new": "zun",
+   "old": "vok",
+   "large": "vug",
+   "small": "kuz",
+   "wrong": "bov",
+   "ready": "zoz"
+  },
+  "affixes": {
+   "AGT": "ip",
+   "PAT": "od",
+   "REC": "ap",
+   "INS": "ag",
+   "SRC": "ib",
+   "PL": "iv",
+   "PST": "eg",
+   "FUT": "ut",
+   "NEG": "id",
+   "Q": "ot",
+   "CERT": "ub",
+   "INFR": "uf"
+  }
+ },
+ "designs": {
+  "nospace": {
+   "parse": {
+    "p0": {
+     "gloss": "fix-CERT result-PL-INS",
+     "morphemes": [
+      "tep",
+      "ub",
+      "fek",
+      "iv",
+      "ag"
+     ]
+    },
+    "p1": {
+     "gloss": "send-PST-INFR result-AGT message-INS file-SRC",
+     "morphemes": [
+      "reb",
+      "eg",
+      "uf",
+      "fek",
+      "ip",
+      "zud",
+      "ag",
+      "kef",
+      "ib"
+     ]
+    },
+    "p2": {
+     "gloss": "delete-INFR plan-PL-PAT agent-PL-REC user-INS result-SRC",
+     "morphemes": [
+      "pof",
+      "uf",
+      "vum",
+      "iv",
+      "od",
+      "vab",
+      "iv",
+      "ap",
+      "vik",
+      "ag",
+      "fek",
+      "ib"
+     ]
+    },
+    "p3": {
+     "gloss": "check-NEG-INFR server-AGT task-PL-PAT message-new-PL-REC result-new-SRC",
+     "morphemes": [
+      "tuf",
+      "id",
+      "uf",
+      "rur",
+      "ip",
+      "geg",
+      "iv",
+      "od",
+      "zud",
+      "zun",
+      "iv",
+      "ap",
+      "fek",
+      "zun",
+      "ib"
+     ]
+    },
+    "p4": {
+     "gloss": "write-CERT file-PL-INS",
+     "morphemes": [
+      "zaz",
+      "ub",
+      "kef",
+      "iv",
+      "ag"
+     ]
+    },
+    "p5": {
+     "gloss": "run-INFR error-large-PL-AGT task-old-PAT tool-REC plan-new-INS",
+     "morphemes": [
+      "kog",
+      "uf",
+      "zim",
+      "vug",
+      "iv",
+      "ip",
+      "geg",
+      "vok",
+      "od",
+      "kig",
+      "ap",
+      "vum",
+      "zun",
+      "ag"
+     ]
+    },
+    "p6": {
+     "gloss": "run-FUT-NEG-INFR-Q message-small-AGT plan-wrong-PAT server-ready-INS plan-small-SRC",
+     "morphemes": [
+      "kog",
+      "ut",
+      "id",
+      "uf",
+      "ot",
+      "zud",
+      "kuz",
+      "ip",
+      "vum",
+      "bov",
+      "od",
+      "rur",
+      "zoz",
+      "ag",
+      "vum",
+      "kuz",
+      "ib"
+     ]
+    },
+    "p7": {
+     "gloss": "check-PST-CERT-Q result-PL-AGT server-PL-REC server-PL-INS tool-PL-SRC",
+     "morphemes": [
+      "tuf",
+      "eg",
+      "ub",
+      "ot",
+      "fek",
+      "iv",
+      "ip",
+      "rur",
+      "iv",
+      "ap",
+      "rur",
+      "iv",
+      "ag",
+      "kig",
+      "iv",
+      "ib"
+     ]
+    },
+    "p8": {
+     "gloss": "delete-PST-CERT error-small-AGT error-large-PL-PAT user-PL-REC agent-PL-SRC",
+     "morphemes": [
+      "pof",
+      "eg",
+      "ub",
+      "zim",
+      "kuz",
+      "ip",
+      "zim",
+      "vug",
+      "iv",
+      "od",
+      "vik",
+      "iv",
+      "ap",
+      "vab",
+      "iv",
+      "ib"
+     ]
+    },
+    "p9": {
+     "gloss": "find-CERT file-PAT tool-PL-INS",
+     "morphemes": [
+      "vef",
+      "ub",
+      "kef",
+      "od",
+      "kig",
+      "iv",
+      "ag"
+     ]
+    },
+    "p10": {
+     "gloss": "find-FUT-INFR plan-wrong-PL-AGT user-PL-REC message-INS file-SRC",
+     "morphemes": [
+      "vef",
+      "ut",
+      "uf",
+      "vum",
+      "bov",
+      "iv",
+      "ip",
+      "vik",
+      "iv",
+      "ap",
+      "zud",
+      "ag",
+      "kef",
+      "ib"
+     ]
+    },
+    "p11": {
+     "gloss": "send-PST-CERT task-PL-PAT",
+     "morphemes": [
+      "reb",
+      "eg",
+      "ub",
+      "geg",
+      "iv",
+      "od"
+     ]
+    },
+    "p12": {
+     "gloss": "find-FUT-NEG-CERT user-AGT message-new-PAT task-PL-INS message-SRC",
+     "morphemes": [
+      "vef",
+      "ut",
+      "id",
+      "ub",
+      "vik",
+      "ip",
+      "zud",
+      "zun",
+      "od",
+      "geg",
+      "iv",
+      "ag",
+      "zud",
+      "ib"
+     ]
+    },
+    "p13": {
+     "gloss": "write-FUT-CERT task-PL-PAT task-REC message-new-SRC",
+     "morphemes": [
+      "zaz",
+      "ut",
+      "ub",
+      "geg",
+      "iv",
+      "od",
+      "geg",
+      "ap",
+      "zud",
+      "zun",
+      "ib"
+     ]
+    },
+    "p14": {
+     "gloss": "read-PST-CERT file-small-PAT task-PL-SRC",
+     "morphemes": [
+      "lup",
+      "eg",
+      "ub",
+      "kef",
+      "kuz",
+      "od",
+      "geg",
+      "iv",
+      "ib"
+     ]
+    },
+    "p15": {
+     "gloss": "find-FUT-INFR message-old-PL-AGT tool-PAT error-PL-REC result-large-SRC",
+     "morphemes": [
+      "vef",
+      "ut",
+      "uf",
+      "zud",
+      "vok",
+      "iv",
+      "ip",
+      "kig",
+      "od",
+      "zim",
+      "iv",
+      "ap",
+      "fek",
+      "vug",
+      "ib"
+     ]
+    },
+    "p16": {
+     "gloss": "write-PST-INFR message-ready-PAT server-PL-REC server-INS file-SRC",
+     "morphemes": [
+      "zaz",
+      "eg",
+      "uf",
+      "zud",
+      "zoz",
+      "od",
+      "rur",
+      "iv",
+      "ap",
+      "rur",
+      "ag",
+      "kef",
+      "ib"
+     ]
+    },
+    "p17": {
+     "gloss": "read-NEG-CERT result-AGT result-PAT error-small-INS message-SRC",
+     "morphemes": [
+      "lup",
+      "id",
+      "ub",
+      "fek",
+      "ip",
+      "fek",
+      "od",
+      "zim",
+      "kuz",
+      "ag",
+      "zud",
+      "ib"
+     ]
+    },
+    "p18": {
+     "gloss": "read-FUT-INFR tool-AGT message-PL-REC task-INS agent-small-PL-SRC",
+     "morphemes": [
+      "lup",
+      "ut",
+      "uf",
+      "kig",
+      "ip",
+      "zud",
+      "iv",
+      "ap",
+      "geg",
+      "ag",
+      "vab",
+      "kuz",
+      "iv",
+      "ib"
+     ]
+    },
+    "p19": {
+     "gloss": "delete-INFR message-AGT message-PL-SRC",
+     "morphemes": [
+      "pof",
+      "uf",
+      "zud",
+      "ip",
+      "zud",
+      "iv",
+      "ib"
+     ]
+    }
+   },
+   "generate": {
+    "g0": "kogutubvumiprurodkigbovagkefkuzib",
+    "g1": "rebegidufkigipvikbovaprurkuzagzudivib",
+    "g2": "tepegubvabipkefodgegzozapkefag",
+    "g3": "vefegidufruripvabzozaprurzozivag",
+    "g4": "kogidubfekipvikbovapkigkuzagvabzunib",
+    "g5": "luputufzudib",
+    "g6": "zazutufgegipvumapgegivib",
+    "g7": "tepufvabip",
+    "g8": "rebutufotgegipkigivodvikivapgegivib",
+    "g9": "teputufvumvokipzudbovagrurvugib",
+    "g10": "kogidubkigvugodkefapruragrurzozivib",
+    "g11": "tufegufotkefzozipvumivap",
+    "g12": "pofutubgegipfekivod",
+    "g13": "pofegubotfekbovodrurivap",
+    "g14": "teputubkefzozipzimapgegbovib",
+    "g15": "zazegidubkefipkefivodgegapfekbovag",
+    "g16": "tufutidubzimipkefivodfekivagvumib",
+    "g17": "teputubotzudipkefivapkigib",
+    "g18": "rebegidubkefap",
+    "g19": "vefegufkefod"
+   }
+  },
+  "spaced": {
+   "parse": {
+    "p0": {
+     "gloss": "fix-CERT result-PL-INS",
+     "morphemes": [
+      "tep",
+      "ub",
+      "fek",
+      "iv",
+      "ag"
+     ]
+    },
+    "p1": {
+     "gloss": "send-PST-INFR result-AGT message-INS file-SRC",
+     "morphemes": [
+      "reb",
+      "eg",
+      "uf",
+      "fek",
+      "ip",
+      "zud",
+      "ag",
+      "kef",
+      "ib"
+     ]
+    },
+    "p2": {
+     "gloss": "delete-INFR plan-PL-PAT agent-PL-REC user-INS result-SRC",
+     "morphemes": [
+      "pof",
+      "uf",
+      "vum",
+      "iv",
+      "od",
+      "vab",
+      "iv",
+      "ap",
+      "vik",
+      "ag",
+      "fek",
+      "ib"
+     ]
+    },
+    "p3": {
+     "gloss": "check-NEG-INFR server-AGT task-PL-PAT message-new-PL-REC result-new-SRC",
+     "morphemes": [
+      "tuf",
+      "id",
+      "uf",
+      "rur",
+      "ip",
+      "geg",
+      "iv",
+      "od",
+      "zud",
+      "zun",
+      "iv",
+      "ap",
+      "fek",
+      "zun",
+      "ib"
+     ]
+    },
+    "p4": {
+     "gloss": "write-CERT file-PL-INS",
+     "morphemes": [
+      "zaz",
+      "ub",
+      "kef",
+      "iv",
+      "ag"
+     ]
+    },
+    "p5": {
+     "gloss": "run-INFR error-large-PL-AGT task-old-PAT tool-REC plan-new-INS",
+     "morphemes": [
+      "kog",
+      "uf",
+      "zim",
+      "vug",
+      "iv",
+      "ip",
+      "geg",
+      "vok",
+      "od",
+      "kig",
+      "ap",
+      "vum",
+      "zun",
+      "ag"
+     ]
+    },
+    "p6": {
+     "gloss": "run-FUT-NEG-INFR-Q message-small-AGT plan-wrong-PAT server-ready-INS plan-small-SRC",
+     "morphemes": [
+      "kog",
+      "ut",
+      "id",
+      "uf",
+      "ot",
+      "zud",
+      "kuz",
+      "ip",
+      "vum",
+      "bov",
+      "od",
+      "rur",
+      "zoz",
+      "ag",
+      "vum",
+      "kuz",
+      "ib"
+     ]
+    },
+    "p7": {
+     "gloss": "check-PST-CERT-Q result-PL-AGT server-PL-REC server-PL-INS tool-PL-SRC",
+     "morphemes": [
+      "tuf",
+      "eg",
+      "ub",
+      "ot",
+      "fek",
+      "iv",
+      "ip",
+      "rur",
+      "iv",
+      "ap",
+      "rur",
+      "iv",
+      "ag",
+      "kig",
+      "iv",
+      "ib"
+     ]
+    },
+    "p8": {
+     "gloss": "delete-PST-CERT error-small-AGT error-large-PL-PAT user-PL-REC agent-PL-SRC",
+     "morphemes": [
+      "pof",
+      "eg",
+      "ub",
+      "zim",
+      "kuz",
+      "ip",
+      "zim",
+      "vug",
+      "iv",
+      "od",
+      "vik",
+      "iv",
+      "ap",
+      "vab",
+      "iv",
+      "ib"
+     ]
+    },
+    "p9": {
+     "gloss": "find-CERT file-PAT tool-PL-INS",
+     "morphemes": [
+      "vef",
+      "ub",
+      "kef",
+      "od",
+      "kig",
+      "iv",
+      "ag"
+     ]
+    },
+    "p10": {
+     "gloss": "find-FUT-INFR plan-wrong-PL-AGT user-PL-REC message-INS file-SRC",
+     "morphemes": [
+      "vef",
+      "ut",
+      "uf",
+      "vum",
+      "bov",
+      "iv",
+      "ip",
+      "vik",
+      "iv",
+      "ap",
+      "zud",
+      "ag",
+      "kef",
+      "ib"
+     ]
+    },
+    "p11": {
+     "gloss": "send-PST-CERT task-PL-PAT",
+     "morphemes": [
+      "reb",
+      "eg",
+      "ub",
+      "geg",
+      "iv",
+      "od"
+     ]
+    },
+    "p12": {
+     "gloss": "find-FUT-NEG-CERT user-AGT message-new-PAT task-PL-INS message-SRC",
+     "morphemes": [
+      "vef",
+      "ut",
+      "id",
+      "ub",
+      "vik",
+      "ip",
+      "zud",
+      "zun",
+      "od",
+      "geg",
+      "iv",
+      "ag",
+      "zud",
+      "ib"
+     ]
+    },
+    "p13": {
+     "gloss": "write-FUT-CERT task-PL-PAT task-REC message-new-SRC",
+     "morphemes": [
+      "zaz",
+      "ut",
+      "ub",
+      "geg",
+      "iv",
+      "od",
+      "geg",
+      "ap",
+      "zud",
+      "zun",
+      "ib"
+     ]
+    },
+    "p14": {
+     "gloss": "read-PST-CERT file-small-PAT task-PL-SRC",
+     "morphemes": [
+      "lup",
+      "eg",
+      "ub",
+      "kef",
+      "kuz",
+      "od",
+      "geg",
+      "iv",
+      "ib"
+     ]
+    },
+    "p15": {
+     "gloss": "find-FUT-INFR message-old-PL-AGT tool-PAT error-PL-REC result-large-SRC",
+     "morphemes": [
+      "vef",
+      "ut",
+      "uf",
+      "zud",
+      "vok",
+      "iv",
+      "ip",
+      "kig",
+      "od",
+      "zim",
+      "iv",
+      "ap",
+      "fek",
+      "vug",
+      "ib"
+     ]
+    },
+    "p16": {
+     "gloss": "write-PST-INFR message-ready-PAT server-PL-REC server-INS file-SRC",
+     "morphemes": [
+      "zaz",
+      "eg",
+      "uf",
+      "zud",
+      "zoz",
+      "od",
+      "rur",
+      "iv",
+      "ap",
+      "rur",
+      "ag",
+      "kef",
+      "ib"
+     ]
+    },
+    "p17": {
+     "gloss": "read-NEG-CERT result-AGT result-PAT error-small-INS message-SRC",
+     "morphemes": [
+      "lup",
+      "id",
+      "ub",
+      "fek",
+      "ip",
+      "fek",
+      "od",
+      "zim",
+      "kuz",
+      "ag",
+      "zud",
+      "ib"
+     ]
+    },
+    "p18": {
+     "gloss": "read-FUT-INFR tool-AGT message-PL-REC task-INS agent-small-PL-SRC",
+     "morphemes": [
+      "lup",
+      "ut",
+      "uf",
+      "kig",
+      "ip",
+      "zud",
+      "iv",
+      "ap",
+      "geg",
+      "ag",
+      "vab",
+      "kuz",
+      "iv",
+      "ib"
+     ]
+    },
+    "p19": {
+     "gloss": "delete-INFR message-AGT message-PL-SRC",
+     "morphemes": [
+      "pof",
+      "uf",
+      "zud",
+      "ip",
+      "zud",
+      "iv",
+      "ib"
+     ]
+    }
+   },
+   "generate": {
+    "g0": "kog ut ub vum ip rur od kig bov ag kef kuz ib",
+    "g1": "reb eg id uf kig ip vik bov ap rur kuz ag zud iv ib",
+    "g2": "tep eg ub vab ip kef od geg zoz ap kef ag",
+    "g3": "vef eg id uf rur ip vab zoz ap rur zoz iv ag",
+    "g4": "kog id ub fek ip vik bov ap kig kuz ag vab zun ib",
+    "g5": "lup ut uf zud ib",
+    "g6": "zaz ut uf geg ip vum ap geg iv ib",
+    "g7": "tep uf vab ip",
+    "g8": "reb ut uf ot geg ip kig iv od vik iv ap geg iv ib",
+    "g9": "tep ut uf vum vok ip zud bov ag rur vug ib",
+    "g10": "kog id ub kig vug od kef ap rur ag rur zoz iv ib",
+    "g11": "tuf eg uf ot kef zoz ip vum iv ap",
+    "g12": "pof ut ub geg ip fek iv od",
+    "g13": "pof eg ub ot fek bov od rur iv ap",
+    "g14": "tep ut ub kef zoz ip zim ap geg bov ib",
+    "g15": "zaz eg id ub kef ip kef iv od geg ap fek bov ag",
+    "g16": "tuf ut id ub zim ip kef iv od fek iv ag vum ib",
+    "g17": "tep ut ub ot zud ip kef iv ap kig ib",
+    "g18": "reb eg id ub kef ap",
+    "g19": "vef eg uf kef od"
+   }
+  },
+  "wordspaced": {
+   "parse": {
+    "p0": {
+     "gloss": "fix-CERT result-PL-INS",
+     "morphemes": [
+      "tep",
+      "ub",
+      "fek",
+      "iv",
+      "ag"
+     ]
+    },
+    "p1": {
+     "gloss": "send-PST-INFR result-AGT message-INS file-SRC",
+     "morphemes": [
+      "reb",
+      "eg",
+      "uf",
+      "fek",
+      "ip",
+      "zud",
+      "ag",
+      "kef",
+      "ib"
+     ]
+    },
+    "p2": {
+     "gloss": "delete-INFR plan-PL-PAT agent-PL-REC user-INS result-SRC",
+     "morphemes": [
+      "pof",
+      "uf",
+      "vum",
+      "iv",
+      "od",
+      "vab",
+      "iv",
+      "ap",
+      "vik",
+      "ag",
+      "fek",
+      "ib"
+     ]
+    },
+    "p3": {
+     "gloss": "check-NEG-INFR server-AGT task-PL-PAT message-new-PL-REC result-new-SRC",
+     "morphemes": [
+      "tuf",
+      "id",
+      "uf",
+      "rur",
+      "ip",
+      "geg",
+      "iv",
+      "od",
+      "zud",
+      "zun",
+      "iv",
+      "ap",
+      "fek",
+      "zun",
+      "ib"
+     ]
+    },
+    "p4": {
+     "gloss": "write-CERT file-PL-INS",
+     "morphemes": [
+      "zaz",
+      "ub",
+      "kef",
+      "iv",
+      "ag"
+     ]
+    },
+    "p5": {
+     "gloss": "run-INFR error-large-PL-AGT task-old-PAT tool-REC plan-new-INS",
+     "morphemes": [
+      "kog",
+      "uf",
+      "zim",
+      "vug",
+      "iv",
+      "ip",
+      "geg",
+      "vok",
+      "od",
+      "kig",
+      "ap",
+      "vum",
+      "zun",
+      "ag"
+     ]
+    },
+    "p6": {
+     "gloss": "run-FUT-NEG-INFR-Q message-small-AGT plan-wrong-PAT server-ready-INS plan-small-SRC",
+     "morphemes": [
+      "kog",
+      "ut",
+      "id",
+      "uf",
+      "ot",
+      "zud",
+      "kuz",
+      "ip",
+      "vum",
+      "bov",
+      "od",
+      "rur",
+      "zoz",
+      "ag",
+      "vum",
+      "kuz",
+      "ib"
+     ]
+    },
+    "p7": {
+     "gloss": "check-PST-CERT-Q result-PL-AGT server-PL-REC server-PL-INS tool-PL-SRC",
+     "morphemes": [
+      "tuf",
+      "eg",
+      "ub",
+      "ot",
+      "fek",
+      "iv",
+      "ip",
+      "rur",
+      "iv",
+      "ap",
+      "rur",
+      "iv",
+      "ag",
+      "kig",
+      "iv",
+      "ib"
+     ]
+    },
+    "p8": {
+     "gloss": "delete-PST-CERT error-small-AGT error-large-PL-PAT user-PL-REC agent-PL-SRC",
+     "morphemes": [
+      "pof",
+      "eg",
+      "ub",
+      "zim",
+      "kuz",
+      "ip",
+      "zim",
+      "vug",
+      "iv",
+      "od",
+      "vik",
+      "iv",
+      "ap",
+      "vab",
+      "iv",
+      "ib"
+     ]
+    },
+    "p9": {
+     "gloss": "find-CERT file-PAT tool-PL-INS",
+     "morphemes": [
+      "vef",
+      "ub",
+      "kef",
+      "od",
+      "kig",
+      "iv",
+      "ag"
+     ]
+    },
+    "p10": {
+     "gloss": "find-FUT-INFR plan-wrong-PL-AGT user-PL-REC message-INS file-SRC",
+     "morphemes": [
+      "vef",
+      "ut",
+      "uf",
+      "vum",
+      "bov",
+      "iv",
+      "ip",
+      "vik",
+      "iv",
+      "ap",
+      "zud",
+      "ag",
+      "kef",
+      "ib"
+     ]
+    },
+    "p11": {
+     "gloss": "send-PST-CERT task-PL-PAT",
+     "morphemes": [
+      "reb",
+      "eg",
+      "ub",
+      "geg",
+      "iv",
+      "od"
+     ]
+    },
+    "p12": {
+     "gloss": "find-FUT-NEG-CERT user-AGT message-new-PAT task-PL-INS message-SRC",
+     "morphemes": [
+      "vef",
+      "ut",
+      "id",
+      "ub",
+      "vik",
+      "ip",
+      "zud",
+      "zun",
+      "od",
+      "geg",
+      "iv",
+      "ag",
+      "zud",
+      "ib"
+     ]
+    },
+    "p13": {
+     "gloss": "write-FUT-CERT task-PL-PAT task-REC message-new-SRC",
+     "morphemes": [
+      "zaz",
+      "ut",
+      "ub",
+      "geg",
+      "iv",
+      "od",
+      "geg",
+      "ap",
+      "zud",
+      "zun",
+      "ib"
+     ]
+    },
+    "p14": {
+     "gloss": "read-PST-CERT file-small-PAT task-PL-SRC",
+     "morphemes": [
+      "lup",
+      "eg",
+      "ub",
+      "kef",
+      "kuz",
+      "od",
+      "geg",
+      "iv",
+      "ib"
+     ]
+    },
+    "p15": {
+     "gloss": "find-FUT-INFR message-old-PL-AGT tool-PAT error-PL-REC result-large-SRC",
+     "morphemes": [
+      "vef",
+      "ut",
+      "uf",
+      "zud",
+      "vok",
+      "iv",
+      "ip",
+      "kig",
+      "od",
+      "zim",
+      "iv",
+      "ap",
+      "fek",
+      "vug",
+      "ib"
+     ]
+    },
+    "p16": {
+     "gloss": "write-PST-INFR message-ready-PAT server-PL-REC server-INS file-SRC",
+     "morphemes": [
+      "zaz",
+      "eg",
+      "uf",
+      "zud",
+      "zoz",
+      "od",
+      "rur",
+      "iv",
+      "ap",
+      "rur",
+      "ag",
+      "kef",
+      "ib"
+     ]
+    },
+    "p17": {
+     "gloss": "read-NEG-CERT result-AGT result-PAT error-small-INS message-SRC",
+     "morphemes": [
+      "lup",
+      "id",
+      "ub",
+      "fek",
+      "ip",
+      "fek",
+      "od",
+      "zim",
+      "kuz",
+      "ag",
+      "zud",
+      "ib"
+     ]
+    },
+    "p18": {
+     "gloss": "read-FUT-INFR tool-AGT message-PL-REC task-INS agent-small-PL-SRC",
+     "morphemes": [
+      "lup",
+      "ut",
+      "uf",
+      "kig",
+      "ip",
+      "zud",
+      "iv",
+      "ap",
+      "geg",
+      "ag",
+      "vab",
+      "kuz",
+      "iv",
+      "ib"
+     ]
+    },
+    "p19": {
+     "gloss": "delete-INFR message-AGT message-PL-SRC",
+     "morphemes": [
+      "pof",
+      "uf",
+      "zud",
+      "ip",
+      "zud",
+      "iv",
+      "ib"
+     ]
+    }
+   },
+   "generate": {
+    "g0": "kogutub vumip rurod kigbovag kefkuzib",
+    "g1": "rebegiduf kigip vikbovap rurkuzag zudivib",
+    "g2": "tepegub vabip kefod gegzozap kefag",
+    "g3": "vefegiduf rurip vabzozap rurzozivag",
+    "g4": "kogidub fekip vikbovap kigkuzag vabzunib",
+    "g5": "luputuf zudib",
+    "g6": "zazutuf gegip vumap gegivib",
+    "g7": "tepuf vabip",
+    "g8": "rebutufot gegip kigivod vikivap gegivib",
+    "g9": "teputuf vumvokip zudbovag rurvugib",
+    "g10": "kogidub kigvugod kefap rurag rurzozivib",
+    "g11": "tufegufot kefzozip vumivap",
+    "g12": "pofutub gegip fekivod",
+    "g13": "pofegubot fekbovod rurivap",
+    "g14": "teputub kefzozip zimap gegbovib",
+    "g15": "zazegidub kefip kefivod gegap fekbovag",
+    "g16": "tufutidub zimip kefivod fekivag vumib",
+    "g17": "teputubot zudip kefivap kigib",
+    "g18": "rebegidub kefap",
+    "g19": "vefeguf kefod"
+   }
+  },
+  "camel": {
+   "parse": {
+    "p0": {
+     "gloss": "fix-CERT result-PL-INS",
+     "morphemes": [
+      "tep",
+      "ub",
+      "fek",
+      "iv",
+      "ag"
+     ]
+    },
+    "p1": {
+     "gloss": "send-PST-INFR result-AGT message-INS file-SRC",
+     "morphemes": [
+      "reb",
+      "eg",
+      "uf",
+      "fek",
+      "ip",
+      "zud",
+      "ag",
+      "kef",
+      "ib"
+     ]
+    },
+    "p2": {
+     "gloss": "delete-INFR plan-PL-PAT agent-PL-REC user-INS result-SRC",
+     "morphemes": [
+      "pof",
+      "uf",
+      "vum",
+      "iv",
+      "od",
+      "vab",
+      "iv",
+      "ap",
+      "vik",
+      "ag",
+      "fek",
+      "ib"
+     ]
+    },
+    "p3": {
+     "gloss": "check-NEG-INFR server-AGT task-PL-PAT message-new-PL-REC result-new-SRC",
+     "morphemes": [
+      "tuf",
+      "id",
+      "uf",
+      "rur",
+      "ip",
+      "geg",
+      "iv",
+      "od",
+      "zud",
+      "zun",
+      "iv",
+      "ap",
+      "fek",
+      "zun",
+      "ib"
+     ]
+    },
+    "p4": {
+     "gloss": "write-CERT file-PL-INS",
+     "morphemes": [
+      "zaz",
+      "ub",
+      "kef",
+      "iv",
+      "ag"
+     ]
+    },
+    "p5": {
+     "gloss": "run-INFR error-large-PL-AGT task-old-PAT tool-REC plan-new-INS",
+     "morphemes": [
+      "kog",
+      "uf",
+      "zim",
+      "vug",
+      "iv",
+      "ip",
+      "geg",
+      "vok",
+      "od",
+      "kig",
+      "ap",
+      "vum",
+      "zun",
+      "ag"
+     ]
+    },
+    "p6": {
+     "gloss": "run-FUT-NEG-INFR-Q message-small-AGT plan-wrong-PAT server-ready-INS plan-small-SRC",
+     "morphemes": [
+      "kog",
+      "ut",
+      "id",
+      "uf",
+      "ot",
+      "zud",
+      "kuz",
+      "ip",
+      "vum",
+      "bov",
+      "od",
+      "rur",
+      "zoz",
+      "ag",
+      "vum",
+      "kuz",
+      "ib"
+     ]
+    },
+    "p7": {
+     "gloss": "check-PST-CERT-Q result-PL-AGT server-PL-REC server-PL-INS tool-PL-SRC",
+     "morphemes": [
+      "tuf",
+      "eg",
+      "ub",
+      "ot",
+      "fek",
+      "iv",
+      "ip",
+      "rur",
+      "iv",
+      "ap",
+      "rur",
+      "iv",
+      "ag",
+      "kig",
+      "iv",
+      "ib"
+     ]
+    },
+    "p8": {
+     "gloss": "delete-PST-CERT error-small-AGT error-large-PL-PAT user-PL-REC agent-PL-SRC",
+     "morphemes": [
+      "pof",
+      "eg",
+      "ub",
+      "zim",
+      "kuz",
+      "ip",
+      "zim",
+      "vug",
+      "iv",
+      "od",
+      "vik",
+      "iv",
+      "ap",
+      "vab",
+      "iv",
+      "ib"
+     ]
+    },
+    "p9": {
+     "gloss": "find-CERT file-PAT tool-PL-INS",
+     "morphemes": [
+      "vef",
+      "ub",
+      "kef",
+      "od",
+      "kig",
+      "iv",
+      "ag"
+     ]
+    },
+    "p10": {
+     "gloss": "find-FUT-INFR plan-wrong-PL-AGT user-PL-REC message-INS file-SRC",
+     "morphemes": [
+      "vef",
+      "ut",
+      "uf",
+      "vum",
+      "bov",
+      "iv",
+      "ip",
+      "vik",
+      "iv",
+      "ap",
+      "zud",
+      "ag",
+      "kef",
+      "ib"
+     ]
+    },
+    "p11": {
+     "gloss": "send-PST-CERT task-PL-PAT",
+     "morphemes": [
+      "reb",
+      "eg",
+      "ub",
+      "geg",
+      "iv",
+      "od"
+     ]
+    },
+    "p12": {
+     "gloss": "find-FUT-NEG-CERT user-AGT message-new-PAT task-PL-INS message-SRC",
+     "morphemes": [
+      "vef",
+      "ut",
+      "id",
+      "ub",
+      "vik",
+      "ip",
+      "zud",
+      "zun",
+      "od",
+      "geg",
+      "iv",
+      "ag",
+      "zud",
+      "ib"
+     ]
+    },
+    "p13": {
+     "gloss": "write-FUT-CERT task-PL-PAT task-REC message-new-SRC",
+     "morphemes": [
+      "zaz",
+      "ut",
+      "ub",
+      "geg",
+      "iv",
+      "od",
+      "geg",
+      "ap",
+      "zud",
+      "zun",
+      "ib"
+     ]
+    },
+    "p14": {
+     "gloss": "read-PST-CERT file-small-PAT task-PL-SRC",
+     "morphemes": [
+      "lup",
+      "eg",
+      "ub",
+      "kef",
+      "kuz",
+      "od",
+      "geg",
+      "iv",
+      "ib"
+     ]
+    },
+    "p15": {
+     "gloss": "find-FUT-INFR message-old-PL-AGT tool-PAT error-PL-REC result-large-SRC",
+     "morphemes": [
+      "vef",
+      "ut",
+      "uf",
+      "zud",
+      "vok",
+      "iv",
+      "ip",
+      "kig",
+      "od",
+      "zim",
+      "iv",
+      "ap",
+      "fek",
+      "vug",
+      "ib"
+     ]
+    },
+    "p16": {
+     "gloss": "write-PST-INFR message-ready-PAT server-PL-REC server-INS file-SRC",
+     "morphemes": [
+      "zaz",
+      "eg",
+      "uf",
+      "zud",
+      "zoz",
+      "od",
+      "rur",
+      "iv",
+      "ap",
+      "rur",
+      "ag",
+      "kef",
+      "ib"
+     ]
+    },
+    "p17": {
+     "gloss": "read-NEG-CERT result-AGT result-PAT error-small-INS message-SRC",
+     "morphemes": [
+      "lup",
+      "id",
+      "ub",
+      "fek",
+      "ip",
+      "fek",
+      "od",
+      "zim",
+      "kuz",
+      "ag",
+      "zud",
+      "ib"
+     ]
+    },
+    "p18": {
+     "gloss": "read-FUT-INFR tool-AGT message-PL-REC task-INS agent-small-PL-SRC",
+     "morphemes": [
+      "lup",
+      "ut",
+      "uf",
+      "kig",
+      "ip",
+      "zud",
+      "iv",
+      "ap",
+      "geg",
+      "ag",
+      "vab",
+      "kuz",
+      "iv",
+      "ib"
+     ]
+    },
+    "p19": {
+     "gloss": "delete-INFR message-AGT message-PL-SRC",
+     "morphemes": [
+      "pof",
+      "uf",
+      "zud",
+      "ip",
+      "zud",
+      "iv",
+      "ib"
+     ]
+    }
+   },
+   "generate": {
+    "g0": "KogUtUbVumIpRurOdKigBovAgKefKuzIb",
+    "g1": "RebEgIdUfKigIpVikBovApRurKuzAgZudIvIb",
+    "g2": "TepEgUbVabIpKefOdGegZozApKefAg",
+    "g3": "VefEgIdUfRurIpVabZozApRurZozIvAg",
+    "g4": "KogIdUbFekIpVikBovApKigKuzAgVabZunIb",
+    "g5": "LupUtUfZudIb",
+    "g6": "ZazUtUfGegIpVumApGegIvIb",
+    "g7": "TepUfVabIp",
+    "g8": "RebUtUfOtGegIpKigIvOdVikIvApGegIvIb",
+    "g9": "TepUtUfVumVokIpZudBovAgRurVugIb",
+    "g10": "KogIdUbKigVugOdKefApRurAgRurZozIvIb",
+    "g11": "TufEgUfOtKefZozIpVumIvAp",
+    "g12": "PofUtUbGegIpFekIvOd",
+    "g13": "PofEgUbOtFekBovOdRurIvAp",
+    "g14": "TepUtUbKefZozIpZimApGegBovIb",
+    "g15": "ZazEgIdUbKefIpKefIvOdGegApFekBovAg",
+    "g16": "TufUtIdUbZimIpKefIvOdFekIvAgVumIb",
+    "g17": "TepUtUbOtZudIpKefIvApKigIb",
+    "g18": "RebEgIdUbKefAp",
+    "g19": "VefEgUfKefOd"
+   }
+  }
+ }
+}

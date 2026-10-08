@@ -2,3 +2,5 @@ __pycache__/
 *.pyc
 .venv/
 experiments/tokenization/.cache/
+# inventory.py가 68초 만에 다시 만드는 4.4MB 데이터
+experiments/tokenization/results/inventory.json

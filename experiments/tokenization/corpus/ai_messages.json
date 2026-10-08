@@ -1,0 +1,322 @@
+[
+ {
+  "id": "m01",
+  "category": "delegation",
+  "en": "Please refactor the retry logic in src/net/client.py to use exponential backoff with at most 5 attempts. Keep the public interface unchanged.",
+  "en_terse": "Refactor retry logic in src/net/client.py -> exponential backoff, max 5 attempts. Keep public interface unchanged.",
+  "ko": "src/net/client.py의 재시도 로직을 지수 백오프 방식으로 바꾸고 시도는 최대 5회로 해 주세요. 공개 인터페이스는 그대로 두세요.",
+  "json": "{\"task\":\"refactor\",\"file\":\"src/net/client.py\",\"part\":\"retry_logic\",\"use\":\"exp_backoff\",\"max_attempts\":5,\"keep\":\"public_interface\"}"
+ },
+ {
+  "id": "m02",
+  "category": "delegation",
+  "en": "Find recent peer-reviewed studies on how sleep deprivation affects working memory. Return the five most relevant, each with a one-sentence summary.",
+  "en_terse": "Find recent peer-reviewed studies: sleep deprivation -> working memory. Return top 5, 1-sentence summary each.",
+  "ko": "수면 부족이 작업 기억에 미치는 영향을 다룬 최근 동료 심사 연구를 찾아 주세요. 가장 관련성 높은 다섯 편을 각각 한 문장 요약과 함께 보내 주세요.",
+  "json": "{\"task\":\"search\",\"q\":\"sleep deprivation effect on working memory\",\"filter\":[\"peer_reviewed\",\"recent\"],\"top_k\":5,\"each\":\"one_sentence_summary\"}"
+ },
+ {
+  "id": "m03",
+  "category": "delegation",
+  "en": "Turn the user's question into a SQL query against the sales database and run it. Report only the result, not the query.",
+  "en_terse": "User question -> SQL query on sales DB, run it. Report result only, not query.",
+  "ko": "사용자 질문을 판매 데이터베이스에 대한 SQL 쿼리로 바꿔 실행해 주세요. 쿼리는 빼고 결과만 알려 주세요.",
+  "json": "{\"task\":\"text_to_sql\",\"db\":\"sales\",\"run\":true,\"return\":\"result_only\"}"
+ },
+ {
+  "id": "m04",
+  "category": "delegation",
+  "en": "Draft a polite reply that declines the meeting request and proposes two alternative times later this week.",
+  "en_terse": "Draft polite reply: decline meeting request, propose 2 alt times later this week.",
+  "ko": "회의 요청을 정중하게 거절하고 이번 주 후반의 다른 시간 두 개를 제안하는 답장 초안을 써 주세요.",
+  "json": "{\"task\":\"draft_reply\",\"tone\":\"polite\",\"action\":\"decline_meeting\",\"propose_times\":2,\"window\":\"later_this_week\"}"
+ },
+ {
+  "id": "m05",
+  "category": "status",
+  "en": "I have processed 1,200 of 3,000 records so far. At the current rate, the job should finish in about 25 minutes.",
+  "en_terse": "Processed 1200/3000 records. Current rate -> ETA ~25 min.",
+  "ko": "지금까지 레코드 3,000개 중 1,200개를 처리했습니다. 지금 속도라면 약 25분 뒤에 작업이 끝납니다.",
+  "json": "{\"status\":\"running\",\"done\":1200,\"total\":3000,\"eta_min\":25}"
+ },
+ {
+  "id": "m06",
+  "category": "status",
+  "en": "The literature search is finished, and I am now reading the shortlisted papers with no blockers so far.",
+  "en_terse": "Lit search done; reading shortlisted papers now. No blockers.",
+  "ko": "문헌 검색은 끝났고 지금은 추려 낸 논문을 읽고 있으며, 아직 막힌 곳은 없습니다.",
+  "json": "{\"status\":\"running\",\"done\":[\"lit_search\"],\"now\":\"reading_shortlist\",\"blockers\":[]}"
+ },
+ {
+  "id": "m07",
+  "category": "status",
+  "en": "All unit tests pass locally. I am waiting for the integration tests to finish before opening the pull request.",
+  "en_terse": "Unit tests all pass locally. Waiting on integration tests, then open PR.",
+  "ko": "단위 테스트는 로컬에서 모두 통과했습니다. 통합 테스트가 끝나기를 기다렸다가 풀 리퀘스트를 열겠습니다.",
+  "json": "{\"unit_tests\":\"pass_local\",\"integration_tests\":\"running\",\"next\":\"open_pr\"}"
+ },
+ {
+  "id": "m08",
+  "category": "status",
+  "en": "The first draft of the report is done. It covers the background, methods, and results; the discussion section is still missing.",
+  "en_terse": "Report first draft done: background, methods, results. Discussion still missing.",
+  "ko": "보고서 초안을 완성했습니다. 배경, 방법, 결과는 들어갔고 논의 부분은 아직 없습니다.",
+  "json": "{\"status\":\"draft1_done\",\"has\":[\"background\",\"methods\",\"results\"],\"missing\":[\"discussion\"]}"
+ },
+ {
+  "id": "m09",
+  "category": "tool_result",
+  "en": "The search returned 14 results. The most relevant is the official changelog at https://docs.python.org/3/whatsnew/3.13.html, which lists the removed modules.",
+  "en_terse": "Search: 14 results. Top: official changelog https://docs.python.org/3/whatsnew/3.13.html (lists removed modules).",
+  "ko": "검색 결과는 14건입니다. 가장 관련성 높은 것은 https://docs.python.org/3/whatsnew/3.13.html 의 공식 변경 기록으로, 제거된 모듈 목록이 있습니다.",
+  "json": "{\"tool\":\"search\",\"n\":14,\"top\":{\"url\":\"https://docs.python.org/3/whatsnew/3.13.html\",\"kind\":\"official_changelog\",\"has\":\"removed_modules\"}}"
+ },
+ {
+  "id": "m10",
+  "category": "tool_result",
+  "en": "The file scan found no duplicate entries. Three columns have missing values, mostly in the address field.",
+  "en_terse": "File scan: no duplicates. 3 columns with missing values, mostly address field.",
+  "ko": "파일을 검사한 결과 중복 항목은 없습니다. 열 세 개에 빈 값이 있고, 대부분 주소 필드입니다.",
+  "json": "{\"tool\":\"file_scan\",\"dupes\":0,\"cols_missing\":3,\"worst\":\"address\"}"
+ },
+ {
+  "id": "m11",
+  "category": "tool_result",
+  "en": "The calculator confirms that the total cost is within budget, but the remaining margin is small.",
+  "en_terse": "Calculator: total cost within budget, but margin small.",
+  "ko": "계산기로 확인해 보니 총비용은 예산 안이지만 남은 여유는 작습니다.",
+  "json": "{\"tool\":\"calculator\",\"total_cost\":\"within_budget\",\"margin\":\"small\"}"
+ },
+ {
+  "id": "m12",
+  "category": "tool_result",
+  "en": "According to the company directory, Maria Lopez owns the billing service and Kenji Sato is the backup on-call engineer.",
+  "en_terse": "Company directory: billing service owner = Maria Lopez; backup on-call = Kenji Sato.",
+  "ko": "사내 명부에 따르면 결제 서비스 담당자는 마리아 로페스이고, 예비 당직 엔지니어는 사토 겐지입니다.",
+  "json": "{\"src\":\"company_directory\",\"billing_service\":{\"owner\":\"Maria Lopez\",\"backup_oncall\":\"Kenji Sato\"}}"
+ },
+ {
+  "id": "m13",
+  "category": "clarification",
+  "en": "Should the summary target executives or engineers? The level of technical detail depends on the audience.",
+  "en_terse": "Summary audience: executives or engineers? Tech detail level depends on it.",
+  "ko": "요약의 독자가 임원인가요, 엔지니어인가요? 독자에 따라 기술적 세부 수준이 달라집니다.",
+  "json": "{\"q\":\"summary_audience\",\"options\":[\"executives\",\"engineers\"],\"why\":\"sets_tech_detail\"}"
+ },
+ {
+  "id": "m14",
+  "category": "clarification",
+  "en": "Should I modify parse_config() directly, or add a new function and keep the old one for backward compatibility?",
+  "en_terse": "Modify parse_config() directly, or add new fn + keep old for backward compat?",
+  "ko": "parse_config()를 직접 고칠까요, 아니면 새 함수를 추가하고 하위 호환을 위해 기존 함수를 남겨 둘까요?",
+  "json": "{\"q\":\"change_strategy\",\"target\":\"parse_config()\",\"options\":[\"modify_in_place\",\"add_new_keep_old\"],\"why\":\"backward_compat\"}"
+ },
+ {
+  "id": "m15",
+  "category": "clarification",
+  "en": "By 'last quarter', do you mean the most recent calendar quarter or the company's fiscal quarter?",
+  "en_terse": "'Last quarter' = latest calendar quarter or company fiscal quarter?",
+  "ko": "'지난 분기'는 달력 기준 최근 분기인가요, 회사 회계 분기인가요?",
+  "json": "{\"q\":\"define\",\"term\":\"last quarter\",\"options\":[\"calendar\",\"fiscal\"]}"
+ },
+ {
+  "id": "m16",
+  "category": "clarification",
+  "en": "The two source documents give different deadlines. Which one should I treat as authoritative?",
+  "en_terse": "2 source documents give different deadlines. Which is authoritative?",
+  "ko": "원본 문서 두 개의 마감일이 서로 다릅니다. 어느 쪽을 기준으로 삼을까요?",
+  "json": "{\"q\":\"which_source_authoritative\",\"issue\":\"conflicting_deadlines\",\"n_docs\":2}"
+ },
+ {
+  "id": "m17",
+  "category": "error",
+  "en": "The request to the payments API failed with HTTP 503 three times in a row. I stopped retrying to avoid hitting the rate limit.",
+  "en_terse": "Payments API: HTTP 503 x3 in a row. Stopped retrying to avoid rate limit.",
+  "ko": "결제 API 요청이 연달아 세 번 HTTP 503으로 실패했습니다. 요청 한도에 걸리지 않도록 재시도를 멈췄습니다.",
+  "json": "{\"err\":\"http_503\",\"svc\":\"payments_api\",\"consecutive\":3,\"action\":\"stopped_retry\",\"why\":\"avoid_rate_limit\"}"
+ },
+ {
+  "id": "m18",
+  "category": "error",
+  "en": "I could not open data/2024/q3_sales.csv because the file does not exist. Was it moved to another folder?",
+  "en_terse": "Can't open data/2024/q3_sales.csv: not found. Moved to other folder?",
+  "ko": "data/2024/q3_sales.csv 파일이 없어서 열지 못했습니다. 다른 폴더로 옮겨졌나요?",
+  "json": "{\"err\":\"file_not_found\",\"path\":\"data/2024/q3_sales.csv\",\"q\":\"moved_elsewhere?\"}"
+ },
+ {
+  "id": "m19",
+  "category": "error",
+  "en": "The translation step failed because the input exceeded the context limit. I can split the document into chunks and retry. Should I go ahead?",
+  "en_terse": "Translation failed: input > context limit. Can split doc into chunks + retry. Proceed?",
+  "ko": "입력이 컨텍스트 한도를 넘어 번역 단계가 실패했습니다. 문서를 여러 조각으로 나눠 다시 시도할 수 있습니다. 진행할까요?",
+  "json": "{\"err\":\"context_limit_exceeded\",\"step\":\"translation\",\"fix\":\"chunk_and_retry\",\"q\":\"proceed?\"}"
+ },
+ {
+  "id": "m20",
+  "category": "error",
+  "en": "My previous answer was wrong because I mixed up the two datasets. The corrected figures are in the updated table.",
+  "en_terse": "Previous answer wrong: mixed up the 2 datasets. Corrected figures in updated table.",
+  "ko": "두 데이터셋을 혼동해서 앞선 답변이 틀렸습니다. 고친 수치는 갱신한 표에 있습니다.",
+  "json": "{\"correction\":true,\"cause\":\"mixed_up_datasets\",\"fixed_in\":\"updated_table\"}"
+ },
+ {
+  "id": "m21",
+  "category": "plan",
+  "en": "I propose three steps: collect the customer complaints, group them by theme, and rank the themes by frequency. Grouping is the hardest step, so I would like a second reviewer there. I will start collecting unless you object. Expect first results within the hour.",
+  "en_terse": "Plan: 1) collect customer complaints 2) group by theme 3) rank themes by frequency. Grouping hardest -> want second reviewer there. Starting collection unless objection. First results <1h.",
+  "ko": "고객 불만 수집, 주제별 묶기, 빈도순 정렬의 세 단계를 제안합니다. 묶는 단계가 가장 어려우니 거기에는 검토자를 한 명 더 두고 싶습니다. 반대가 없으면 수집부터 시작하겠습니다. 첫 결과는 한 시간 안에 드리겠습니다.",
+  "json": "{\"plan\":[\"collect_complaints\",\"group_by_theme\",\"rank_by_freq\"],\"hardest\":\"group_by_theme\",\"want\":\"second_reviewer\",\"start\":\"collect\",\"unless\":\"objection\",\"first_results_within_h\":1}"
+ },
+ {
+  "id": "m22",
+  "category": "plan",
+  "en": "Let's upgrade numpy to 2.1 first, then fix the deprecation warnings, and only then raise the minimum Python version to 3.11.",
+  "en_terse": "Order: numpy -> 2.1, fix deprecation warnings, then min Python -> 3.11.",
+  "ko": "먼저 numpy를 2.1로 올리고, 그다음 사용 중단 경고를 고친 뒤에야 최소 Python 버전을 3.11로 올립시다.",
+  "json": "{\"plan\":[{\"upgrade\":\"numpy\",\"to\":\"2.1\"},\"fix_deprecation_warnings\",{\"raise\":\"min_python\",\"to\":\"3.11\"}]}"
+ },
+ {
+  "id": "m23",
+  "category": "plan",
+  "en": "Instead of rewriting the whole module, we could add a caching layer in front of the slow queries. This is lower risk and easy to revert.",
+  "en_terse": "Alt to full module rewrite: cache layer in front of slow queries. Lower risk, easy revert.",
+  "ko": "모듈 전체를 다시 쓰는 대신 느린 쿼리 앞에 캐시 계층을 둘 수 있습니다. 위험이 더 낮고 되돌리기도 쉽습니다.",
+  "json": "{\"proposal\":\"add_cache_layer\",\"before\":\"slow_queries\",\"instead_of\":\"rewrite_module\",\"pros\":[\"lower_risk\",\"easy_revert\"]}"
+ },
+ {
+  "id": "m24",
+  "category": "plan",
+  "en": "I suggest we split the work: I handle data cleaning, you handle the visualizations, and we merge the results at the end. We should agree on column names first. Does that work for you?",
+  "en_terse": "Proposed split: me = data cleaning, you = visualizations, merge at end. Agree on column names first. OK?",
+  "ko": "작업을 나누면 좋겠습니다. 데이터 정리는 제가, 시각화는 그쪽에서 맡고 마지막에 결과를 합치는 방식입니다. 열 이름부터 먼저 맞춰야 합니다. 괜찮으신가요?",
+  "json": "{\"proposal\":\"split_work\",\"me\":\"data_cleaning\",\"you\":\"visualizations\",\"merge\":\"at_end\",\"first\":\"agree_column_names\",\"q\":\"ok?\"}"
+ },
+ {
+  "id": "m25",
+  "category": "review",
+  "en": "The patch is correct, but the loop in merge_records() is quadratic. With 100,000 rows that will be too slow, so consider a dictionary keyed by ID.",
+  "en_terse": "Patch correct, but merge_records() loop quadratic. 100k rows -> too slow; use dict keyed by ID.",
+  "ko": "패치는 맞지만 merge_records()의 반복문이 제곱 시간입니다. 행이 100,000개면 너무 느리니 ID를 키로 하는 딕셔너리를 검토해 주세요.",
+  "json": "{\"verdict\":\"correct\",\"issue\":{\"at\":\"merge_records()\",\"complexity\":\"quadratic\",\"rows\":100000,\"effect\":\"too_slow\"},\"suggest\":\"dict_keyed_by_id\"}"
+ },
+ {
+  "id": "m26",
+  "category": "review",
+  "en": "The argument is persuasive, but the second claim is not supported by any of the cited sources. Either add a source or soften the claim.",
+  "en_terse": "Argument persuasive, but claim 2 unsupported by cited sources. Add source or soften claim.",
+  "ko": "논증은 설득력이 있지만 두 번째 주장은 인용한 출처 어디에서도 뒷받침되지 않습니다. 출처를 추가하거나 주장을 누그러뜨려 주세요.",
+  "json": "{\"verdict\":\"persuasive\",\"issue\":{\"claim\":2,\"problem\":\"unsupported_by_citations\"},\"fix\":[\"add_source\",\"soften_claim\"]}"
+ },
+ {
+  "id": "m27",
+  "category": "review",
+  "en": "Good summary overall. It is slightly too long; cutting the background paragraph will bring it within the limit.",
+  "en_terse": "Good summary overall. Slightly too long; cut background para -> within limit.",
+  "ko": "전체적으로 좋은 요약입니다. 조금 길지만 배경 문단을 빼면 분량 제한 안에 들어옵니다.",
+  "json": "{\"verdict\":\"good\",\"issue\":\"slightly_too_long\",\"fix\":\"cut_background_para\",\"then\":\"within_limit\"}"
+ },
+ {
+  "id": "m28",
+  "category": "review",
+  "en": "I checked your calculation and found an error in the third step: the tax was applied twice. The final amount should be lower. Everything else is correct.",
+  "en_terse": "Checked your calc: step 3 error, tax applied twice -> final amount should be lower. Rest correct.",
+  "ko": "계산을 확인해 보니 세 번째 단계에 오류가 있습니다. 세금이 두 번 적용됐습니다. 최종 금액은 더 낮아야 하고, 나머지는 맞습니다.",
+  "json": "{\"checked\":\"calculation\",\"error\":{\"step\":3,\"issue\":\"tax_applied_twice\"},\"final_amount\":\"should_be_lower\",\"rest\":\"correct\"}"
+ },
+ {
+  "id": "m29",
+  "category": "negotiation",
+  "en": "I agree with your plan, with one change: run the cheaper model first and use the larger one only for the hard cases.",
+  "en_terse": "Agree with your plan, 1 change: cheaper model first, larger only for hard cases.",
+  "ko": "계획에 동의하지만 한 가지만 바꾸죠. 싼 모델을 먼저 돌리고 큰 모델은 어려운 사례에만 씁시다.",
+  "json": "{\"agree\":true,\"amend\":{\"first\":\"cheaper_model\",\"larger_model_only\":\"hard_cases\"}}"
+ },
+ {
+  "id": "m30",
+  "category": "negotiation",
+  "en": "I can take the frontend tasks, but I need two more days than you proposed. If that is too late, I can deliver a partial version by the original date.",
+  "en_terse": "Can take frontend tasks but need 2 more days than proposed. If too late: partial version by original date.",
+  "ko": "프론트엔드 작업을 맡을 수 있지만 제안하신 일정보다 이틀이 더 필요합니다. 그게 너무 늦다면 원래 날짜까지 일부만 먼저 넘기겠습니다.",
+  "json": "{\"accept\":\"frontend_tasks\",\"need_extra_days\":2,\"fallback\":\"partial_by_original_date\"}"
+ },
+ {
+  "id": "m31",
+  "category": "negotiation",
+  "en": "I disagree with dropping the outliers. They come from a real sensor fault, so we should flag them instead of deleting them.",
+  "en_terse": "Disagree with dropping outliers: from real sensor fault -> flag, don't delete.",
+  "ko": "이상치를 빼는 데는 반대합니다. 실제 센서 고장에서 나온 값이니 지우지 말고 표시해 둬야 합니다.",
+  "json": "{\"disagree\":\"drop_outliers\",\"why\":\"real_sensor_fault\",\"counter\":\"flag_not_delete\"}"
+ },
+ {
+  "id": "m32",
+  "category": "negotiation",
+  "en": "Your estimate of 40 GPU hours seems high to me. My measurement suggests 25 is enough; can we compromise at 30 and revisit after the first run?",
+  "en_terse": "Your 40 GPU hours estimate seems high; my measurement says 25 enough. Compromise at 30, revisit after first run?",
+  "ko": "GPU 40시간이라는 추정치는 많아 보입니다. 제가 측정해 보니 25시간이면 충분합니다. 30시간으로 절충하고 첫 실행 뒤에 다시 볼까요?",
+  "json": "{\"re\":\"gpu_hours\",\"yours\":40,\"mine\":25,\"offer\":30,\"revisit\":\"after_first_run\"}"
+ },
+ {
+  "id": "m33",
+  "category": "final_answer",
+  "en": "The capital of Australia is Canberra, not Sydney. Confidence is high; sources are the Australian government website and two encyclopedias.",
+  "en_terse": "Capital of Australia = Canberra (not Sydney). Confidence high; sources: Australian government website + 2 encyclopedias.",
+  "ko": "호주의 수도는 시드니가 아니라 캔버라입니다. 확신도는 높으며, 출처는 호주 정부 웹사이트와 백과사전 두 곳입니다.",
+  "json": "{\"answer\":\"Canberra\",\"not\":\"Sydney\",\"confidence\":\"high\",\"sources\":{\"au_gov_website\":1,\"encyclopedias\":2}}"
+ },
+ {
+  "id": "m34",
+  "category": "final_answer",
+  "en": "The most likely cause of the slowdown is the new logging configuration, which writes every request to disk. I am fairly confident based on the profiler output, but I have not tested a fix yet.",
+  "en_terse": "Likely slowdown cause: new logging config writes every request to disk. Fairly confident (profiler output); fix not yet tested.",
+  "ko": "속도 저하의 가장 유력한 원인은 모든 요청을 디스크에 기록하는 새 로그 설정입니다. 프로파일러 출력을 보고 꽤 확신하지만, 수정안은 아직 시험하지 않았습니다.",
+  "json": "{\"answer\":\"new_logging_config_writes_every_request_to_disk\",\"confidence\":\"fairly_high\",\"basis\":\"profiler_output\",\"fix_tested\":false}"
+ },
+ {
+  "id": "m35",
+  "category": "final_answer",
+  "en": "Yes, the bug was fixed in version 4.2.1. The changelog at https://github.com/example-org/tilemap/blob/main/CHANGELOG.md confirms it, and I reproduced the fix locally. Confidence: high.",
+  "en_terse": "Yes, fixed in 4.2.1. Confirmed by changelog https://github.com/example-org/tilemap/blob/main/CHANGELOG.md + local repro. Confidence: high.",
+  "ko": "네, 그 버그는 4.2.1 버전에서 고쳐졌습니다. https://github.com/example-org/tilemap/blob/main/CHANGELOG.md 의 변경 기록으로 확인했고 로컬에서도 수정을 재현했습니다. 확신도는 높습니다.",
+  "json": "{\"answer\":\"yes\",\"fixed_in\":\"4.2.1\",\"sources\":[\"https://github.com/example-org/tilemap/blob/main/CHANGELOG.md\",\"local_repro\"],\"confidence\":\"high\"}"
+ },
+ {
+  "id": "m36",
+  "category": "final_answer",
+  "en": "I could not find a reliable answer. The two sources I found contradict each other; the newer one supports the second option, but my confidence is low.",
+  "en_terse": "No reliable answer. 2 sources contradict; newer supports option 2. Confidence low.",
+  "ko": "믿을 만한 답을 찾지 못했습니다. 찾은 출처 두 개가 서로 모순되는데, 더 최근 것은 두 번째 안을 지지하지만 확신도는 낮습니다.",
+  "json": "{\"answer\":null,\"n_sources\":2,\"conflict\":true,\"newer_supports\":\"option_2\",\"confidence\":\"low\"}"
+ },
+ {
+  "id": "m37",
+  "category": "handoff",
+  "en": "Handing off: the fix is on branch fix/login-timeout, and the remaining work is updating test_auth.py. The flaky test is test_session_expiry, which fails about one run in ten.",
+  "en_terse": "Handoff: fix on branch fix/login-timeout. TODO: update test_auth.py. Flaky: test_session_expiry, fails ~1/10 runs.",
+  "ko": "인계합니다. 수정 사항은 fix/login-timeout 브랜치에 있고, 남은 일은 test_auth.py를 고치는 것입니다. 불안정한 테스트는 test_session_expiry로, 열 번에 한 번쯤 실패합니다.",
+  "json": "{\"handoff\":true,\"branch\":\"fix/login-timeout\",\"todo\":[\"update test_auth.py\"],\"flaky\":{\"test\":\"test_session_expiry\",\"fail_rate\":0.1}}"
+ },
+ {
+  "id": "m38",
+  "category": "handoff",
+  "en": "Context for the next agent: the user prefers short answers. They have already rejected the first two designs. They liked the color scheme of the third one but not its layout. The budget is fixed, so do not ask about it again.",
+  "en_terse": "Context for next agent: user prefers short answers. Rejected designs 1+2. Design 3: liked colors, not layout. Budget fixed, never ask again.",
+  "ko": "다음 에이전트를 위한 맥락입니다. 사용자는 짧은 답을 선호합니다. 처음 두 디자인은 이미 거절했습니다. 세 번째 디자인의 색 구성은 마음에 들어 했지만 배치는 아니었습니다. 예산은 정해져 있으니 다시 묻지 마세요.",
+  "json": "{\"ctx\":{\"user_pref\":\"short_answers\",\"rejected_designs\":[1,2],\"design_3\":{\"liked\":\"colors\",\"disliked\":\"layout\"},\"budget\":\"fixed\",\"dont_ask\":\"budget\"}}"
+ },
+ {
+  "id": "m39",
+  "category": "handoff",
+  "en": "State so far: flights to Lisbon are booked for both travelers, but the hotel is not. The remaining budget is 850 euros, and the user wants to stay near the old town.",
+  "en_terse": "State: Lisbon flights booked (both travelers); hotel not yet. Budget left €850. User wants near old town.",
+  "ko": "지금까지 상황입니다. 리스본행 항공편은 두 사람 모두 예약했지만 호텔은 아직입니다. 남은 예산은 850유로이고, 사용자는 구시가지 근처를 원합니다.",
+  "json": "{\"state\":{\"flights\":{\"to\":\"Lisbon\",\"booked\":\"both_travelers\"},\"hotel\":\"not_booked\",\"budget_left_eur\":850,\"pref\":\"near_old_town\"}}"
+ },
+ {
+  "id": "m40",
+  "category": "handoff",
+  "en": "I am passing this task back to you because it needs human approval. Everything is prepared; only the final confirmation is missing.",
+  "en_terse": "Returning task to you: needs human approval. All prepared; only final confirmation missing.",
+  "ko": "사람의 승인이 필요해서 이 작업을 돌려드립니다. 준비는 모두 끝났고 마지막 확인만 남았습니다.",
+  "json": "{\"return_task\":true,\"why\":\"needs_human_approval\",\"prepared\":true,\"missing\":\"final_confirmation\"}"
+ }
+]
