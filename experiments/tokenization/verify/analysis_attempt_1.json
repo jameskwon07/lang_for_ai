@@ -1,0 +1,288 @@
+{
+ "en_terse_token_classes_even20": {
+  "o200k": {
+   "word": 274,
+   "punct_or_space": 108,
+   "digit": 24
+  },
+  "claude_legacy": {
+   "word": 280,
+   "punct_or_space": 98,
+   "digit": 24
+  },
+  "mistral_sp": {
+   "word": 310,
+   "punct_or_space": 117,
+   "digit": 30
+  }
+ },
+ "attempt_1_token_classes": {
+  "o200k": {
+   "grammar_markers": {
+    "items": 103,
+    "tokens_in_context": 103
+   },
+   "phrase_macros": {
+    "items": 19,
+    "tokens_in_context": 21
+   },
+   "roots": {
+    "items": 167,
+    "tokens_in_context": 174
+   },
+   "number_forms": {
+    "items": 23,
+    "tokens_in_context": 23
+   },
+   "raw_text": {
+    "items": 4,
+    "tokens_in_context": 17
+   }
+  },
+  "claude_legacy": {
+   "grammar_markers": {
+    "items": 103,
+    "tokens_in_context": 103
+   },
+   "phrase_macros": {
+    "items": 19,
+    "tokens_in_context": 33
+   },
+   "roots": {
+    "items": 167,
+    "tokens_in_context": 232
+   },
+   "number_forms": {
+    "items": 23,
+    "tokens_in_context": 23
+   },
+   "raw_text": {
+    "items": 4,
+    "tokens_in_context": 21
+   }
+  },
+  "mistral_sp": {
+   "grammar_markers": {
+    "items": 103,
+    "tokens_in_context": 103
+   },
+   "phrase_macros": {
+    "items": 19,
+    "tokens_in_context": 35
+   },
+   "roots": {
+    "items": 167,
+    "tokens_in_context": 250
+   },
+   "number_forms": {
+    "items": 23,
+    "tokens_in_context": 23
+   },
+   "raw_text": {
+    "items": 4,
+    "tokens_in_context": 26
+   }
+  }
+ },
+ "macro_reuse": {
+  "@return_top": {
+   "even_messages": 1,
+   "odd_messages": 1,
+   "odd_ids": [
+    "m09"
+   ],
+   "keywords": [
+    "most relevant",
+    "top "
+   ]
+  },
+  "@one_sentence_summary": {
+   "even_messages": 1,
+   "odd_messages": 0,
+   "odd_ids": [],
+   "keywords": [
+    "one-sentence",
+    "one sentence"
+   ]
+  },
+  "@later_this_week": {
+   "even_messages": 1,
+   "odd_messages": 0,
+   "odd_ids": [],
+   "keywords": [
+    "this week"
+   ]
+  },
+  "@lit_search": {
+   "even_messages": 1,
+   "odd_messages": 0,
+   "odd_ids": [],
+   "keywords": [
+    "literature"
+   ]
+  },
+  "@no_blockers": {
+   "even_messages": 1,
+   "odd_messages": 0,
+   "odd_ids": [],
+   "keywords": [
+    "blocker"
+   ]
+  },
+  "@per": {
+   "even_messages": 1,
+   "odd_messages": 0,
+   "odd_ids": [],
+   "keywords": [
+    "according to"
+   ]
+  },
+  "@for_backcompat": {
+   "even_messages": 1,
+   "odd_messages": 0,
+   "odd_ids": [],
+   "keywords": [
+    "backward compat"
+   ]
+  },
+  "@not_found": {
+   "even_messages": 1,
+   "odd_messages": 0,
+   "odd_ids": [],
+   "keywords": [
+    "does not exist",
+    "not found"
+   ]
+  },
+  "@my_prev_answer": {
+   "even_messages": 1,
+   "odd_messages": 0,
+   "odd_ids": [],
+   "keywords": [
+    "previous answer",
+    "my earlier answer"
+   ]
+  },
+  "@in_order": {
+   "even_messages": 1,
+   "odd_messages": 0,
+   "odd_ids": [],
+   "keywords": [
+    "first,",
+    " then "
+   ]
+  },
+  "@does_that_work": {
+   "even_messages": 1,
+   "odd_messages": 0,
+   "odd_ids": [],
+   "keywords": [
+    "work for you",
+    "ok with you",
+    "does that work"
+   ]
+  },
+  "@rest_correct": {
+   "even_messages": 1,
+   "odd_messages": 0,
+   "odd_ids": [],
+   "keywords": [
+    "everything else"
+   ]
+  },
+  "@gpu_hour": {
+   "even_messages": 1,
+   "odd_messages": 0,
+   "odd_ids": [],
+   "keywords": [
+    "gpu hour"
+   ]
+  },
+  "@likely_cause": {
+   "even_messages": 1,
+   "odd_messages": 0,
+   "odd_ids": [],
+   "keywords": [
+    "likely cause"
+   ]
+  },
+  "@conf_fair_tool": {
+   "even_messages": 1,
+   "odd_messages": 0,
+   "odd_ids": [],
+   "keywords": [
+    "fairly confident"
+   ]
+  },
+  "@conf_low": {
+   "even_messages": 1,
+   "odd_messages": 0,
+   "odd_ids": [],
+   "keywords": [
+    "confidence is low",
+    "low confidence"
+   ]
+  },
+  "@context_next_agent": {
+   "even_messages": 1,
+   "odd_messages": 0,
+   "odd_ids": [],
+   "keywords": [
+    "next agent"
+   ]
+  },
+  "@pass_back": {
+   "even_messages": 1,
+   "odd_messages": 0,
+   "odd_ids": [],
+   "keywords": [
+    "back to you"
+   ]
+  },
+  "@needs_human_approval": {
+   "even_messages": 1,
+   "odd_messages": 0,
+   "odd_ids": [],
+   "keywords": [
+    "human approval"
+   ]
+  }
+ },
+ "breakeven_vs_en_terse": {
+  "o200k": {
+   "saved_per_message": 3.3,
+   "spec_tokens": 7118,
+   "messages_to_amortise_spec": 2157
+  },
+  "cl100k": {
+   "saved_per_message": 1.4,
+   "spec_tokens": 7532,
+   "messages_to_amortise_spec": 5380
+  },
+  "claude_legacy": {
+   "saved_per_message": -0.55,
+   "spec_tokens": 8433,
+   "messages_to_amortise_spec": null
+  },
+  "llama3": {
+   "saved_per_message": 1.5,
+   "spec_tokens": 7378,
+   "messages_to_amortise_spec": 4919
+  },
+  "llama4": {
+   "saved_per_message": 3.6,
+   "spec_tokens": 7164,
+   "messages_to_amortise_spec": 1990
+  },
+  "mistral_tekken": {
+   "saved_per_message": 3.95,
+   "spec_tokens": 7577,
+   "messages_to_amortise_spec": 1918
+  },
+  "mistral_sp": {
+   "saved_per_message": 1.0,
+   "spec_tokens": 9108,
+   "messages_to_amortise_spec": 9108
+  }
+ }
+}

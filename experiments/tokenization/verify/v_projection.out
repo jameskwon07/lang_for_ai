@@ -1,0 +1,103 @@
+======================================================================
+1. declared totals vs recount
+ gloss 1: recount S0 1480 vs declared total_strict 1480; S1 1229 vs declared total_elided 1229
+   per-message S0 mismatches: []
+   per-message S1 mismatches: []
+ gloss 2: recount S0 1442 vs declared total_strict 1442; S1 1169 vs declared total_elided 1169
+   per-message S0 mismatches: []
+   per-message S1 mismatches: []
+======================================================================
+2. pragmatic clusters
+ gloss 1: cluster sizes {3: 104}; non-default markers per cluster {0: 43, 1: 61}
+   cluster label order patterns: {('SA', 'CF', 'EV'): 104}
+ gloss 2: cluster sizes {3: 121}; non-default markers per cluster {0: 33, 1: 86, 2: 2}
+   cluster label order patterns: {('ACT', 'x', 'x'): 121}
+======================================================================
+3. token totals (independent lexicon build)
+ candidate forms: 100240 (projection.json meta says 100240 )
+ mean cost closed[0:150]: {'o200k': 1, 'cl100k': 1, 'claude_legacy': 1, 'llama3': 1, 'llama4': 1, 'mistral_tekken': 1, 'mistral_sp': 1}
+ mean cost roots[150:1150]: {'o200k': 1.067, 'cl100k': 1.573, 'claude_legacy': 1.818, 'llama3': 1.448, 'llama4': 1.087, 'mistral_tekken': 1.219, 'mistral_sp': 1.932}
+  gloss1 S0: morphemes 1480 (proj 1480), closed labels 94, roots 247; token diffs vs projection.json: none
+  gloss1 S1: morphemes 1229 (proj 1229), closed labels 91, roots 247; token diffs vs projection.json: none
+  gloss1 S2: morphemes 1229 (proj 1229), closed labels 91, roots 247; token diffs vs projection.json: none
+  gloss1 S3: morphemes 1074 (proj 1074), closed labels 88, roots 247; token diffs vs projection.json: none
+  gloss1 S4: morphemes 966 (proj 966), closed labels 86, roots 247; token diffs vs projection.json: none
+  gloss1 S5: morphemes 868 (proj 868), closed labels 77, roots 247; token diffs vs projection.json: none
+  gloss2 S0: morphemes 1442 (proj 1442), closed labels 98, roots 278; token diffs vs projection.json: none
+  gloss2 S1: morphemes 1169 (proj 1169), closed labels 95, roots 278; token diffs vs projection.json: none
+  gloss2 S2: morphemes 1167 (proj 1167), closed labels 95, roots 278; token diffs vs projection.json: none
+  gloss2 S3: morphemes 1018 (proj 1018), closed labels 92, roots 278; token diffs vs projection.json: none
+  gloss2 S4: morphemes 1001 (proj 1001), closed labels 91, roots 278; token diffs vs projection.json: none
+  gloss2 S5: morphemes 903 (proj 903), closed labels 82, roots 278; token diffs vs projection.json: none
+ [replication]  cells = tokens (x en, x en_terse)
+  g1 S0 m/msg  37.0 | o200k 1608 (1.39,1.90) | claude_legacy 1880 (1.59,2.20) | llama3 1687 (1.45,1.98) | mistral_sp 1970 (1.55,2.03)
+  g1 S1 m/msg  30.7 | o200k 1357 (1.17,1.60) | claude_legacy 1629 (1.38,1.91) | llama3 1436 (1.23,1.69) | mistral_sp 1719 (1.36,1.77)
+  g1 S2 m/msg  30.7 | o200k 1357 (1.17,1.60) | claude_legacy 1629 (1.38,1.91) | llama3 1436 (1.23,1.69) | mistral_sp 1719 (1.36,1.77)
+  g1 S3 m/msg  26.9 | o200k 1202 (1.04,1.42) | claude_legacy 1474 (1.25,1.72) | llama3 1281 (1.10,1.51) | mistral_sp 1564 (1.23,1.61)
+  g1 S4 m/msg  24.1 | o200k 1094 (0.94,1.29) | claude_legacy 1365 (1.16,1.60) | llama3 1172 (1.01,1.38) | mistral_sp 1456 (1.15,1.50)
+  g1 S5 m/msg  21.7 | o200k 1075 (0.93,1.27) | claude_legacy 1310 (1.11,1.53) | llama3 1154 (0.99,1.36) | mistral_sp 1456 (1.15,1.50)
+  g2 S0 m/msg  36.0 | o200k 1565 (1.35,1.85) | claude_legacy 1856 (1.57,2.17) | llama3 1657 (1.42,1.95) | mistral_sp 1929 (1.52,1.99)
+  g2 S1 m/msg  29.2 | o200k 1292 (1.11,1.52) | claude_legacy 1583 (1.34,1.85) | llama3 1384 (1.19,1.63) | mistral_sp 1656 (1.31,1.71)
+  g2 S2 m/msg  29.2 | o200k 1290 (1.11,1.52) | claude_legacy 1581 (1.34,1.85) | llama3 1382 (1.19,1.62) | mistral_sp 1654 (1.30,1.71)
+  g2 S3 m/msg  25.4 | o200k 1141 (0.98,1.35) | claude_legacy 1432 (1.21,1.67) | llama3 1233 (1.06,1.45) | mistral_sp 1505 (1.19,1.55)
+  g2 S4 m/msg  25.0 | o200k 1124 (0.97,1.33) | claude_legacy 1415 (1.20,1.65) | llama3 1216 (1.04,1.43) | mistral_sp 1488 (1.17,1.54)
+  g2 S5 m/msg  22.6 | o200k 1105 (0.95,1.30) | claude_legacy 1359 (1.15,1.59) | llama3 1197 (1.03,1.41) | mistral_sp 1488 (1.17,1.54)
+======================================================================
+4. hand check of rendered m01 / m05 (gloss 1, S5) and m22 (gloss 2, S5)
+ gloss1 m01 S5: 'phim cer kle trig forg pix kidn src/net/client.py liqu togg spol pav hasn pinc trig redu 5 dict cer vibr dign lesz sufr kuri'
+   en: 'Please refactor the retry logic in src/net/client.py to use exponential backoff with at most 5 attempts. Keep the public interface unchanged.'
+   en_terse: 'Refactor retry logic in src/net/client.py -> exponential backoff, max 5 attempts. Keep public interface unchanged.'
+   o200k: 29 tokens  ph|im| cer| kle| trig| forg| pix| kidn| src|/net|/client|.py| liqu| togg| spol| pav| hasn| pinc| trig| redu| |5| dict| cer| vibr| dign| lesz| sufr| kuri
+      en_terse 24, en 29
+   claude_legacy: 37 tokens  ph|im| cer| kle| trig| forg| pix| kidn| src|/|net|/|client|.|py| liqu| togg| sp|ol| p|av| hasn| p|inc| trig| redu| 5| dict| cer| vibr| dign| les|z| su|fr| k|uri
+      en_terse 26, en 31
+   mistral_sp: 41 tokens  ph|im| cer| kle| tr|ig| forg| p|ix| kidn| src|/|net|/|client|.|py| liqu| togg| sp|ol| p|av| hasn| p|inc| tr|ig| redu| |5| dict| cer| vibr| dign| les|z| su|fr| k|uri
+      en_terse 29, en 34
+ gloss1 m05 S5: 'fenn furn zeb 1200 3000 migr gid llam rhet beho plut decl posl rup repl 25 flav'
+   en: 'I have processed 1,200 of 3,000 records so far. At the current rate, the job should finish in about 25 minutes.'
+   en_terse: 'Processed 1200/3000 records. Current rate -> ETA ~25 min.'
+   o200k: 23 tokens  f|enn| furn| zeb| |120|0| |300|0| migr| gid| llam| rhet| beho| plut| decl| posl| rup| repl| |25| flav
+      en_terse 17, en 31
+   claude_legacy: 23 tokens  f|enn| furn| z|eb| 1200| 3000| migr| gid| llam| rhet| be|ho| pl|ut| decl| pos|l| r|up| repl| 25| flav
+      en_terse 15, en 28
+   mistral_sp: 34 tokens  f|enn| furn| z|eb| |1|2|0|0| |3|0|0|0| migr| g|id| llam| rhet| beh|o| pl|ut| decl| pos|l| r|up| repl| |2|5| flav
+      en_terse 24, en 36
+ gloss2 m22 S5: 'ymax vibr togg numpy murm 2.1 sequ crit virt gluc conj vibr segu fod tutk liqu vort phen conj vibr kiv togg Python murm menj 3.11 sequ'
+   en: "Let's upgrade numpy to 2.1 first, then fix the deprecation warnings, and only then raise the minimum Python version to 3.11."
+   en_terse: 'Order: numpy -> 2.1, fix deprecation warnings, then min Python -> 3.11.'
+   o200k: 34 tokens  y|max| vibr| togg| numpy| murm| |2|.|1| sequ| crit| virt| gluc| conj| vibr| segu| fod| tutk| liqu| vort| phen| conj| vibr| kiv| togg| Python| murm| menj| |3|.|11| sequ
+      en_terse 23, en 31
+   claude_legacy: 37 tokens  ymax| vibr| togg| numpy| murm| 2|.|1| sequ| crit| virt| gluc| conj| vibr| se|gu| f|od| tut|k| liqu| v|ort| phen| conj| vibr| k|iv| togg| Python| murm| men|j| 3|.|11| sequ
+      en_terse 20, en 29
+   mistral_sp: 41 tokens  y|max| vibr| togg| numpy| murm| |2|.|1| sequ| crit| virt| gl|uc| conj| vibr| segu| f|od| tut|k| liqu| v|ort| phen| conj| vibr| k|iv| togg| Python| murm| men|j| |3|.|1|1| sequ
+      en_terse 25, en 35
+======================================================================
+5. sensitivity (bias checks), S4 and S5 only
+ [lexicon ordered by o200k cost only]  cells = tokens (x en, x en_terse)
+  g1 S1 m/msg  30.7 | o200k 1338 (1.15,1.58) | claude_legacy 1632 (1.38,1.91) | llama3 1452 (1.25,1.71) | mistral_sp 1719 (1.36,1.77)
+  g1 S4 m/msg  24.1 | o200k 1075 (0.93,1.27) | claude_legacy 1368 (1.16,1.60) | llama3 1188 (1.02,1.40) | mistral_sp 1456 (1.15,1.50)
+  g1 S5 m/msg  21.7 | o200k 1056 (0.91,1.25) | claude_legacy 1313 (1.11,1.54) | llama3 1170 (1.01,1.37) | mistral_sp 1456 (1.15,1.50)
+  g2 S1 m/msg  29.2 | o200k 1272 (1.10,1.50) | claude_legacy 1589 (1.35,1.86) | llama3 1397 (1.20,1.64) | mistral_sp 1652 (1.30,1.70)
+  g2 S4 m/msg  25.0 | o200k 1104 (0.95,1.30) | claude_legacy 1421 (1.21,1.66) | llama3 1229 (1.06,1.44) | mistral_sp 1484 (1.17,1.53)
+  g2 S5 m/msg  22.6 | o200k 1085 (0.94,1.28) | claude_legacy 1365 (1.16,1.60) | llama3 1210 (1.04,1.42) | mistral_sp 1484 (1.17,1.53)
+ [lexicon ordered by claude_legacy cost only]  cells = tokens (x en, x en_terse)
+  g1 S1 m/msg  30.7 | o200k 1387 (1.20,1.64) | claude_legacy 1559 (1.32,1.82) | llama3 1468 (1.26,1.73) | mistral_sp 1735 (1.37,1.79)
+  g1 S4 m/msg  24.1 | o200k 1124 (0.97,1.33) | claude_legacy 1295 (1.10,1.51) | llama3 1204 (1.03,1.41) | mistral_sp 1472 (1.16,1.52)
+  g1 S5 m/msg  21.7 | o200k 1105 (0.95,1.30) | claude_legacy 1240 (1.05,1.45) | llama3 1186 (1.02,1.39) | mistral_sp 1472 (1.16,1.52)
+  g2 S1 m/msg  29.2 | o200k 1328 (1.14,1.57) | claude_legacy 1505 (1.28,1.76) | llama3 1427 (1.23,1.68) | mistral_sp 1680 (1.32,1.73)
+  g2 S4 m/msg  25.0 | o200k 1160 (1.00,1.37) | claude_legacy 1337 (1.13,1.56) | llama3 1259 (1.08,1.48) | mistral_sp 1512 (1.19,1.56)
+  g2 S5 m/msg  22.6 | o200k 1141 (0.98,1.35) | claude_legacy 1281 (1.09,1.50) | llama3 1240 (1.07,1.46) | mistral_sp 1512 (1.19,1.56)
+ [root lexicon 300 (fewer roots, cheaper forms)]  cells = tokens (x en, x en_terse)
+  g1 S1 m/msg  30.7 | o200k 1337 (1.15,1.58) | claude_legacy 1514 (1.28,1.77) | llama3 1336 (1.15,1.57) | mistral_sp 1667 (1.31,1.72)
+  g1 S4 m/msg  24.1 | o200k 1074 (0.93,1.27) | claude_legacy 1250 (1.06,1.46) | llama3 1072 (0.92,1.26) | mistral_sp 1404 (1.11,1.45)
+  g1 S5 m/msg  21.7 | o200k 1055 (0.91,1.24) | claude_legacy 1195 (1.01,1.40) | llama3 1054 (0.91,1.24) | mistral_sp 1404 (1.11,1.45)
+  g2 S1 m/msg  29.2 | o200k 1270 (1.09,1.50) | claude_legacy 1464 (1.24,1.71) | llama3 1271 (1.09,1.49) | mistral_sp 1607 (1.27,1.66)
+  g2 S4 m/msg  25.0 | o200k 1102 (0.95,1.30) | claude_legacy 1296 (1.10,1.52) | llama3 1103 (0.95,1.30) | mistral_sp 1439 (1.13,1.49)
+  g2 S5 m/msg  22.6 | o200k 1083 (0.93,1.28) | claude_legacy 1240 (1.05,1.45) | llama3 1084 (0.93,1.27) | mistral_sp 1439 (1.13,1.49)
+ [root lexicon 3000]  cells = tokens (x en, x en_terse)
+  g1 S1 m/msg  30.7 | o200k 1434 (1.24,1.69) | claude_legacy 1703 (1.44,1.99) | llama3 1573 (1.35,1.85) | mistral_sp 1749 (1.38,1.80)
+  g1 S4 m/msg  24.1 | o200k 1171 (1.01,1.38) | claude_legacy 1439 (1.22,1.68) | llama3 1309 (1.12,1.54) | mistral_sp 1486 (1.17,1.53)
+  g1 S5 m/msg  21.7 | o200k 1152 (0.99,1.36) | claude_legacy 1384 (1.17,1.62) | llama3 1291 (1.11,1.52) | mistral_sp 1486 (1.17,1.53)
+  g2 S1 m/msg  29.2 | o200k 1378 (1.19,1.62) | claude_legacy 1657 (1.41,1.94) | llama3 1508 (1.30,1.77) | mistral_sp 1697 (1.34,1.75)
+  g2 S4 m/msg  25.0 | o200k 1210 (1.04,1.43) | claude_legacy 1489 (1.26,1.74) | llama3 1340 (1.15,1.57) | mistral_sp 1529 (1.21,1.58)
+  g2 S5 m/msg  22.6 | o200k 1191 (1.03,1.40) | claude_legacy 1433 (1.22,1.68) | llama3 1321 (1.13,1.55) | mistral_sp 1529 (1.21,1.58)

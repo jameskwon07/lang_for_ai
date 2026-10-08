@@ -1,0 +1,18 @@
+lead ' kat': in all 7 vocabularies 9019, confirmed single in context 9019, max zipf<3: 657 (consonant-initial 450, vowel-initial 207), <2: 311; lengths of <3 forms {2: 2, 3: 84, 4: 179, 5: 172, 6: 121, 7: 47, 8: 35, 9: 8, 10: 6, 11: 2, 14: 1}
+   (6 tokenizers without mistral_sp: vocab intersection 14860, of which max zipf<3: 1344 before context confirmation)
+bare 'kat': in all 7 vocabularies 5770, confirmed single in context 5770, max zipf<3: 1953 (consonant-initial 492, vowel-initial 1461), <2: 1238; lengths of <3 forms {2: 15, 3: 302, 4: 636, 5: 507, 6: 270, 7: 127, 8: 55, 9: 29, 10: 9, 11: 3}
+   (6 tokenizers without mistral_sp: vocab intersection 7936, of which max zipf<3: 2960 before context confirmation)
+lead-cap ' Kat': in all 7 vocabularies 3502, confirmed single in context 3502, max zipf<3: 160 (consonant-initial 123, vowel-initial 37), <2: 24; lengths of <3 forms {2: 1, 3: 39, 4: 63, 5: 26, 6: 21, 7: 5, 8: 4, 10: 1}
+   (6 tokenizers without mistral_sp: vocab intersection 5980, of which max zipf<3: 279 before context confirmation)
+lead-space all7 zipf<3 forms whose shape is one of inventory.py's 8 root shapes: 205 (inventory.md: 205)
+consonant-initial forms in other shapes: 245 [('CVCCVC', 41), ('CVVC', 17), ('CVCVCC', 14), ('CCC', 13), ('CVCCC', 13), ('CVCCVCC', 12), ('CVCCV', 12), ('CCVCVC', 12), ('CCVCC', 11), ('CVVCC', 6), ('CCVCCC', 6), ('CVCVCVC', 5)]
+examples, other shapes: ['abol', 'absor', 'abund', 'acceler', 'accommod', 'accompl', 'accum', 'accur', 'accus', 'achie', 'acknow', 'acknowled', 'acqu', 'activ', 'addr', 'administr', 'advers', 'advis', 'advoc', 'aer', 'aest', 'affili', 'aggreg', 'aggress', 'alleg', 'alloc', 'ampl', 'analy', 'anim', 'anth', 'antib', 'anticip', 'anx', 'apolog', 'apost', 'appe', 'append', 'appet', 'appl', 'applic', 'appro', 'appropri', 'aqu', 'arbitr', 'archae', 'argc', 'args', 'argv', 'arist', 'arom', 'arrog', 'artic', 'aspir', 'assass', 'associ', 'async', 'attr', 'attrs', 'aument', 'auss']
+
+all7 lead-space zipf<3: n=657, proper prefix of an English zipf>=3 word: 84%; of an 11-language zipf>=3 word: 89%
+random control (same lengths): n=657, proper prefix of an English zipf>=3 word: 0%; of an 11-language zipf>=3 word: 2%
+all7 lead-space zipf<3 forms that are NOT an English-word prefix: 103 ['acknowled', 'administr', 'argc', 'args', 'argv', 'async', 'attrs', 'aument', 'backend', 'bitmap', 'bool', 'boolean', 'cached', 'callback', 'caract', 'cfg', 'cls', 'cmd', 'comport', 'conoc', 'contempor', 'controvers', 'cref', 'ctx', 'datasets', 'datetime', 'debug', 'descriptor', 'difer', 'dispon', 'dtype', 'efect', 'encontr', 'encuent', 'endpoint', 'enum', 'espa', 'esper', 'estud', 'filename', 'fmt', 'foreach', 'hadn', 'href', 'idx', 'increment', 'indent', 'initialization', 'initialize', 'initialized', 'instanceof', 'isinstance', 'iterator', 'javax', 'json', 'kwargs', 'llam', 'lleg', 'logger', 'lookup', 'murm', 'namespace', 'numpy', 'onclick', 'opacity', 'operand', 'opts', 'oscill', 'params', 'parse', 'parsed', 'parser', 'placeholder', 'printf', 'ptr', 'qued', 'readonly', 'regex', 'retry', 'retval']
+inventory.json CVC space all7_lt3: listed 32, re-verified 32
+inventory.json CVCC space all7_lt3: listed 78, re-verified 78
+inventory.json CVC bare all7_lt3: listed 41, re-verified 41
+inventory.json VCVC bare all7_lt3: listed 225, re-verified 225
+CVC ' kat' all7 & zipf<3 by full enumeration: 32

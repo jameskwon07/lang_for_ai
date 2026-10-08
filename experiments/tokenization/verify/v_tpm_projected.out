@@ -1,0 +1,5 @@
+tokens per morpheme in projected texts, raw strings and digit strings removed (W2, 1,000-root lexicon)
+ g1 S1 (1229 morphemes): o200k 1.040, cl100k 1.142, claude_legacy 1.242, llama3 1.105, llama4 1.037, mistral_tekken 1.077, mistral_sp 1.308
+ g1 S5 (868 morphemes): o200k 1.056, cl100k 1.202, claude_legacy 1.343, llama3 1.149, llama4 1.053, mistral_tekken 1.109, mistral_sp 1.435
+ g2 S1 (1169 morphemes): o200k 1.040, cl100k 1.148, claude_legacy 1.269, llama3 1.120, llama4 1.039, mistral_tekken 1.082, mistral_sp 1.323
+ g2 S5 (903 morphemes): o200k 1.052, cl100k 1.192, claude_legacy 1.349, llama3 1.155, llama4 1.051, mistral_tekken 1.106, mistral_sp 1.419

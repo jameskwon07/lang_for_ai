@@ -1,0 +1,8 @@
+g1 S4 o200k: per-msg ratio vs en_terse median 1.26 min 0.89 max 1.92, msgs below en_terse 1/40; vs en: msgs below en 23/40
+g1 S4 claude_legacy: per-msg ratio vs en_terse median 1.59 min 1.16 max 2.32, msgs below en_terse 0/40; vs en: msgs below en 6/40
+g1 S5 o200k: per-msg ratio vs en_terse median 1.26 min 0.89 max 1.83, msgs below en_terse 1/40; vs en: msgs below en 24/40
+g1 S5 claude_legacy: per-msg ratio vs en_terse median 1.58 min 1.14 max 2.20, msgs below en_terse 0/40; vs en: msgs below en 7/40
+g2 S4 o200k: per-msg ratio vs en_terse median 1.36 min 0.89 max 1.96, msgs below en_terse 1/40; vs en: msgs below en 20/40
+g2 S4 claude_legacy: per-msg ratio vs en_terse median 1.71 min 1.07 max 2.27, msgs below en_terse 0/40; vs en: msgs below en 5/40
+g2 S5 o200k: per-msg ratio vs en_terse median 1.31 min 0.89 max 1.88, msgs below en_terse 1/40; vs en: msgs below en 22/40
+g2 S5 claude_legacy: per-msg ratio vs en_terse median 1.65 min 1.07 max 2.04, msgs below en_terse 0/40; vs en: msgs below en 6/40

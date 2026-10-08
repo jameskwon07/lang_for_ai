@@ -1,0 +1,6086 @@
+{
+ "strategy": "Codebook / macro morphemes + spaced single-token forms (attempt 1, advocate). Telegraphic predicate-first grammar (~93 grammar markers), number forms, a ~80-entry phrase codebook of frequent agent-traffic phrases (status, requests, errors, hand-off, review, time, fused confidence x evidence), and ~2,200 roots (2,000 most frequent English content lemmas from wordfreq + ~190 work/software/data/research roots + 22 tech names). Forms come from a scan of all 7 tokenizer vocabularies (space-prefixed letter strings, max zipf < 3.0 in 11 languages, English zipf < 2.5, code identifiers and complete long words removed); the cheapest forms go to grammar, numbers and the confidence/evidence phrases, then roots and phrases by estimated frequency. Raw strings use a count-delimited quote marker (Q1/Q2/Q3 = next 1/2/3 chunks).",
+ "spec_summary": "KODEX-1 spec. AI-to-AI language. A message = lexicon forms separated by single spaces; each form is one\nentry below (case is part of the form). No punctuation.\nRAW: Q1, Q2, Q3 = the next 1, 2, 3 space-separated chunks are raw text copied verbatim (paths, code, names, URLs).\nNUMBERS: digit forms 0..9 (table). Consecutive number forms are one number: concatenate their digits\n(4 0 = 40; 2 0 2 4 = 2024). POINT = decimal point (3 POINT 1 1 = 3.11). A number before a noun is a\ncount (3 column = 3 columns); a number right after a noun is a label (claim 2 = claim #2 = the second claim).\nORD n = n-th; n TIMES = n times.\nCLASSES: roots are nouns, verbs or modifiers as in English (one root covers noun/verb/adjective/adverb uses);\nG = grammar; P = codebook phrase (S = whole clause, NP, VP, M = modifier/adverbial).\nNOUN PHRASE: [quantifier|number] [modifier]* [noun]* head. Earlier nouns modify the last (billing service). Plural is\nunmarked. A verb root before the head is its past participle when that reading fits (cite source = cited sources;\nupdate table = updated table); a verb root as head is the action (data clean = data cleaning). A modifier alone can\nbe the head (MORE new = the newer one). Lists: AND / OR between items.\nCLAUSE: [subject] [TAM]* predicate [object] [complements] [adverbs]. Predicate = verb, or modifier (copula omitted:\nanswer wrong = the answer is wrong), or IS + NP. Prepositions precede their NP. A modifier after the verb phrase is an\nadverb (change X direct = change X directly). A verb after a complete verb phrase starts a second verb phrase with\nthe same subject (decline X propose Y).\nOMITTED SUBJECT: verb-first clause without TAM = imperative to the addressee; clause opened by a TAM (PAST PROG FUT\nDONE ALREADY NOTYET CAN FAIL SHOULD MUST MAY) = speaker (I); HORT = we (let us / I propose we); after a connective\n(BUT CAUSE CONSE IF THEN OR) = same subject as the previous clause; PASS without subject = the last-mentioned thing.\nCLAUSE BOUNDARIES: SEP ends a clause. A new clause starts without SEP at: a connective; a TAM, HORT or DONT when the\ncurrent clause already has its predicate; a pronoun subject (I YOU WE THEY IT, or MY/YOUR + NP) after a complete\nclause; a wh-word; a clause phrase (P:S). Otherwise write SEP. CNT = ':' (elaboration: namely / consisting of /\nwhich is / with content). IF A B: A = condition, B = consequence.\nQUESTIONS: QUES at clause end = yes/no question. A clause opened by a wh-word is a question (no QUES).\nHORT ... QUES = shall we / can we ...?\nPRAGMATICS: unmarked = plain assertion, normal confidence. CONF phrases state the speaker's confidence in the\npreceding clause(s); a following NP names the tool or source. PER NP = according to NP; at message end it covers\nthe whole message.\nLEXICON (form gloss). G and numbers first, then phrases (P), then roots by frequency.",
+ "lexicon": {
+  "compl": "find",
+  "ceremon": "recent",
+  "vaj": "peer-reviewed",
+  "persu": "study",
+  "phen": "[G ON] about / on (topic)",
+  "multip": "[G HOW] how (question / embedded: how X V Y)",
+  "sovere": "sleep",
+  "refriger": "lack",
+  "apresent": "affect",
+  "evalu": "work",
+  "vinc": "memory",
+  "recogn": "[G SEP] end of clause/sentence (like '.')",
+  "alue": "[P:VP] return the top N most relevant (N follows)",
+  "conj": "[number] 5",
+  "erne": "[P:NP] one-sentence summary",
+  "appropri": "[G EACH] each",
+  "unin": "draft",
+  "chied": "polite",
+  "demasi": "reply",
+  "sequ": "[G CNT] ':' elaboration: namely / consisting of / which is / with content",
+  "vagu": "decline",
+  "conse": "meet",
+  "emple": "request",
+  "provinc": "suggest",
+  "inj": "[number] 2",
+  "chac": "alternative",
+  "Associ": "time",
+  "elog": "[P:M] later this week",
+  "uner": "[P:NP] literature search",
+  "Dest": "[G DONE] TAM/predicate completive: is done / finished",
+  "Blo": "[G PROG] TAM progressive: currently ...-ing (now)",
+  "meas": "read",
+  "commut": "shortlist",
+  "sulf": "paper",
+  "empre": "[P:S] no blockers so far",
+  "spect": "[G FIRST] first",
+  "influ": "report",
+  "molt": "background",
+  "requ": "[G AND] and (between list items; between clauses only when needed)",
+  "einf": "method",
+  "transl": "result",
+  "parch": "discussion",
+  "emb": "[G STILL] still",
+  "murm": "miss",
+  "Vaugh": "file",
+  "zeich": "scan",
+  "Ident": "[G NO] no / none of (quantifier)",
+  "hul": "duplicate",
+  "neur": "[number] 3",
+  "clandest": "column",
+  "nost": "[G WITH] with / having",
+  "agon": "value",
+  "Evel": "mostly",
+  "anth": "[G IN] in / at (place, container)",
+  "congest": "address",
+  "barg": "field",
+  "Manufact": "[G Q2] quote: next 2 chunks are raw text",
+  "escal": "own",
+  "arri": "billing",
+  "synt": "service",
+  "virt": "[G IS] equative copula: is / = (NP IS NP)",
+  "mathematic": "backup",
+  "suscept": "on-call",
+  "dro": "[P:M] according to (NP); at message end covers the whole message",
+  "ampl": "company",
+  "vezet": "directory",
+  "mul": "[G SHOULD] TAM should",
+  "inher": "change",
+  "veget": "[G Q1] quote: next 1 space-separated chunk is raw text",
+  "overwhel": "direct",
+  "chron": "[G OR] or / either...or",
+  "complic": "add",
+  "absor": "new",
+  "dlg": "function",
+  "administr": "keep",
+  "imagin": "old",
+  "rist": "[P:M] for backward compatibility",
+  "integr": "[G QUES] yes/no question (clause-final)",
+  "celebr": "source",
+  "muj": "document",
+  "neut": "give",
+  "resid": "different",
+  "sted": "deadline",
+  "succ": "[G WHICH] which (question / embedded)",
+  "alve": "authoritative",
+  "conv": "[G FAIL] TAM could not / failed to",
+  "Insp": "open",
+  "Mult": "[G CAUSE] because (starts reason clause)",
+  "opl": "[P:S] (it) does not exist / was not found",
+  "Anim": "[G PASS] passive: subject undergoes V (is/was V-ed)",
+  "trunc": "move",
+  "lect": "[G TO] to / into / toward (goal, recipient, target value)",
+  "imag": "[G OTHER] other / another / else",
+  "trast": "folder",
+  "egin": "[P:NP] my previous answer",
+  "experi": "wrong",
+  "occup": "[G PAST] TAM past: did / -ed",
+  "Thess": "confuse",
+  "symmet": "dataset",
+  "estr": "figure",
+  "curios": "correct",
+  "hypoc": "update",
+  "follic": "table",
+  "ater": "[P:S] proposed plan, steps strictly in this order:",
+  "accompagn": "upgrade",
+  "ngu": "[name] numpy",
+  "infl": "[G POINT] decimal point",
+  "Comput": "[number] 1",
+  "empir": "fix",
+  "territo": "deprecation",
+  "Alic": "warn",
+  "congreg": "raise",
+  "heredit": "minimum",
+  "rul": "[name] python",
+  "poss": "[G HORT] TAM let us / we should / I propose we",
+  "provin": "split",
+  "guid": "[G I] I / me",
+  "ammon": "handle",
+  "enf": "data",
+  "Rodrig": "clean",
+  "Compar": "[G YOU] you",
+  "nuc": "visualization",
+  "ener": "[G WE] we / us",
+  "enca": "merge",
+  "fif": "final",
+  "contrib": "agree",
+  "femin": "name",
+  "furt": "[P:S] does that work for you? / OK with you?",
+  "Guth": "argument",
+  "voud": "persuasive",
+  "urg": "[G BUT] but (contrast; starts clause)",
+  "pren": "cite",
+  "discipl": "support",
+  "estud": "claim",
+  "jum": "hedge",
+  "renov": "check",
+  "Contin": "[G YOUR] your",
+  "ryt": "calculation",
+  "cancell": "step",
+  "trang": "error",
+  "verd": "tax",
+  "curs": "apply",
+  "gost": "twice",
+  "Pred": "[G CONSE] so / therefore (starts consequence clause)",
+  "presum": "amount",
+  "consid": "lower",
+  "urma": "[P:S] everything else is correct",
+  "veh": "[G CAN] TAM can / able to",
+  "squ": "take",
+  "fek": "frontend",
+  "sve": "task",
+  "vacc": "need",
+  "scient": "[G MORE] more / -er (comparative)",
+  "declar": "day",
+  "cust": "[G THAN] than",
+  "curr": "[G IF] if (condition clause; consequence starts at next TAM/verb/connective)",
+  "mour": "[G TOO] too (excessively)",
+  "convers": "late",
+  "categ": "deliver",
+  "metic": "partial",
+  "prv": "version",
+  "Equ": "[G BY] by (agent of passive; deadline)",
+  "embr": "original",
+  "scrut": "date",
+  "Particip": "[number] 4",
+  "consum": "[number] 0",
+  "thal": "[P:NP] GPU hour(s)",
+  "cellul": "estimate",
+  "neigh": "seem",
+  "divid": "high",
+  "stre": "[G MY] my",
+  "scand": "measure",
+  "advoc": "enough",
+  "uko": "compromise",
+  "mant": "[G AT] at (point: value, time)",
+  "gev": "review",
+  "compet": "[G AGAIN] again",
+  "Clar": "[G AFTER] after",
+  "antib": "run",
+  "inade": "slowdown",
+  "alist": "[P:NP] most likely cause (compound head: X likely_cause = most likely cause of X)",
+  "irradi": "log",
+  "stric": "config",
+  "practition": "write",
+  "charg": "[G EVERY] every",
+  "oll": "disk",
+  "vig": "[P:S] fairly confident, based on tool output (tool NP may follow)",
+  "establ": "profiler",
+  "indic": "[G NOTYET] TAM not yet / have not ...-ed yet",
+  "conqu": "test",
+  "attravers": "reliable",
+  "polic": "answer",
+  "aconte": "conflict",
+  "sph": "option",
+  "radi": "[P:S] my confidence is low",
+  "rett": "[P:S] context for the next agent:",
+  "guar": "user",
+  "hvor": "prefer",
+  "Craw": "short",
+  "activ": "[G THEY] they / them / singular they",
+  "educ": "[G ALREADY] TAM already / have ...-ed",
+  "ragaz": "reject",
+  "applic": "design",
+  "indu": "like",
+  "compuls": "color",
+  "Gerr": "scheme",
+  "isol": "[G NEG] not (before predicate or NP)",
+  "rup": "layout",
+  "inici": "budget",
+  "Fant": "[G DONT] do not (negative imperative)",
+  "tob": "ask",
+  "enk": "[P:VP] I am passing (NP) back to you",
+  "iniz": "[P:S] (this) needs human approval",
+  "Serv": "[G ALL] all / everything",
+  "aque": "ready",
+  "compan": "[G ONLY] only",
+  "urm": "confirmation"
+ },
+ "messages": [
+  {
+   "id": "m02",
+   "encoded": "compl ceremon vaj persu phen multip sovere refriger apresent evalu vinc recogn alue conj erne appropri",
+   "back_translation": "Find recent peer-reviewed studies on how sleep deprivation (lack of sleep) affects working memory. Return the 5 most relevant, with a one-sentence summary each.",
+   "dsl": "find recent peer_reviewed study _ON _HOW sleep lack affect work memory _SEP @return_top #5 @one_sentence_summary _EACH",
+   "en": "Find recent peer-reviewed studies on how sleep deprivation affects working memory. Return the five most relevant, each with a one-sentence summary.",
+   "en_terse": "Find recent peer-reviewed studies: sleep deprivation -> working memory. Return top 5, 1-sentence summary each.",
+   "tokens": {
+    "o200k": 16,
+    "cl100k": 20,
+    "claude_legacy": 21,
+    "llama3": 20,
+    "llama4": 17,
+    "mistral_tekken": 17,
+    "mistral_sp": 21
+   },
+   "en_terse_tokens": {
+    "o200k": 24,
+    "cl100k": 24,
+    "claude_legacy": 23,
+    "llama3": 24,
+    "llama4": 24,
+    "mistral_tekken": 26,
+    "mistral_sp": 29
+   },
+   "morphemes": 16
+  },
+  {
+   "id": "m04",
+   "encoded": "unin chied demasi sequ vagu conse emple provinc inj chac Associ elog",
+   "back_translation": "Draft a polite reply: (it) declines the meeting request and proposes 2 alternative times later this week.",
+   "dsl": "draft polite reply _CNT decline meet request suggest #2 alternative time @later_this_week",
+   "en": "Draft a polite reply that declines the meeting request and proposes two alternative times later this week.",
+   "en_terse": "Draft polite reply: decline meeting request, propose 2 alt times later this week.",
+   "tokens": {
+    "o200k": 12,
+    "cl100k": 16,
+    "claude_legacy": 19,
+    "llama3": 16,
+    "llama4": 12,
+    "mistral_tekken": 13,
+    "mistral_sp": 19
+   },
+   "en_terse_tokens": {
+    "o200k": 17,
+    "cl100k": 17,
+    "claude_legacy": 16,
+    "llama3": 17,
+    "llama4": 17,
+    "mistral_tekken": 17,
+    "mistral_sp": 18
+   },
+   "morphemes": 12
+  },
+  {
+   "id": "m06",
+   "encoded": "uner Dest Blo meas commut sulf empre",
+   "back_translation": "The literature search is done; I am now reading the shortlisted papers. No blockers so far.",
+   "dsl": "@lit_search _DONE _PROG read shortlist paper @no_blockers",
+   "en": "The literature search is finished, and I am now reading the shortlisted papers with no blockers so far.",
+   "en_terse": "Lit search done; reading shortlisted papers now. No blockers.",
+   "tokens": {
+    "o200k": 8,
+    "cl100k": 9,
+    "claude_legacy": 10,
+    "llama3": 9,
+    "llama4": 7,
+    "mistral_tekken": 7,
+    "mistral_sp": 10
+   },
+   "en_terse_tokens": {
+    "o200k": 12,
+    "cl100k": 13,
+    "claude_legacy": 14,
+    "llama3": 13,
+    "llama4": 14,
+    "mistral_tekken": 14,
+    "mistral_sp": 14
+   },
+   "morphemes": 7
+  },
+  {
+   "id": "m08",
+   "encoded": "spect influ unin Dest sequ molt requ einf requ transl recogn parch emb murm",
+   "back_translation": "The first report draft is done: (it covers) background, methods and results. The discussion is still missing.",
+   "dsl": "_FIRST report draft _DONE _CNT background _AND method _AND result _SEP discussion _STILL miss",
+   "en": "The first draft of the report is done. It covers the background, methods, and results; the discussion section is still missing.",
+   "en_terse": "Report first draft done: background, methods, results. Discussion still missing.",
+   "tokens": {
+    "o200k": 14,
+    "cl100k": 14,
+    "claude_legacy": 16,
+    "llama3": 14,
+    "llama4": 14,
+    "mistral_tekken": 17,
+    "mistral_sp": 18
+   },
+   "en_terse_tokens": {
+    "o200k": 15,
+    "cl100k": 15,
+    "claude_legacy": 15,
+    "llama3": 15,
+    "llama4": 15,
+    "mistral_tekken": 15,
+    "mistral_sp": 16
+   },
+   "morphemes": 14
+  },
+  {
+   "id": "m10",
+   "encoded": "Vaugh zeich sequ Ident hul recogn neur clandest nost murm agon Evel anth congest barg",
+   "back_translation": "File scan: no duplicates. 3 columns have missing values, mostly in the address field.",
+   "dsl": "file scan _CNT _NO duplicate _SEP #3 column _WITH miss value mostly _IN address field",
+   "en": "The file scan found no duplicate entries. Three columns have missing values, mostly in the address field.",
+   "en_terse": "File scan: no duplicates. 3 columns with missing values, mostly address field.",
+   "tokens": {
+    "o200k": 16,
+    "cl100k": 18,
+    "claude_legacy": 20,
+    "llama3": 18,
+    "llama4": 16,
+    "mistral_tekken": 16,
+    "mistral_sp": 23
+   },
+   "en_terse_tokens": {
+    "o200k": 17,
+    "cl100k": 17,
+    "claude_legacy": 16,
+    "llama3": 17,
+    "llama4": 17,
+    "mistral_tekken": 17,
+    "mistral_sp": 19
+   },
+   "morphemes": 15
+  },
+  {
+   "id": "m12",
+   "encoded": "Manufact Maria Lopez escal arri synt recogn Manufact Kenji Sato virt mathematic suscept dro ampl vezet",
+   "back_translation": "Maria Lopez owns the billing service; Kenji Sato is the backup on-call (engineer). (All according to the company directory.)",
+   "dsl": "\"Maria Lopez\" own billing service _SEP \"Kenji Sato\" _IS backup on_call @per company directory",
+   "en": "According to the company directory, Maria Lopez owns the billing service and Kenji Sato is the backup on-call engineer.",
+   "en_terse": "Company directory: billing service owner = Maria Lopez; backup on-call = Kenji Sato.",
+   "tokens": {
+    "o200k": 19,
+    "cl100k": 20,
+    "claude_legacy": 20,
+    "llama3": 20,
+    "llama4": 18,
+    "mistral_tekken": 18,
+    "mistral_sp": 24
+   },
+   "en_terse_tokens": {
+    "o200k": 19,
+    "cl100k": 19,
+    "claude_legacy": 20,
+    "llama3": 19,
+    "llama4": 18,
+    "mistral_tekken": 18,
+    "mistral_sp": 23
+   },
+   "morphemes": 12
+  },
+  {
+   "id": "m14",
+   "encoded": "mul inher veget parse_config() overwhel chron complic absor dlg administr imagin rist integr",
+   "back_translation": "Should I change (modify) parse_config() directly, or add a new function and keep the old one for backward compatibility?",
+   "dsl": "_SHOULD change \"parse_config()\" direct _OR add new function keep old @for_backcompat _QUES",
+   "en": "Should I modify parse_config() directly, or add a new function and keep the old one for backward compatibility?",
+   "en_terse": "Modify parse_config() directly, or add new fn + keep old for backward compat?",
+   "tokens": {
+    "o200k": 15,
+    "cl100k": 16,
+    "claude_legacy": 17,
+    "llama3": 16,
+    "llama4": 15,
+    "mistral_tekken": 16,
+    "mistral_sp": 18
+   },
+   "en_terse_tokens": {
+    "o200k": 17,
+    "cl100k": 17,
+    "claude_legacy": 18,
+    "llama3": 17,
+    "llama4": 17,
+    "mistral_tekken": 17,
+    "mistral_sp": 19
+   },
+   "morphemes": 12
+  },
+  {
+   "id": "m16",
+   "encoded": "inj celebr muj neut resid sted succ alve",
+   "back_translation": "The 2 source documents give different deadlines. Which (one) is authoritative?",
+   "dsl": "#2 source document give different deadline _WHICH authoritative",
+   "en": "The two source documents give different deadlines. Which one should I treat as authoritative?",
+   "en_terse": "2 source documents give different deadlines. Which is authoritative?",
+   "tokens": {
+    "o200k": 8,
+    "cl100k": 11,
+    "claude_legacy": 11,
+    "llama3": 11,
+    "llama4": 8,
+    "mistral_tekken": 9,
+    "mistral_sp": 10
+   },
+   "en_terse_tokens": {
+    "o200k": 11,
+    "cl100k": 11,
+    "claude_legacy": 12,
+    "llama3": 11,
+    "llama4": 11,
+    "mistral_tekken": 12,
+    "mistral_sp": 14
+   },
+   "morphemes": 8
+  },
+  {
+   "id": "m18",
+   "encoded": "conv Insp veget data/2024/q3_sales.csv Mult opl Anim trunc lect imag trast integr",
+   "back_translation": "I could not open data/2024/q3_sales.csv because it does not exist. Was it moved to another folder?",
+   "dsl": "_FAIL open \"data/2024/q3_sales.csv\" _CAUSE @not_found _PASS move _TO _OTHER folder _QUES",
+   "en": "I could not open data/2024/q3_sales.csv because the file does not exist. Was it moved to another folder?",
+   "en_terse": "Can't open data/2024/q3_sales.csv: not found. Moved to other folder?",
+   "tokens": {
+    "o200k": 19,
+    "cl100k": 21,
+    "claude_legacy": 24,
+    "llama3": 21,
+    "llama4": 19,
+    "mistral_tekken": 22,
+    "mistral_sp": 27
+   },
+   "en_terse_tokens": {
+    "o200k": 20,
+    "cl100k": 20,
+    "claude_legacy": 23,
+    "llama3": 20,
+    "llama4": 20,
+    "mistral_tekken": 24,
+    "mistral_sp": 28
+   },
+   "morphemes": 11
+  },
+  {
+   "id": "m20",
+   "encoded": "egin experi Mult occup Thess inj symmet recogn estr Anim curios anth hypoc follic",
+   "back_translation": "My previous answer was wrong because I mixed up (confused) the 2 datasets. The figures are corrected in the updated table.",
+   "dsl": "@my_prev_answer wrong _CAUSE _PAST confuse #2 dataset _SEP figure _PASS correct _IN update table",
+   "en": "My previous answer was wrong because I mixed up the two datasets. The corrected figures are in the updated table.",
+   "en_terse": "Previous answer wrong: mixed up the 2 datasets. Corrected figures in updated table.",
+   "tokens": {
+    "o200k": 15,
+    "cl100k": 17,
+    "claude_legacy": 16,
+    "llama3": 17,
+    "llama4": 14,
+    "mistral_tekken": 14,
+    "mistral_sp": 19
+   },
+   "en_terse_tokens": {
+    "o200k": 18,
+    "cl100k": 18,
+    "claude_legacy": 17,
+    "llama3": 18,
+    "llama4": 18,
+    "mistral_tekken": 18,
+    "mistral_sp": 20
+   },
+   "morphemes": 14
+  },
+  {
+   "id": "m22",
+   "encoded": "ater accompagn ngu lect inj infl Comput empir territo Alic congreg heredit rul lect neur infl Comput Comput",
+   "back_translation": "Proposed plan, strictly in this order: upgrade numpy to 2.1, fix the deprecation warnings, raise the minimum Python (version) to 3.11.",
+   "dsl": "@in_order upgrade numpy _TO #2.1 fix deprecation warn raise minimum python _TO #3.11",
+   "en": "Let's upgrade numpy to 2.1 first, then fix the deprecation warnings, and only then raise the minimum Python version to 3.11.",
+   "en_terse": "Order: numpy -> 2.1, fix deprecation warnings, then min Python -> 3.11.",
+   "tokens": {
+    "o200k": 18,
+    "cl100k": 22,
+    "claude_legacy": 25,
+    "llama3": 21,
+    "llama4": 18,
+    "mistral_tekken": 21,
+    "mistral_sp": 24
+   },
+   "en_terse_tokens": {
+    "o200k": 23,
+    "cl100k": 23,
+    "claude_legacy": 20,
+    "llama3": 23,
+    "llama4": 23,
+    "mistral_tekken": 25,
+    "mistral_sp": 25
+   },
+   "morphemes": 18
+  },
+  {
+   "id": "m24",
+   "encoded": "poss provin evalu sequ guid ammon enf Rodrig Compar ammon nuc ener enca transl fif poss contrib clandest femin spect furt",
+   "back_translation": "Let's split the work: I handle data cleaning, you handle the visualizations, we merge the results at the end (finally). Let's agree on column names first. Does that work for you?",
+   "dsl": "_HORT split work _CNT _I handle data clean _YOU handle visualization _WE merge result final _HORT agree column name _FIRST @does_that_work",
+   "en": "I suggest we split the work: I handle data cleaning, you handle the visualizations, and we merge the results at the end. We should agree on column names first. Does that work for you?",
+   "en_terse": "Proposed split: me = data cleaning, you = visualizations, merge at end. Agree on column names first. OK?",
+   "tokens": {
+    "o200k": 21,
+    "cl100k": 25,
+    "claude_legacy": 26,
+    "llama3": 25,
+    "llama4": 21,
+    "mistral_tekken": 22,
+    "mistral_sp": 29
+   },
+   "en_terse_tokens": {
+    "o200k": 26,
+    "cl100k": 26,
+    "claude_legacy": 26,
+    "llama3": 26,
+    "llama4": 26,
+    "mistral_tekken": 27,
+    "mistral_sp": 27
+   },
+   "morphemes": 21
+  },
+  {
+   "id": "m26",
+   "encoded": "Guth voud urg Ident pren celebr discipl estud inj recogn complic celebr chron jum estud",
+   "back_translation": "The argument is persuasive, but none of the cited sources supports claim 2 (the second claim). Add a source or soften (hedge) the claim.",
+   "dsl": "argument persuasive _BUT _NO cite source support claim #2 _SEP add source _OR hedge claim",
+   "en": "The argument is persuasive, but the second claim is not supported by any of the cited sources. Either add a source or soften the claim.",
+   "en_terse": "Argument persuasive, but claim 2 unsupported by cited sources. Add source or soften claim.",
+   "tokens": {
+    "o200k": 16,
+    "cl100k": 19,
+    "claude_legacy": 19,
+    "llama3": 19,
+    "llama4": 16,
+    "mistral_tekken": 16,
+    "mistral_sp": 19
+   },
+   "en_terse_tokens": {
+    "o200k": 18,
+    "cl100k": 18,
+    "claude_legacy": 18,
+    "llama3": 18,
+    "llama4": 18,
+    "mistral_tekken": 21,
+    "mistral_sp": 22
+   },
+   "morphemes": 15
+  },
+  {
+   "id": "m28",
+   "encoded": "occup renov Contin ryt sequ cancell neur trang sequ verd Anim curs gost Pred fif presum mul consid urma",
+   "back_translation": "I checked your calculation: (there is an) error in step 3: the tax was applied twice, so the final amount should be lower. Everything else is correct.",
+   "dsl": "_PAST check _YOUR calculation _CNT step #3 error _CNT tax _PASS apply twice _CONSE final amount _SHOULD lower @rest_correct",
+   "en": "I checked your calculation and found an error in the third step: the tax was applied twice. The final amount should be lower. Everything else is correct.",
+   "en_terse": "Checked your calc: step 3 error, tax applied twice -> final amount should be lower. Rest correct.",
+   "tokens": {
+    "o200k": 19,
+    "cl100k": 22,
+    "claude_legacy": 26,
+    "llama3": 21,
+    "llama4": 19,
+    "mistral_tekken": 19,
+    "mistral_sp": 24
+   },
+   "en_terse_tokens": {
+    "o200k": 22,
+    "cl100k": 22,
+    "claude_legacy": 21,
+    "llama3": 22,
+    "llama4": 22,
+    "mistral_tekken": 22,
+    "mistral_sp": 23
+   },
+   "morphemes": 19
+  },
+  {
+   "id": "m30",
+   "encoded": "veh squ fek sve urg vacc inj scient declar cust Compar provinc curr mour convers veh categ metic prv Equ embr scrut",
+   "back_translation": "I can take the frontend tasks, but I need 2 more days than you proposed (suggest). If (that is) too late, I can deliver a partial version by the original date.",
+   "dsl": "_CAN take frontend task _BUT need #2 _MORE day _THAN _YOU suggest _IF _TOO late _CAN deliver partial version _BY original date",
+   "en": "I can take the frontend tasks, but I need two more days than you proposed. If that is too late, I can deliver a partial version by the original date.",
+   "en_terse": "Can take frontend tasks but need 2 more days than proposed. If too late: partial version by original date.",
+   "tokens": {
+    "o200k": 24,
+    "cl100k": 24,
+    "claude_legacy": 27,
+    "llama3": 24,
+    "llama4": 23,
+    "mistral_tekken": 23,
+    "mistral_sp": 25
+   },
+   "en_terse_tokens": {
+    "o200k": 23,
+    "cl100k": 23,
+    "claude_legacy": 22,
+    "llama3": 23,
+    "llama4": 23,
+    "mistral_tekken": 23,
+    "mistral_sp": 24
+   },
+   "morphemes": 22
+  },
+  {
+   "id": "m32",
+   "encoded": "Contin Particip consum thal cellul neigh divid stre scand provinc inj conj advoc poss uko mant neur consum gev compet Clar spect antib integr",
+   "back_translation": "Your 40 GPU-hour estimate seems high. My measurement suggests 25 is enough. Shall/can we compromise at 30 and review (revisit) it again after the first run?",
+   "dsl": "_YOUR #40 @gpu_hour estimate seem high _MY measure suggest #25 enough _HORT compromise _AT #30 review _AGAIN _AFTER _FIRST run _QUES",
+   "en": "Your estimate of 40 GPU hours seems high to me. My measurement suggests 25 is enough; can we compromise at 30 and revisit after the first run?",
+   "en_terse": "Your 40 GPU hours estimate seems high; my measurement says 25 enough. Compromise at 30, revisit after first run?",
+   "tokens": {
+    "o200k": 25,
+    "cl100k": 26,
+    "claude_legacy": 28,
+    "llama3": 26,
+    "llama4": 24,
+    "mistral_tekken": 24,
+    "mistral_sp": 28
+   },
+   "en_terse_tokens": {
+    "o200k": 27,
+    "cl100k": 27,
+    "claude_legacy": 26,
+    "llama3": 27,
+    "llama4": 27,
+    "mistral_tekken": 31,
+    "mistral_sp": 31
+   },
+   "morphemes": 24
+  },
+  {
+   "id": "m34",
+   "encoded": "inade alist sequ absor irradi stric practition charg emple lect oll vig establ indic conqu empir",
+   "back_translation": "Most likely cause of the slowdown: the new logging config(uration), (which) writes every request to disk. I am fairly confident, based on the profiler's output. I have not yet tested a fix.",
+   "dsl": "slowdown @likely_cause _CNT new log config write _EVERY request _TO disk @conf_fair_tool profiler _NOTYET test fix",
+   "en": "The most likely cause of the slowdown is the new logging configuration, which writes every request to disk. I am fairly confident based on the profiler output, but I have not tested a fix yet.",
+   "en_terse": "Likely slowdown cause: new logging config writes every request to disk. Fairly confident (profiler output); fix not yet tested.",
+   "tokens": {
+    "o200k": 19,
+    "cl100k": 20,
+    "claude_legacy": 21,
+    "llama3": 20,
+    "llama4": 18,
+    "mistral_tekken": 18,
+    "mistral_sp": 25
+   },
+   "en_terse_tokens": {
+    "o200k": 27,
+    "cl100k": 27,
+    "claude_legacy": 28,
+    "llama3": 27,
+    "llama4": 28,
+    "mistral_tekken": 29,
+    "mistral_sp": 29
+   },
+   "morphemes": 16
+  },
+  {
+   "id": "m36",
+   "encoded": "conv compl attravers polic recogn inj compl celebr aconte recogn scient absor discipl sph inj radi",
+   "back_translation": "I could not find a reliable answer. The 2 sources I found conflict (contradict each other); the newer one supports option 2 (the second option). My confidence is low.",
+   "dsl": "_FAIL find reliable answer _SEP #2 find source conflict _SEP _MORE new support option #2 @conf_low",
+   "en": "I could not find a reliable answer. The two sources I found contradict each other; the newer one supports the second option, but my confidence is low.",
+   "en_terse": "No reliable answer. 2 sources contradict; newer supports option 2. Confidence low.",
+   "tokens": {
+    "o200k": 16,
+    "cl100k": 16,
+    "claude_legacy": 18,
+    "llama3": 16,
+    "llama4": 16,
+    "mistral_tekken": 16,
+    "mistral_sp": 20
+   },
+   "en_terse_tokens": {
+    "o200k": 18,
+    "cl100k": 18,
+    "claude_legacy": 17,
+    "llama3": 18,
+    "llama4": 18,
+    "mistral_tekken": 19,
+    "mistral_sp": 20
+   },
+   "morphemes": 16
+  },
+  {
+   "id": "m38",
+   "encoded": "rett guar hvor Craw polic activ educ ragaz spect inj applic activ occup indu applic neur compuls Gerr urg isol rup recogn inici Anim empir Pred Fant tob compet",
+   "back_translation": "Context for the next agent: the user prefers short answers. They have already rejected the first 2 designs. They liked design 3's color scheme but not (its) layout. The budget is fixed, so do not ask (about it) again.",
+   "dsl": "@context_next_agent user prefer short answer _THEY _ALREADY reject _FIRST #2 design _THEY _PAST like design #3 color scheme _BUT _NEG layout _SEP budget _PASS fix _CONSE _DONT ask _AGAIN",
+   "en": "Context for the next agent: the user prefers short answers. They have already rejected the first two designs. They liked the color scheme of the third one but not its layout. The budget is fixed, so do not ask about it again.",
+   "en_terse": "Context for next agent: user prefers short answers. Rejected designs 1+2. Design 3: liked colors, not layout. Budget fixed, never ask again.",
+   "tokens": {
+    "o200k": 29,
+    "cl100k": 30,
+    "claude_legacy": 34,
+    "llama3": 30,
+    "llama4": 30,
+    "mistral_tekken": 30,
+    "mistral_sp": 38
+   },
+   "en_terse_tokens": {
+    "o200k": 35,
+    "cl100k": 35,
+    "claude_legacy": 33,
+    "llama3": 35,
+    "llama4": 35,
+    "mistral_tekken": 35,
+    "mistral_sp": 38
+   },
+   "morphemes": 29
+  },
+  {
+   "id": "m40",
+   "encoded": "enk sve Mult iniz Serv aque recogn compan fif urm murm",
+   "back_translation": "I am passing this task back to you because it needs human approval. Everything is ready (prepared); only the final confirmation is missing.",
+   "dsl": "@pass_back task _CAUSE @needs_human_approval _ALL ready _SEP _ONLY final confirmation miss",
+   "en": "I am passing this task back to you because it needs human approval. Everything is prepared; only the final confirmation is missing.",
+   "en_terse": "Returning task to you: needs human approval. All prepared; only final confirmation missing.",
+   "tokens": {
+    "o200k": 11,
+    "cl100k": 13,
+    "claude_legacy": 15,
+    "llama3": 13,
+    "llama4": 11,
+    "mistral_tekken": 11,
+    "mistral_sp": 16
+   },
+   "en_terse_tokens": {
+    "o200k": 17,
+    "cl100k": 17,
+    "claude_legacy": 17,
+    "llama3": 17,
+    "llama4": 17,
+    "mistral_tekken": 18,
+    "mistral_sp": 18
+   },
+   "morphemes": 11
+  }
+ ],
+ "measurement": {
+  "main_config": "B_num10",
+  "config": {
+   "n_num": 10,
+   "closed_conf": true,
+   "macro_zipf": 4.0,
+   "domain_boost": 0.0
+  },
+  "totals": {
+   "o200k": {
+    "en": 562,
+    "en_terse": 406,
+    "main": 340,
+    "main_vs_en_terse": 0.837,
+    "main_vs_en": 0.605,
+    "macros_expanded": 377,
+    "macros_expanded_vs_en_terse": 0.929,
+    "macros_expanded_vs_en": 0.671,
+    "even_spread": 342,
+    "even_spread_vs_en_terse": 0.842,
+    "even_spread_vs_en": 0.609,
+    "RELAXATION_raw_digits": 352,
+    "RELAXATION_raw_digits_vs_en_terse": 0.867,
+    "RELAXATION_raw_digits_vs_en": 0.626,
+    "main_leading_space": 338
+   },
+   "cl100k": {
+    "en": 564,
+    "en_terse": 407,
+    "main": 379,
+    "main_vs_en_terse": 0.931,
+    "main_vs_en": 0.672,
+    "macros_expanded": 414,
+    "macros_expanded_vs_en_terse": 1.017,
+    "macros_expanded_vs_en": 0.734,
+    "even_spread": 378,
+    "even_spread_vs_en_terse": 0.929,
+    "even_spread_vs_en": 0.67,
+    "RELAXATION_raw_digits": 390,
+    "RELAXATION_raw_digits_vs_en_terse": 0.958,
+    "RELAXATION_raw_digits_vs_en": 0.691,
+    "main_leading_space": 378
+   },
+   "claude_legacy": {
+    "en": 569,
+    "en_terse": 402,
+    "main": 413,
+    "main_vs_en_terse": 1.027,
+    "main_vs_en": 0.726,
+    "macros_expanded": 452,
+    "macros_expanded_vs_en_terse": 1.124,
+    "macros_expanded_vs_en": 0.794,
+    "even_spread": 434,
+    "even_spread_vs_en_terse": 1.08,
+    "even_spread_vs_en": 0.763,
+    "RELAXATION_raw_digits": 409,
+    "RELAXATION_raw_digits_vs_en_terse": 1.017,
+    "RELAXATION_raw_digits_vs_en": 0.719,
+    "main_leading_space": 412
+   },
+   "llama3": {
+    "en": 564,
+    "en_terse": 407,
+    "main": 377,
+    "main_vs_en_terse": 0.926,
+    "main_vs_en": 0.668,
+    "macros_expanded": 411,
+    "macros_expanded_vs_en_terse": 1.01,
+    "macros_expanded_vs_en": 0.729,
+    "even_spread": 366,
+    "even_spread_vs_en_terse": 0.899,
+    "even_spread_vs_en": 0.649,
+    "RELAXATION_raw_digits": 388,
+    "RELAXATION_raw_digits_vs_en_terse": 0.953,
+    "RELAXATION_raw_digits_vs_en": 0.688,
+    "main_leading_space": 376
+   },
+   "llama4": {
+    "en": 563,
+    "en_terse": 408,
+    "main": 336,
+    "main_vs_en_terse": 0.824,
+    "main_vs_en": 0.597,
+    "macros_expanded": 376,
+    "macros_expanded_vs_en_terse": 0.922,
+    "macros_expanded_vs_en": 0.668,
+    "even_spread": 342,
+    "even_spread_vs_en_terse": 0.838,
+    "even_spread_vs_en": 0.607,
+    "RELAXATION_raw_digits": 348,
+    "RELAXATION_raw_digits_vs_en_terse": 0.853,
+    "RELAXATION_raw_digits_vs_en": 0.618,
+    "main_leading_space": 334
+   },
+   "mistral_tekken": {
+    "en": 579,
+    "en_terse": 428,
+    "main": 349,
+    "main_vs_en_terse": 0.815,
+    "main_vs_en": 0.603,
+    "macros_expanded": 389,
+    "macros_expanded_vs_en_terse": 0.909,
+    "macros_expanded_vs_en": 0.672,
+    "even_spread": 357,
+    "even_spread_vs_en_terse": 0.834,
+    "even_spread_vs_en": 0.617,
+    "RELAXATION_raw_digits": 365,
+    "RELAXATION_raw_digits_vs_en_terse": 0.853,
+    "RELAXATION_raw_digits_vs_en": 0.63,
+    "main_leading_space": 345
+   },
+   "mistral_sp": {
+    "en": 601,
+    "en_terse": 457,
+    "main": 437,
+    "main_vs_en_terse": 0.956,
+    "main_vs_en": 0.727,
+    "macros_expanded": 477,
+    "macros_expanded_vs_en_terse": 1.044,
+    "macros_expanded_vs_en": 0.794,
+    "even_spread": 459,
+    "even_spread_vs_en_terse": 1.004,
+    "even_spread_vs_en": 0.764,
+    "RELAXATION_raw_digits": 454,
+    "RELAXATION_raw_digits_vs_en_terse": 0.993,
+    "RELAXATION_raw_digits_vs_en": 0.755,
+    "main_leading_space": 457
+   }
+  },
+  "per_message_wins_vs_en_terse": {
+   "o200k": 18,
+   "cl100k": 13,
+   "claude_legacy": 7,
+   "llama3": 14,
+   "llama4": 18,
+   "mistral_tekken": 17,
+   "mistral_sp": 11
+  },
+  "per_message_ties_vs_en_terse": {
+   "o200k": 1,
+   "cl100k": 2,
+   "claude_legacy": 2,
+   "llama3": 1,
+   "llama4": 2,
+   "mistral_tekken": 2,
+   "mistral_sp": 2
+  },
+  "morphemes_total": {
+   "main": 312,
+   "macros_expanded": 348
+  },
+  "spec": {
+   "entries_total": 2399,
+   "entries_by_section": {
+    "grammar": 105,
+    "number": 10,
+    "macro": 66,
+    "core": 2000,
+    "domain": 196,
+    "tech": 22
+   },
+   "closed_class_macros": 12,
+   "spec_tokens": {
+    "o200k": 7118,
+    "cl100k": 7532,
+    "claude_legacy": 8433,
+    "llama3": 7378,
+    "llama4": 7164,
+    "mistral_tekken": 7577,
+    "mistral_sp": 9108
+   },
+   "grammar_text_tokens": {
+    "o200k": 763,
+    "cl100k": 768,
+    "claude_legacy": 787,
+    "llama3": 768,
+    "llama4": 758,
+    "mistral_tekken": 804,
+    "mistral_sp": 890
+   }
+  },
+  "used_entries": {
+   "core": 105,
+   "domain": 33,
+   "grammar": 52,
+   "macro": 16,
+   "number": 6,
+   "macro (closed: confidence/evidence)": 3,
+   "tech": 2
+  },
+  "used_entries_list": {
+   "core": [
+    "find",
+    "recent",
+    "study",
+    "sleep",
+    "lack",
+    "affect",
+    "work",
+    "memory",
+    "draft",
+    "reply",
+    "decline",
+    "meet",
+    "request",
+    "suggest",
+    "alternative",
+    "time",
+    "read",
+    "paper",
+    "report",
+    "background",
+    "method",
+    "result",
+    "discussion",
+    "miss",
+    "file",
+    "value",
+    "mostly",
+    "address",
+    "field",
+    "own",
+    "service",
+    "company",
+    "change",
+    "direct",
+    "add",
+    "new",
+    "function",
+    "keep",
+    "old",
+    "source",
+    "document",
+    "give",
+    "different",
+    "open",
+    "move",
+    "wrong",
+    "confuse",
+    "figure",
+    "correct",
+    "update",
+    "table",
+    "fix",
+    "warn",
+    "raise",
+    "minimum",
+    "split",
+    "handle",
+    "data",
+    "clean",
+    "final",
+    "agree",
+    "name",
+    "argument",
+    "support",
+    "claim",
+    "check",
+    "step",
+    "error",
+    "tax",
+    "apply",
+    "twice",
+    "amount",
+    "lower",
+    "take",
+    "task",
+    "need",
+    "day",
+    "late",
+    "deliver",
+    "version",
+    "original",
+    "date",
+    "estimate",
+    "seem",
+    "high",
+    "measure",
+    "enough",
+    "review",
+    "run",
+    "write",
+    "test",
+    "answer",
+    "conflict",
+    "option",
+    "user",
+    "prefer",
+    "short",
+    "reject",
+    "design",
+    "like",
+    "color",
+    "scheme",
+    "budget",
+    "ask",
+    "ready"
+   ],
+   "domain": [
+    "peer_reviewed",
+    "polite",
+    "shortlist",
+    "scan",
+    "duplicate",
+    "column",
+    "billing",
+    "backup",
+    "on_call",
+    "directory",
+    "deadline",
+    "authoritative",
+    "folder",
+    "dataset",
+    "upgrade",
+    "deprecation",
+    "visualization",
+    "merge",
+    "persuasive",
+    "cite",
+    "hedge",
+    "calculation",
+    "frontend",
+    "partial",
+    "compromise",
+    "slowdown",
+    "log",
+    "config",
+    "disk",
+    "profiler",
+    "reliable",
+    "layout",
+    "confirmation"
+   ],
+   "grammar": [
+    "_ON",
+    "_HOW",
+    "_SEP",
+    "_EACH",
+    "_CNT",
+    "_DONE",
+    "_PROG",
+    "_FIRST",
+    "_AND",
+    "_STILL",
+    "_NO",
+    "_WITH",
+    "_IN",
+    "_Q2",
+    "_IS",
+    "_SHOULD",
+    "_Q1",
+    "_OR",
+    "_QUES",
+    "_WHICH",
+    "_FAIL",
+    "_CAUSE",
+    "_PASS",
+    "_TO",
+    "_OTHER",
+    "_PAST",
+    "_POINT",
+    "_HORT",
+    "_I",
+    "_YOU",
+    "_WE",
+    "_BUT",
+    "_YOUR",
+    "_CONSE",
+    "_CAN",
+    "_MORE",
+    "_THAN",
+    "_IF",
+    "_TOO",
+    "_BY",
+    "_MY",
+    "_AT",
+    "_AGAIN",
+    "_AFTER",
+    "_EVERY",
+    "_NOTYET",
+    "_THEY",
+    "_ALREADY",
+    "_NEG",
+    "_DONT",
+    "_ALL",
+    "_ONLY"
+   ],
+   "macro": [
+    "@return_top",
+    "@one_sentence_summary",
+    "@later_this_week",
+    "@lit_search",
+    "@no_blockers",
+    "@for_backcompat",
+    "@not_found",
+    "@my_prev_answer",
+    "@in_order",
+    "@does_that_work",
+    "@rest_correct",
+    "@gpu_hour",
+    "@likely_cause",
+    "@context_next_agent",
+    "@pass_back",
+    "@needs_human_approval"
+   ],
+   "number": [
+    "#5",
+    "#2",
+    "#3",
+    "#1",
+    "#4",
+    "#0"
+   ],
+   "macro (closed: confidence/evidence)": [
+    "@per",
+    "@conf_fair_tool",
+    "@conf_low"
+   ],
+   "tech": [
+    "numpy",
+    "python"
+   ]
+  },
+  "used_form_cost": {
+   "find": {
+    "form": "compl",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "recent": {
+    "form": "ceremon",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "peer_reviewed": {
+    "form": "vaj",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "study": {
+    "form": "persu",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "_ON": {
+    "form": "phen",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "_HOW": {
+    "form": "multip",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "sleep": {
+    "form": "sovere",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 2,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "lack": {
+    "form": "refriger",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "affect": {
+    "form": "apresent",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "work": {
+    "form": "evalu",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "memory": {
+    "form": "vinc",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "_SEP": {
+    "form": "recogn",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "@return_top": {
+    "form": "alue",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "#5": {
+    "form": "conj",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "@one_sentence_summary": {
+    "form": "erne",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "_EACH": {
+    "form": "appropri",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "draft": {
+    "form": "unin",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 2,
+    "mistral_sp": 2
+   },
+   "polite": {
+    "form": "chied",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "reply": {
+    "form": "demasi",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "_CNT": {
+    "form": "sequ",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "decline": {
+    "form": "vagu",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 1,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "meet": {
+    "form": "conse",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "request": {
+    "form": "emple",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "suggest": {
+    "form": "provinc",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "#2": {
+    "form": "inj",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "alternative": {
+    "form": "chac",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "time": {
+    "form": "Associ",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "@later_this_week": {
+    "form": "elog",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "@lit_search": {
+    "form": "uner",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "_DONE": {
+    "form": "Dest",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "_PROG": {
+    "form": "Blo",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "read": {
+    "form": "meas",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "shortlist": {
+    "form": "commut",
+    "o200k": 2,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "paper": {
+    "form": "sulf",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "@no_blockers": {
+    "form": "empre",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "_FIRST": {
+    "form": "spect",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "report": {
+    "form": "influ",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "background": {
+    "form": "molt",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "_AND": {
+    "form": "requ",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "method": {
+    "form": "einf",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "result": {
+    "form": "transl",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "discussion": {
+    "form": "parch",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 2,
+    "mistral_sp": 2
+   },
+   "_STILL": {
+    "form": "emb",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "miss": {
+    "form": "murm",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "file": {
+    "form": "Vaugh",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "scan": {
+    "form": "zeich",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "_NO": {
+    "form": "Ident",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "duplicate": {
+    "form": "hul",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "#3": {
+    "form": "neur",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "column": {
+    "form": "clandest",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 3
+   },
+   "_WITH": {
+    "form": "nost",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "value": {
+    "form": "agon",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "mostly": {
+    "form": "Evel",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "_IN": {
+    "form": "anth",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "address": {
+    "form": "congest",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "field": {
+    "form": "barg",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "_Q2": {
+    "form": "Manufact",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "own": {
+    "form": "escal",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "billing": {
+    "form": "arri",
+    "o200k": 2,
+    "cl100k": 2,
+    "claude_legacy": 1,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "service": {
+    "form": "synt",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "_IS": {
+    "form": "virt",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "backup": {
+    "form": "mathematic",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 2,
+    "mistral_tekken": 1,
+    "mistral_sp": 3
+   },
+   "on_call": {
+    "form": "suscept",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "@per": {
+    "form": "dro",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "company": {
+    "form": "ampl",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "directory": {
+    "form": "vezet",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "_SHOULD": {
+    "form": "mul",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "change": {
+    "form": "inher",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "_Q1": {
+    "form": "veget",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "direct": {
+    "form": "overwhel",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "_OR": {
+    "form": "chron",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "add": {
+    "form": "complic",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "new": {
+    "form": "absor",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "function": {
+    "form": "dlg",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 2,
+    "mistral_sp": 2
+   },
+   "keep": {
+    "form": "administr",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "old": {
+    "form": "imagin",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "@for_backcompat": {
+    "form": "rist",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "_QUES": {
+    "form": "integr",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "source": {
+    "form": "celebr",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "document": {
+    "form": "muj",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 2,
+    "mistral_sp": 1
+   },
+   "give": {
+    "form": "neut",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "different": {
+    "form": "resid",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "deadline": {
+    "form": "sted",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "_WHICH": {
+    "form": "succ",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "authoritative": {
+    "form": "alve",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "_FAIL": {
+    "form": "conv",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "open": {
+    "form": "Insp",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "_CAUSE": {
+    "form": "Mult",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "@not_found": {
+    "form": "opl",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "_PASS": {
+    "form": "Anim",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "move": {
+    "form": "trunc",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "_TO": {
+    "form": "lect",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "_OTHER": {
+    "form": "imag",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "folder": {
+    "form": "trast",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "@my_prev_answer": {
+    "form": "egin",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "wrong": {
+    "form": "experi",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "_PAST": {
+    "form": "occup",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "confuse": {
+    "form": "Thess",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 1,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "dataset": {
+    "form": "symmet",
+    "o200k": 2,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "figure": {
+    "form": "estr",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "correct": {
+    "form": "curios",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 1,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "update": {
+    "form": "hypoc",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "table": {
+    "form": "follic",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "@in_order": {
+    "form": "ater",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "upgrade": {
+    "form": "accompagn",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 3,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "numpy": {
+    "form": "ngu",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 2,
+    "mistral_sp": 2
+   },
+   "_POINT": {
+    "form": "infl",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "#1": {
+    "form": "Comput",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "fix": {
+    "form": "empir",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "deprecation": {
+    "form": "territo",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 2,
+    "mistral_sp": 1
+   },
+   "warn": {
+    "form": "Alic",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "raise": {
+    "form": "congreg",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "minimum": {
+    "form": "heredit",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 1,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "python": {
+    "form": "rul",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 2,
+    "mistral_sp": 1
+   },
+   "_HORT": {
+    "form": "poss",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "split": {
+    "form": "provin",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "_I": {
+    "form": "guid",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "handle": {
+    "form": "ammon",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "data": {
+    "form": "enf",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "clean": {
+    "form": "Rodrig",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "_YOU": {
+    "form": "Compar",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "visualization": {
+    "form": "nuc",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 2,
+    "mistral_sp": 1
+   },
+   "_WE": {
+    "form": "ener",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "merge": {
+    "form": "enca",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "final": {
+    "form": "fif",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "agree": {
+    "form": "contrib",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "name": {
+    "form": "femin",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "@does_that_work": {
+    "form": "furt",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "argument": {
+    "form": "Guth",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 2,
+    "mistral_sp": 2
+   },
+   "persuasive": {
+    "form": "voud",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "_BUT": {
+    "form": "urg",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "cite": {
+    "form": "pren",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "support": {
+    "form": "discipl",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "claim": {
+    "form": "estud",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "hedge": {
+    "form": "jum",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "check": {
+    "form": "renov",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "_YOUR": {
+    "form": "Contin",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "calculation": {
+    "form": "ryt",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "step": {
+    "form": "cancell",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "error": {
+    "form": "trang",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "tax": {
+    "form": "verd",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "apply": {
+    "form": "curs",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "twice": {
+    "form": "gost",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "_CONSE": {
+    "form": "Pred",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "amount": {
+    "form": "presum",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "lower": {
+    "form": "consid",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "@rest_correct": {
+    "form": "urma",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "_CAN": {
+    "form": "veh",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "take": {
+    "form": "squ",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "frontend": {
+    "form": "fek",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "task": {
+    "form": "sve",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "need": {
+    "form": "vacc",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "_MORE": {
+    "form": "scient",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "day": {
+    "form": "declar",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "_THAN": {
+    "form": "cust",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "_IF": {
+    "form": "curr",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "_TOO": {
+    "form": "mour",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "late": {
+    "form": "convers",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "deliver": {
+    "form": "categ",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 1,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "partial": {
+    "form": "metic",
+    "o200k": 2,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 2,
+    "mistral_tekken": 2,
+    "mistral_sp": 2
+   },
+   "version": {
+    "form": "prv",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "_BY": {
+    "form": "Equ",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "original": {
+    "form": "embr",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "date": {
+    "form": "scrut",
+    "o200k": 2,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "#4": {
+    "form": "Particip",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "#0": {
+    "form": "consum",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "@gpu_hour": {
+    "form": "thal",
+    "o200k": 2,
+    "cl100k": 2,
+    "claude_legacy": 1,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "estimate": {
+    "form": "cellul",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "seem": {
+    "form": "neigh",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "high": {
+    "form": "divid",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "_MY": {
+    "form": "stre",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "measure": {
+    "form": "scand",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "enough": {
+    "form": "advoc",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "compromise": {
+    "form": "uko",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "_AT": {
+    "form": "mant",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "review": {
+    "form": "gev",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "_AGAIN": {
+    "form": "compet",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "_AFTER": {
+    "form": "Clar",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "run": {
+    "form": "antib",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "slowdown": {
+    "form": "inade",
+    "o200k": 2,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 2,
+    "mistral_tekken": 2,
+    "mistral_sp": 2
+   },
+   "@likely_cause": {
+    "form": "alist",
+    "o200k": 2,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 2,
+    "mistral_tekken": 2,
+    "mistral_sp": 2
+   },
+   "log": {
+    "form": "irradi",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 3
+   },
+   "config": {
+    "form": "stric",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "write": {
+    "form": "practition",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "_EVERY": {
+    "form": "charg",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "disk": {
+    "form": "oll",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "@conf_fair_tool": {
+    "form": "vig",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "profiler": {
+    "form": "establ",
+    "o200k": 2,
+    "cl100k": 2,
+    "claude_legacy": 1,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "_NOTYET": {
+    "form": "indic",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "test": {
+    "form": "conqu",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "reliable": {
+    "form": "attravers",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 3,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "answer": {
+    "form": "polic",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "conflict": {
+    "form": "aconte",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 3
+   },
+   "option": {
+    "form": "sph",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "@conf_low": {
+    "form": "radi",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "@context_next_agent": {
+    "form": "rett",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "user": {
+    "form": "guar",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "prefer": {
+    "form": "hvor",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "short": {
+    "form": "Craw",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "_THEY": {
+    "form": "activ",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "_ALREADY": {
+    "form": "educ",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "reject": {
+    "form": "ragaz",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 2,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "design": {
+    "form": "applic",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "like": {
+    "form": "indu",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "color": {
+    "form": "compuls",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "scheme": {
+    "form": "Gerr",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 2,
+    "mistral_sp": 2
+   },
+   "_NEG": {
+    "form": "isol",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "layout": {
+    "form": "rup",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "budget": {
+    "form": "inici",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 2,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "_DONT": {
+    "form": "Fant",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "ask": {
+    "form": "tob",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "@pass_back": {
+    "form": "enk",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "@needs_human_approval": {
+    "form": "iniz",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "_ALL": {
+    "form": "Serv",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "ready": {
+    "form": "aque",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "_ONLY": {
+    "form": "compan",
+    "o200k": 1,
+    "cl100k": 1,
+    "claude_legacy": 1,
+    "llama3": 1,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 1
+   },
+   "confirmation": {
+    "form": "urm",
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   }
+  },
+  "variants": {
+   "main": "frequency-ranked forms (roots: wordfreq zipf; codebook phrases: assumed zipf 4.0; confidence/evidence phrases: closed class)",
+   "macros_expanded": "same forms, each phrase macro replaced by its expansion (ablation)",
+   "even_spread": "used open-class entries spread evenly over open-class ranks (projection.py-style)",
+   "main_leading_space": "main with one leading space before the message",
+   "RELAXATION_raw_digits": "RELAXATION (breaks letters-only rule): numbers written as raw Arabic digits without a quote marker; everything else as main"
+  },
+  "sensitivity_configs": {
+   "A_num100": {
+    "cfg": {
+     "n_num": 100,
+     "closed_conf": true,
+     "macro_zipf": 4.0,
+     "domain_boost": 0.0
+    },
+    "totals": {
+     "main": {
+      "o200k": 338,
+      "cl100k": 384,
+      "claude_legacy": 423,
+      "llama3": 379,
+      "llama4": 335,
+      "mistral_tekken": 345,
+      "mistral_sp": 445
+     },
+     "macros_expanded": {
+      "o200k": 375,
+      "cl100k": 415,
+      "claude_legacy": 460,
+      "llama3": 409,
+      "llama4": 370,
+      "mistral_tekken": 386,
+      "mistral_sp": 485
+     },
+     "even_spread": {
+      "o200k": 348,
+      "cl100k": 377,
+      "claude_legacy": 433,
+      "llama3": 365,
+      "llama4": 344,
+      "mistral_tekken": 350,
+      "mistral_sp": 462
+     },
+     "RELAXATION_raw_digits": {
+      "o200k": 354,
+      "cl100k": 399,
+      "claude_legacy": 423,
+      "llama3": 394,
+      "llama4": 351,
+      "mistral_tekken": 365,
+      "mistral_sp": 466
+     }
+    },
+    "spec_tokens": {
+     "o200k": 7239,
+     "cl100k": 7742,
+     "claude_legacy": 8630,
+     "llama3": 7588,
+     "llama4": 7279,
+     "mistral_tekken": 7705,
+     "mistral_sp": 9311
+    }
+   },
+   "B_num10": {
+    "cfg": {
+     "n_num": 10,
+     "closed_conf": true,
+     "macro_zipf": 4.0,
+     "domain_boost": 0.0
+    },
+    "totals": {
+     "main": {
+      "o200k": 340,
+      "cl100k": 379,
+      "claude_legacy": 413,
+      "llama3": 377,
+      "llama4": 336,
+      "mistral_tekken": 349,
+      "mistral_sp": 437
+     },
+     "macros_expanded": {
+      "o200k": 377,
+      "cl100k": 414,
+      "claude_legacy": 452,
+      "llama3": 411,
+      "llama4": 376,
+      "mistral_tekken": 389,
+      "mistral_sp": 477
+     },
+     "even_spread": {
+      "o200k": 342,
+      "cl100k": 378,
+      "claude_legacy": 434,
+      "llama3": 366,
+      "llama4": 342,
+      "mistral_tekken": 357,
+      "mistral_sp": 459
+     },
+     "RELAXATION_raw_digits": {
+      "o200k": 352,
+      "cl100k": 390,
+      "claude_legacy": 409,
+      "llama3": 388,
+      "llama4": 348,
+      "mistral_tekken": 365,
+      "mistral_sp": 454
+     }
+    },
+    "spec_tokens": {
+     "o200k": 7118,
+     "cl100k": 7532,
+     "claude_legacy": 8433,
+     "llama3": 7378,
+     "llama4": 7164,
+     "mistral_tekken": 7577,
+     "mistral_sp": 9108
+    }
+   },
+   "C_num10_agentfreq": {
+    "cfg": {
+     "n_num": 10,
+     "closed_conf": true,
+     "macro_zipf": 5.0,
+     "domain_boost": 1.0
+    },
+    "totals": {
+     "main": {
+      "o200k": 349,
+      "cl100k": 374,
+      "claude_legacy": 414,
+      "llama3": 362,
+      "llama4": 343,
+      "mistral_tekken": 354,
+      "mistral_sp": 416
+     },
+     "macros_expanded": {
+      "o200k": 381,
+      "cl100k": 409,
+      "claude_legacy": 454,
+      "llama3": 396,
+      "llama4": 374,
+      "mistral_tekken": 387,
+      "mistral_sp": 460
+     },
+     "even_spread": {
+      "o200k": 345,
+      "cl100k": 379,
+      "claude_legacy": 433,
+      "llama3": 367,
+      "llama4": 341,
+      "mistral_tekken": 363,
+      "mistral_sp": 461
+     },
+     "RELAXATION_raw_digits": {
+      "o200k": 361,
+      "cl100k": 385,
+      "claude_legacy": 410,
+      "llama3": 373,
+      "llama4": 355,
+      "mistral_tekken": 370,
+      "mistral_sp": 433
+     }
+    },
+    "spec_tokens": {
+     "o200k": 7166,
+     "cl100k": 7631,
+     "claude_legacy": 8471,
+     "llama3": 7484,
+     "llama4": 7202,
+     "mistral_tekken": 7618,
+     "mistral_sp": 9165
+    }
+   },
+   "D_num100_agentfreq": {
+    "cfg": {
+     "n_num": 100,
+     "closed_conf": true,
+     "macro_zipf": 5.0,
+     "domain_boost": 1.0
+    },
+    "totals": {
+     "main": {
+      "o200k": 338,
+      "cl100k": 366,
+      "claude_legacy": 408,
+      "llama3": 360,
+      "llama4": 345,
+      "mistral_tekken": 359,
+      "mistral_sp": 438
+     },
+     "macros_expanded": {
+      "o200k": 369,
+      "cl100k": 403,
+      "claude_legacy": 444,
+      "llama3": 396,
+      "llama4": 376,
+      "mistral_tekken": 391,
+      "mistral_sp": 473
+     },
+     "even_spread": {
+      "o200k": 349,
+      "cl100k": 373,
+      "claude_legacy": 429,
+      "llama3": 363,
+      "llama4": 345,
+      "mistral_tekken": 352,
+      "mistral_sp": 462
+     },
+     "RELAXATION_raw_digits": {
+      "o200k": 354,
+      "cl100k": 381,
+      "claude_legacy": 408,
+      "llama3": 375,
+      "llama4": 361,
+      "mistral_tekken": 379,
+      "mistral_sp": 459
+     }
+    },
+    "spec_tokens": {
+     "o200k": 7291,
+     "cl100k": 7805,
+     "claude_legacy": 8647,
+     "llama3": 7659,
+     "llama4": 7323,
+     "mistral_tekken": 7742,
+     "mistral_sp": 9307
+    }
+   },
+   "E_num10_claude_first": {
+    "cfg": {
+     "n_num": 10,
+     "closed_conf": true,
+     "macro_zipf": 4.0,
+     "domain_boost": 0.0,
+     "pool_order": "claude_first"
+    },
+    "totals": {
+     "main": {
+      "o200k": 357,
+      "cl100k": 367,
+      "claude_legacy": 392,
+      "llama3": 367,
+      "llama4": 358,
+      "mistral_tekken": 365,
+      "mistral_sp": 455
+     },
+     "macros_expanded": {
+      "o200k": 393,
+      "cl100k": 405,
+      "claude_legacy": 424,
+      "llama3": 405,
+      "llama4": 392,
+      "mistral_tekken": 401,
+      "mistral_sp": 494
+     },
+     "even_spread": {
+      "o200k": 394,
+      "cl100k": 398,
+      "claude_legacy": 375,
+      "llama3": 397,
+      "llama4": 390,
+      "mistral_tekken": 401,
+      "mistral_sp": 472
+     },
+     "RELAXATION_raw_digits": {
+      "o200k": 369,
+      "cl100k": 378,
+      "claude_legacy": 388,
+      "llama3": 378,
+      "llama4": 370,
+      "mistral_tekken": 381,
+      "mistral_sp": 472
+     }
+    },
+    "spec_tokens": {
+     "o200k": 7777,
+     "cl100k": 7925,
+     "claude_legacy": 7794,
+     "llama3": 7914,
+     "llama4": 7782,
+     "mistral_tekken": 8135,
+     "mistral_sp": 9350
+    }
+   }
+  },
+  "rendered_variants": {
+   "macros_expanded": {
+    "m02": "compl ceremon vaj persu phen multip sovere refriger apresent evalu vinc recogn stret spir Venezuel conj Comput trium oportun appropri",
+    "m04": "unin chied demasi sequ vagu conse emple provinc inj chac Associ exagger Vict Catal",
+    "m06": "philanth multic Dest Blo meas commut sulf Ident igaz Autom",
+    "m08": "spect influ unin Dest sequ molt requ einf requ transl recogn parch emb murm",
+    "m10": "Vaugh zeich sequ Ident hul recogn neur clandest nost murm agon Evel anth congest barg",
+    "m12": "Manufact Maria Lopez escal arri synt recogn Manufact Kenji Sato virt mathematic suscept Camb ampl vezet",
+    "m14": "mul inher veget parse_config() overwhel chron complic absor dlg administr imagin ordin zuk folg integr",
+    "m16": "inj celebr muj neut resid sted succ alve",
+    "m18": "conv Insp veget data/2024/q3_sales.csv Mult isol lumin Anim trunc lect imag trast integr",
+    "m20": "stre autoc polic experi Mult occup Thess inj symmet recogn estr Anim curios anth hypoc follic",
+    "m22": "poss sequ accompagn ngu lect inj infl Comput empir territo Alic congreg heredit rul lect neur infl Comput Comput",
+    "m24": "poss provin evalu sequ guid ammon enf Rodrig Compar ammon nuc ener enca transl fif poss contrib clandest femin spect contrib integr",
+    "m26": "Guth voud urg Ident pren celebr discipl estud inj recogn complic celebr chron jum estud",
+    "m28": "occup renov Contin ryt sequ cancell neur trang sequ verd Anim curs gost Pred fif presum mul consid Serv imag curios",
+    "m30": "veh squ fek sve urg vacc inj scient declar cust Compar provinc curr mour convers veh categ metic prv Equ embr scrut",
+    "m32": "Contin Particip consum journ stere cellul neigh divid stre scand provinc inj conj advoc poss uko mant neur consum gev compet Clar spect antib integr",
+    "m34": "inade spir conjug Kre sequ absor irradi stric practition charg emple lect oll ingred Scandin Camb ocur jeopard establ indic conqu empir",
+    "m36": "conv compl attravers polic recogn inj compl celebr aconte recogn scient absor discipl sph inj stre finan Confeder",
+    "m38": "odst ordin suc restr sequ guar hvor Craw polic activ educ ragaz spect inj applic activ occup indu applic neur compuls Gerr urg isol rup recogn inici Anim empir Pred Fant tob compet",
+    "m40": "Blo stret lect Compar sve Mult vacc Conserv szcz Serv aque recogn compan fif urm murm"
+   },
+   "even_spread": {
+    "m02": "femin legis souha constit phen multip anatom dilig plung vot subdiv recogn konz conj Arth appropri",
+    "m04": "baj philanth multis sequ sulph arom conspir hypoc inj Bulg squ Schro",
+    "m06": "serr Dest Blo reprodu nje Guang scol",
+    "m08": "spect toler baj Dest sequ Hib requ suppl requ celebr recogn adicion emb entr",
+    "m10": "wirk derog sequ Ident urma recogn neur klin nost entr deliber empres anth intu smo",
+    "m12": "Manufact Maria Lopez conce iniz coinc recogn Manufact Kenji Sato virt Sver epis dro proport intrins",
+    "m14": "mul constitu veget parse_config() antiqu chron retr exper elast aspir emphas vyp integr",
+    "m16": "inj adip neph horm demol seva succ embra",
+    "m18": "conv nomin veget data/2024/q3_sales.csv Mult monop Anim acqu lect imag inic integr",
+    "m20": "dve congreg Mult occup krit inj koht recogn metast Anim assort anth nond cerr",
+    "m22": "antip negoti aussch lect inj infl Comput oppon desl forb escol elucid szcz lect neur infl Comput Comput",
+    "m24": "poss inaccur vot sequ guid Muk Garc restr Compar Muk estis ener narciss celebr orn poss cerv klin gover spect supern",
+    "m26": "palp jis urg Ident ance adip congr lumin inj recogn retr adip chron rique lumin",
+    "m28": "occup traj Contin znaj sequ etiqu neur telesc sequ hyster Anim trabaj inici Pred orn recre mul infring assur",
+    "m30": "veh kne inad fiss urg incent inj scient manip cust Compar hypoc curr mour pobl veh hypoth doct uten Equ afirm Ezek",
+    "m32": "Contin Particip consum kuv dazz ubic repe stre adoles hypoc inj conj unic poss janu mant neur consum caric compet Clar spect disg integr",
+    "m34": "arque Seah sequ exper topl prek insurg charg conspir lect semif vig kezd indic Harr oppon",
+    "m36": "conv femin ilg provinc recogn inj femin adip molt recogn scient exper congr invo inj radi",
+    "m38": "hairst agric invers volunt provinc activ educ ogl spect inj progn activ occup indu progn neur opc reak urg isol ngay recogn respir Anim oppon Pred Fant puzz compet",
+    "m40": "afore fiss Mult respe Serv illumin recogn compan orn oyn entr"
+   },
+   "RELAXATION_raw_digits": {
+    "m02": "compl ceremon vaj persu phen multip sovere refriger apresent evalu vinc recogn alue 5 erne appropri",
+    "m04": "unin chied demasi sequ vagu conse emple provinc 2 chac Associ elog",
+    "m06": "uner Dest Blo meas commut sulf empre",
+    "m08": "spect influ unin Dest sequ molt requ einf requ transl recogn parch emb murm",
+    "m10": "Vaugh zeich sequ Ident hul recogn 3 clandest nost murm agon Evel anth congest barg",
+    "m12": "Manufact Maria Lopez escal arri synt recogn Manufact Kenji Sato virt mathematic suscept dro ampl vezet",
+    "m14": "mul inher veget parse_config() overwhel chron complic absor dlg administr imagin rist integr",
+    "m16": "2 celebr muj neut resid sted succ alve",
+    "m18": "conv Insp veget data/2024/q3_sales.csv Mult opl Anim trunc lect imag trast integr",
+    "m20": "egin experi Mult occup Thess 2 symmet recogn estr Anim curios anth hypoc follic",
+    "m22": "ater accompagn ngu lect 2.1 empir territo Alic congreg heredit rul lect 3.11",
+    "m24": "poss provin evalu sequ guid ammon enf Rodrig Compar ammon nuc ener enca transl fif poss contrib clandest femin spect furt",
+    "m26": "Guth voud urg Ident pren celebr discipl estud 2 recogn complic celebr chron jum estud",
+    "m28": "occup renov Contin ryt sequ cancell 3 trang sequ verd Anim curs gost Pred fif presum mul consid urma",
+    "m30": "veh squ fek sve urg vacc 2 scient declar cust Compar provinc curr mour convers veh categ metic prv Equ embr scrut",
+    "m32": "Contin 40 thal cellul neigh divid stre scand provinc 25 advoc poss uko mant 30 gev compet Clar spect antib integr",
+    "m34": "inade alist sequ absor irradi stric practition charg emple lect oll vig establ indic conqu empir",
+    "m36": "conv compl attravers polic recogn 2 compl celebr aconte recogn scient absor discipl sph 2 radi",
+    "m38": "rett guar hvor Craw polic activ educ ragaz spect 2 applic activ occup indu applic 3 compuls Gerr urg isol rup recogn inici Anim empir Pred Fant tob compet",
+    "m40": "enk sve Mult iniz Serv aque recogn compan fif urm murm"
+   }
+  },
+  "per_message": {
+   "main": {
+    "m02": {
+     "morphemes": 16,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 16,
+      "cl100k": 20,
+      "claude_legacy": 21,
+      "llama3": 20,
+      "llama4": 17,
+      "mistral_tekken": 17,
+      "mistral_sp": 21
+     },
+     "tokens_leading_space": {
+      "o200k": 16,
+      "cl100k": 19,
+      "claude_legacy": 21,
+      "llama3": 19,
+      "llama4": 17,
+      "mistral_tekken": 16,
+      "mistral_sp": 22
+     }
+    },
+    "m04": {
+     "morphemes": 12,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 12,
+      "cl100k": 16,
+      "claude_legacy": 19,
+      "llama3": 16,
+      "llama4": 12,
+      "mistral_tekken": 13,
+      "mistral_sp": 19
+     },
+     "tokens_leading_space": {
+      "o200k": 12,
+      "cl100k": 15,
+      "claude_legacy": 19,
+      "llama3": 15,
+      "llama4": 12,
+      "mistral_tekken": 13,
+      "mistral_sp": 20
+     }
+    },
+    "m06": {
+     "morphemes": 7,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 8,
+      "cl100k": 9,
+      "claude_legacy": 10,
+      "llama3": 9,
+      "llama4": 7,
+      "mistral_tekken": 7,
+      "mistral_sp": 10
+     },
+     "tokens_leading_space": {
+      "o200k": 8,
+      "cl100k": 10,
+      "claude_legacy": 10,
+      "llama3": 10,
+      "llama4": 7,
+      "mistral_tekken": 7,
+      "mistral_sp": 11
+     }
+    },
+    "m08": {
+     "morphemes": 14,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 14,
+      "cl100k": 14,
+      "claude_legacy": 16,
+      "llama3": 14,
+      "llama4": 14,
+      "mistral_tekken": 17,
+      "mistral_sp": 18
+     },
+     "tokens_leading_space": {
+      "o200k": 14,
+      "cl100k": 14,
+      "claude_legacy": 16,
+      "llama3": 14,
+      "llama4": 14,
+      "mistral_tekken": 16,
+      "mistral_sp": 19
+     }
+    },
+    "m10": {
+     "morphemes": 15,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 16,
+      "cl100k": 18,
+      "claude_legacy": 20,
+      "llama3": 18,
+      "llama4": 16,
+      "mistral_tekken": 16,
+      "mistral_sp": 23
+     },
+     "tokens_leading_space": {
+      "o200k": 15,
+      "cl100k": 17,
+      "claude_legacy": 19,
+      "llama3": 17,
+      "llama4": 15,
+      "mistral_tekken": 15,
+      "mistral_sp": 24
+     }
+    },
+    "m12": {
+     "morphemes": 12,
+     "raw_chunks": 2,
+     "tokens": {
+      "o200k": 19,
+      "cl100k": 20,
+      "claude_legacy": 20,
+      "llama3": 20,
+      "llama4": 18,
+      "mistral_tekken": 18,
+      "mistral_sp": 24
+     },
+     "tokens_leading_space": {
+      "o200k": 19,
+      "cl100k": 20,
+      "claude_legacy": 19,
+      "llama3": 20,
+      "llama4": 18,
+      "mistral_tekken": 17,
+      "mistral_sp": 25
+     }
+    },
+    "m14": {
+     "morphemes": 12,
+     "raw_chunks": 1,
+     "tokens": {
+      "o200k": 15,
+      "cl100k": 16,
+      "claude_legacy": 17,
+      "llama3": 16,
+      "llama4": 15,
+      "mistral_tekken": 16,
+      "mistral_sp": 18
+     },
+     "tokens_leading_space": {
+      "o200k": 15,
+      "cl100k": 16,
+      "claude_legacy": 17,
+      "llama3": 16,
+      "llama4": 15,
+      "mistral_tekken": 16,
+      "mistral_sp": 19
+     }
+    },
+    "m16": {
+     "morphemes": 8,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 8,
+      "cl100k": 11,
+      "claude_legacy": 11,
+      "llama3": 11,
+      "llama4": 8,
+      "mistral_tekken": 9,
+      "mistral_sp": 10
+     },
+     "tokens_leading_space": {
+      "o200k": 8,
+      "cl100k": 10,
+      "claude_legacy": 11,
+      "llama3": 10,
+      "llama4": 8,
+      "mistral_tekken": 9,
+      "mistral_sp": 11
+     }
+    },
+    "m18": {
+     "morphemes": 11,
+     "raw_chunks": 1,
+     "tokens": {
+      "o200k": 19,
+      "cl100k": 21,
+      "claude_legacy": 24,
+      "llama3": 21,
+      "llama4": 19,
+      "mistral_tekken": 22,
+      "mistral_sp": 27
+     },
+     "tokens_leading_space": {
+      "o200k": 19,
+      "cl100k": 21,
+      "claude_legacy": 24,
+      "llama3": 21,
+      "llama4": 19,
+      "mistral_tekken": 22,
+      "mistral_sp": 28
+     }
+    },
+    "m20": {
+     "morphemes": 14,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 15,
+      "cl100k": 17,
+      "claude_legacy": 16,
+      "llama3": 17,
+      "llama4": 14,
+      "mistral_tekken": 14,
+      "mistral_sp": 19
+     },
+     "tokens_leading_space": {
+      "o200k": 15,
+      "cl100k": 18,
+      "claude_legacy": 16,
+      "llama3": 18,
+      "llama4": 14,
+      "mistral_tekken": 14,
+      "mistral_sp": 20
+     }
+    },
+    "m22": {
+     "morphemes": 18,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 18,
+      "cl100k": 22,
+      "claude_legacy": 25,
+      "llama3": 21,
+      "llama4": 18,
+      "mistral_tekken": 21,
+      "mistral_sp": 24
+     },
+     "tokens_leading_space": {
+      "o200k": 18,
+      "cl100k": 23,
+      "claude_legacy": 26,
+      "llama3": 22,
+      "llama4": 18,
+      "mistral_tekken": 21,
+      "mistral_sp": 25
+     }
+    },
+    "m24": {
+     "morphemes": 21,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 21,
+      "cl100k": 25,
+      "claude_legacy": 26,
+      "llama3": 25,
+      "llama4": 21,
+      "mistral_tekken": 22,
+      "mistral_sp": 29
+     },
+     "tokens_leading_space": {
+      "o200k": 21,
+      "cl100k": 25,
+      "claude_legacy": 26,
+      "llama3": 25,
+      "llama4": 21,
+      "mistral_tekken": 22,
+      "mistral_sp": 30
+     }
+    },
+    "m26": {
+     "morphemes": 15,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 16,
+      "cl100k": 19,
+      "claude_legacy": 19,
+      "llama3": 19,
+      "llama4": 16,
+      "mistral_tekken": 16,
+      "mistral_sp": 19
+     },
+     "tokens_leading_space": {
+      "o200k": 15,
+      "cl100k": 18,
+      "claude_legacy": 18,
+      "llama3": 18,
+      "llama4": 15,
+      "mistral_tekken": 16,
+      "mistral_sp": 20
+     }
+    },
+    "m28": {
+     "morphemes": 19,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 19,
+      "cl100k": 22,
+      "claude_legacy": 26,
+      "llama3": 21,
+      "llama4": 19,
+      "mistral_tekken": 19,
+      "mistral_sp": 24
+     },
+     "tokens_leading_space": {
+      "o200k": 19,
+      "cl100k": 22,
+      "claude_legacy": 26,
+      "llama3": 21,
+      "llama4": 19,
+      "mistral_tekken": 19,
+      "mistral_sp": 25
+     }
+    },
+    "m30": {
+     "morphemes": 22,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 24,
+      "cl100k": 24,
+      "claude_legacy": 27,
+      "llama3": 24,
+      "llama4": 23,
+      "mistral_tekken": 23,
+      "mistral_sp": 25
+     },
+     "tokens_leading_space": {
+      "o200k": 24,
+      "cl100k": 24,
+      "claude_legacy": 27,
+      "llama3": 24,
+      "llama4": 23,
+      "mistral_tekken": 23,
+      "mistral_sp": 26
+     }
+    },
+    "m32": {
+     "morphemes": 24,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 25,
+      "cl100k": 26,
+      "claude_legacy": 28,
+      "llama3": 26,
+      "llama4": 24,
+      "mistral_tekken": 24,
+      "mistral_sp": 28
+     },
+     "tokens_leading_space": {
+      "o200k": 25,
+      "cl100k": 26,
+      "claude_legacy": 28,
+      "llama3": 26,
+      "llama4": 24,
+      "mistral_tekken": 24,
+      "mistral_sp": 29
+     }
+    },
+    "m34": {
+     "morphemes": 16,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 19,
+      "cl100k": 20,
+      "claude_legacy": 21,
+      "llama3": 20,
+      "llama4": 18,
+      "mistral_tekken": 18,
+      "mistral_sp": 25
+     },
+     "tokens_leading_space": {
+      "o200k": 19,
+      "cl100k": 19,
+      "claude_legacy": 21,
+      "llama3": 19,
+      "llama4": 18,
+      "mistral_tekken": 18,
+      "mistral_sp": 26
+     }
+    },
+    "m36": {
+     "morphemes": 16,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 16,
+      "cl100k": 16,
+      "claude_legacy": 18,
+      "llama3": 16,
+      "llama4": 16,
+      "mistral_tekken": 16,
+      "mistral_sp": 20
+     },
+     "tokens_leading_space": {
+      "o200k": 16,
+      "cl100k": 16,
+      "claude_legacy": 18,
+      "llama3": 16,
+      "llama4": 16,
+      "mistral_tekken": 16,
+      "mistral_sp": 21
+     }
+    },
+    "m38": {
+     "morphemes": 29,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 29,
+      "cl100k": 30,
+      "claude_legacy": 34,
+      "llama3": 30,
+      "llama4": 30,
+      "mistral_tekken": 30,
+      "mistral_sp": 38
+     },
+     "tokens_leading_space": {
+      "o200k": 29,
+      "cl100k": 31,
+      "claude_legacy": 35,
+      "llama3": 31,
+      "llama4": 30,
+      "mistral_tekken": 30,
+      "mistral_sp": 39
+     }
+    },
+    "m40": {
+     "morphemes": 11,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 11,
+      "cl100k": 13,
+      "claude_legacy": 15,
+      "llama3": 13,
+      "llama4": 11,
+      "mistral_tekken": 11,
+      "mistral_sp": 16
+     },
+     "tokens_leading_space": {
+      "o200k": 11,
+      "cl100k": 14,
+      "claude_legacy": 15,
+      "llama3": 14,
+      "llama4": 11,
+      "mistral_tekken": 11,
+      "mistral_sp": 17
+     }
+    }
+   },
+   "macros_expanded": {
+    "m02": {
+     "morphemes": 20,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 20,
+      "cl100k": 22,
+      "claude_legacy": 27,
+      "llama3": 22,
+      "llama4": 22,
+      "mistral_tekken": 21,
+      "mistral_sp": 26
+     },
+     "tokens_leading_space": {
+      "o200k": 20,
+      "cl100k": 21,
+      "claude_legacy": 27,
+      "llama3": 21,
+      "llama4": 22,
+      "mistral_tekken": 20,
+      "mistral_sp": 27
+     }
+    },
+    "m04": {
+     "morphemes": 14,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 14,
+      "cl100k": 17,
+      "claude_legacy": 20,
+      "llama3": 17,
+      "llama4": 14,
+      "mistral_tekken": 15,
+      "mistral_sp": 20
+     },
+     "tokens_leading_space": {
+      "o200k": 14,
+      "cl100k": 16,
+      "claude_legacy": 20,
+      "llama3": 16,
+      "llama4": 14,
+      "mistral_tekken": 15,
+      "mistral_sp": 21
+     }
+    },
+    "m06": {
+     "morphemes": 10,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 12,
+      "cl100k": 13,
+      "claude_legacy": 13,
+      "llama3": 13,
+      "llama4": 12,
+      "mistral_tekken": 12,
+      "mistral_sp": 14
+     },
+     "tokens_leading_space": {
+      "o200k": 11,
+      "cl100k": 12,
+      "claude_legacy": 13,
+      "llama3": 12,
+      "llama4": 10,
+      "mistral_tekken": 11,
+      "mistral_sp": 15
+     }
+    },
+    "m08": {
+     "morphemes": 14,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 14,
+      "cl100k": 14,
+      "claude_legacy": 16,
+      "llama3": 14,
+      "llama4": 14,
+      "mistral_tekken": 17,
+      "mistral_sp": 18
+     },
+     "tokens_leading_space": {
+      "o200k": 14,
+      "cl100k": 14,
+      "claude_legacy": 16,
+      "llama3": 14,
+      "llama4": 14,
+      "mistral_tekken": 16,
+      "mistral_sp": 19
+     }
+    },
+    "m10": {
+     "morphemes": 15,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 16,
+      "cl100k": 18,
+      "claude_legacy": 20,
+      "llama3": 18,
+      "llama4": 16,
+      "mistral_tekken": 16,
+      "mistral_sp": 23
+     },
+     "tokens_leading_space": {
+      "o200k": 15,
+      "cl100k": 17,
+      "claude_legacy": 19,
+      "llama3": 17,
+      "llama4": 15,
+      "mistral_tekken": 15,
+      "mistral_sp": 24
+     }
+    },
+    "m12": {
+     "morphemes": 12,
+     "raw_chunks": 2,
+     "tokens": {
+      "o200k": 19,
+      "cl100k": 20,
+      "claude_legacy": 20,
+      "llama3": 20,
+      "llama4": 18,
+      "mistral_tekken": 18,
+      "mistral_sp": 24
+     },
+     "tokens_leading_space": {
+      "o200k": 19,
+      "cl100k": 20,
+      "claude_legacy": 19,
+      "llama3": 20,
+      "llama4": 18,
+      "mistral_tekken": 17,
+      "mistral_sp": 25
+     }
+    },
+    "m14": {
+     "morphemes": 14,
+     "raw_chunks": 1,
+     "tokens": {
+      "o200k": 18,
+      "cl100k": 19,
+      "claude_legacy": 20,
+      "llama3": 19,
+      "llama4": 17,
+      "mistral_tekken": 18,
+      "mistral_sp": 20
+     },
+     "tokens_leading_space": {
+      "o200k": 18,
+      "cl100k": 19,
+      "claude_legacy": 20,
+      "llama3": 19,
+      "llama4": 17,
+      "mistral_tekken": 18,
+      "mistral_sp": 21
+     }
+    },
+    "m16": {
+     "morphemes": 8,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 8,
+      "cl100k": 11,
+      "claude_legacy": 11,
+      "llama3": 11,
+      "llama4": 8,
+      "mistral_tekken": 9,
+      "mistral_sp": 10
+     },
+     "tokens_leading_space": {
+      "o200k": 8,
+      "cl100k": 10,
+      "claude_legacy": 11,
+      "llama3": 10,
+      "llama4": 8,
+      "mistral_tekken": 9,
+      "mistral_sp": 11
+     }
+    },
+    "m18": {
+     "morphemes": 12,
+     "raw_chunks": 1,
+     "tokens": {
+      "o200k": 20,
+      "cl100k": 21,
+      "claude_legacy": 24,
+      "llama3": 21,
+      "llama4": 20,
+      "mistral_tekken": 23,
+      "mistral_sp": 28
+     },
+     "tokens_leading_space": {
+      "o200k": 20,
+      "cl100k": 21,
+      "claude_legacy": 24,
+      "llama3": 21,
+      "llama4": 20,
+      "mistral_tekken": 23,
+      "mistral_sp": 29
+     }
+    },
+    "m20": {
+     "morphemes": 16,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 17,
+      "cl100k": 19,
+      "claude_legacy": 17,
+      "llama3": 19,
+      "llama4": 16,
+      "mistral_tekken": 16,
+      "mistral_sp": 21
+     },
+     "tokens_leading_space": {
+      "o200k": 17,
+      "cl100k": 19,
+      "claude_legacy": 17,
+      "llama3": 19,
+      "llama4": 16,
+      "mistral_tekken": 16,
+      "mistral_sp": 22
+     }
+    },
+    "m22": {
+     "morphemes": 19,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 19,
+      "cl100k": 23,
+      "claude_legacy": 26,
+      "llama3": 22,
+      "llama4": 19,
+      "mistral_tekken": 22,
+      "mistral_sp": 24
+     },
+     "tokens_leading_space": {
+      "o200k": 19,
+      "cl100k": 23,
+      "claude_legacy": 26,
+      "llama3": 22,
+      "llama4": 19,
+      "mistral_tekken": 22,
+      "mistral_sp": 25
+     }
+    },
+    "m24": {
+     "morphemes": 22,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 22,
+      "cl100k": 25,
+      "claude_legacy": 26,
+      "llama3": 25,
+      "llama4": 22,
+      "mistral_tekken": 23,
+      "mistral_sp": 30
+     },
+     "tokens_leading_space": {
+      "o200k": 22,
+      "cl100k": 25,
+      "claude_legacy": 26,
+      "llama3": 25,
+      "llama4": 22,
+      "mistral_tekken": 23,
+      "mistral_sp": 31
+     }
+    },
+    "m26": {
+     "morphemes": 15,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 16,
+      "cl100k": 19,
+      "claude_legacy": 19,
+      "llama3": 19,
+      "llama4": 16,
+      "mistral_tekken": 16,
+      "mistral_sp": 19
+     },
+     "tokens_leading_space": {
+      "o200k": 15,
+      "cl100k": 18,
+      "claude_legacy": 18,
+      "llama3": 18,
+      "llama4": 15,
+      "mistral_tekken": 16,
+      "mistral_sp": 20
+     }
+    },
+    "m28": {
+     "morphemes": 21,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 21,
+      "cl100k": 24,
+      "claude_legacy": 27,
+      "llama3": 23,
+      "llama4": 21,
+      "mistral_tekken": 21,
+      "mistral_sp": 25
+     },
+     "tokens_leading_space": {
+      "o200k": 21,
+      "cl100k": 24,
+      "claude_legacy": 27,
+      "llama3": 23,
+      "llama4": 21,
+      "mistral_tekken": 21,
+      "mistral_sp": 26
+     }
+    },
+    "m30": {
+     "morphemes": 22,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 24,
+      "cl100k": 24,
+      "claude_legacy": 27,
+      "llama3": 24,
+      "llama4": 23,
+      "mistral_tekken": 23,
+      "mistral_sp": 25
+     },
+     "tokens_leading_space": {
+      "o200k": 24,
+      "cl100k": 24,
+      "claude_legacy": 27,
+      "llama3": 24,
+      "llama4": 23,
+      "mistral_tekken": 23,
+      "mistral_sp": 26
+     }
+    },
+    "m32": {
+     "morphemes": 25,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 25,
+      "cl100k": 27,
+      "claude_legacy": 30,
+      "llama3": 27,
+      "llama4": 25,
+      "mistral_tekken": 25,
+      "mistral_sp": 29
+     },
+     "tokens_leading_space": {
+      "o200k": 25,
+      "cl100k": 27,
+      "claude_legacy": 30,
+      "llama3": 27,
+      "llama4": 25,
+      "mistral_tekken": 25,
+      "mistral_sp": 30
+     }
+    },
+    "m34": {
+     "morphemes": 22,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 24,
+      "cl100k": 27,
+      "claude_legacy": 28,
+      "llama3": 27,
+      "llama4": 24,
+      "mistral_tekken": 24,
+      "mistral_sp": 36
+     },
+     "tokens_leading_space": {
+      "o200k": 24,
+      "cl100k": 26,
+      "claude_legacy": 28,
+      "llama3": 26,
+      "llama4": 24,
+      "mistral_tekken": 24,
+      "mistral_sp": 37
+     }
+    },
+    "m36": {
+     "morphemes": 18,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 18,
+      "cl100k": 19,
+      "claude_legacy": 21,
+      "llama3": 18,
+      "llama4": 18,
+      "mistral_tekken": 18,
+      "mistral_sp": 23
+     },
+     "tokens_leading_space": {
+      "o200k": 18,
+      "cl100k": 19,
+      "claude_legacy": 21,
+      "llama3": 18,
+      "llama4": 18,
+      "mistral_tekken": 18,
+      "mistral_sp": 24
+     }
+    },
+    "m38": {
+     "morphemes": 33,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 34,
+      "cl100k": 35,
+      "claude_legacy": 40,
+      "llama3": 35,
+      "llama4": 35,
+      "mistral_tekken": 36,
+      "mistral_sp": 42
+     },
+     "tokens_leading_space": {
+      "o200k": 33,
+      "cl100k": 35,
+      "claude_legacy": 40,
+      "llama3": 34,
+      "llama4": 34,
+      "mistral_tekken": 35,
+      "mistral_sp": 43
+     }
+    },
+    "m40": {
+     "morphemes": 16,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 16,
+      "cl100k": 17,
+      "claude_legacy": 20,
+      "llama3": 17,
+      "llama4": 16,
+      "mistral_tekken": 16,
+      "mistral_sp": 20
+     },
+     "tokens_leading_space": {
+      "o200k": 16,
+      "cl100k": 17,
+      "claude_legacy": 20,
+      "llama3": 17,
+      "llama4": 16,
+      "mistral_tekken": 16,
+      "mistral_sp": 21
+     }
+    }
+   },
+   "even_spread": {
+    "m02": {
+     "morphemes": 16,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 17,
+      "cl100k": 19,
+      "claude_legacy": 22,
+      "llama3": 17,
+      "llama4": 16,
+      "mistral_tekken": 20,
+      "mistral_sp": 24
+     },
+     "tokens_leading_space": {
+      "o200k": 16,
+      "cl100k": 18,
+      "claude_legacy": 21,
+      "llama3": 16,
+      "llama4": 16,
+      "mistral_tekken": 19,
+      "mistral_sp": 25
+     }
+    },
+    "m04": {
+     "morphemes": 12,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 13,
+      "cl100k": 13,
+      "claude_legacy": 19,
+      "llama3": 13,
+      "llama4": 14,
+      "mistral_tekken": 15,
+      "mistral_sp": 19
+     },
+     "tokens_leading_space": {
+      "o200k": 12,
+      "cl100k": 12,
+      "claude_legacy": 19,
+      "llama3": 12,
+      "llama4": 13,
+      "mistral_tekken": 14,
+      "mistral_sp": 20
+     }
+    },
+    "m06": {
+     "morphemes": 7,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 8,
+      "cl100k": 10,
+      "claude_legacy": 9,
+      "llama3": 10,
+      "llama4": 8,
+      "mistral_tekken": 8,
+      "mistral_sp": 11
+     },
+     "tokens_leading_space": {
+      "o200k": 7,
+      "cl100k": 9,
+      "claude_legacy": 9,
+      "llama3": 9,
+      "llama4": 7,
+      "mistral_tekken": 8,
+      "mistral_sp": 12
+     }
+    },
+    "m08": {
+     "morphemes": 14,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 14,
+      "cl100k": 14,
+      "claude_legacy": 19,
+      "llama3": 14,
+      "llama4": 14,
+      "mistral_tekken": 15,
+      "mistral_sp": 18
+     },
+     "tokens_leading_space": {
+      "o200k": 14,
+      "cl100k": 14,
+      "claude_legacy": 19,
+      "llama3": 14,
+      "llama4": 14,
+      "mistral_tekken": 14,
+      "mistral_sp": 19
+     }
+    },
+    "m10": {
+     "morphemes": 15,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 15,
+      "cl100k": 19,
+      "claude_legacy": 22,
+      "llama3": 18,
+      "llama4": 15,
+      "mistral_tekken": 16,
+      "mistral_sp": 21
+     },
+     "tokens_leading_space": {
+      "o200k": 15,
+      "cl100k": 18,
+      "claude_legacy": 22,
+      "llama3": 17,
+      "llama4": 15,
+      "mistral_tekken": 16,
+      "mistral_sp": 22
+     }
+    },
+    "m12": {
+     "morphemes": 12,
+     "raw_chunks": 2,
+     "tokens": {
+      "o200k": 18,
+      "cl100k": 21,
+      "claude_legacy": 22,
+      "llama3": 21,
+      "llama4": 17,
+      "mistral_tekken": 18,
+      "mistral_sp": 22
+     },
+     "tokens_leading_space": {
+      "o200k": 18,
+      "cl100k": 21,
+      "claude_legacy": 21,
+      "llama3": 21,
+      "llama4": 17,
+      "mistral_tekken": 17,
+      "mistral_sp": 23
+     }
+    },
+    "m14": {
+     "morphemes": 12,
+     "raw_chunks": 1,
+     "tokens": {
+      "o200k": 15,
+      "cl100k": 16,
+      "claude_legacy": 19,
+      "llama3": 15,
+      "llama4": 15,
+      "mistral_tekken": 15,
+      "mistral_sp": 19
+     },
+     "tokens_leading_space": {
+      "o200k": 15,
+      "cl100k": 16,
+      "claude_legacy": 19,
+      "llama3": 15,
+      "llama4": 15,
+      "mistral_tekken": 15,
+      "mistral_sp": 20
+     }
+    },
+    "m16": {
+     "morphemes": 8,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 9,
+      "cl100k": 11,
+      "claude_legacy": 10,
+      "llama3": 11,
+      "llama4": 8,
+      "mistral_tekken": 8,
+      "mistral_sp": 11
+     },
+     "tokens_leading_space": {
+      "o200k": 9,
+      "cl100k": 10,
+      "claude_legacy": 10,
+      "llama3": 10,
+      "llama4": 8,
+      "mistral_tekken": 8,
+      "mistral_sp": 12
+     }
+    },
+    "m18": {
+     "morphemes": 11,
+     "raw_chunks": 1,
+     "tokens": {
+      "o200k": 19,
+      "cl100k": 21,
+      "claude_legacy": 22,
+      "llama3": 21,
+      "llama4": 19,
+      "mistral_tekken": 23,
+      "mistral_sp": 27
+     },
+     "tokens_leading_space": {
+      "o200k": 19,
+      "cl100k": 21,
+      "claude_legacy": 22,
+      "llama3": 21,
+      "llama4": 19,
+      "mistral_tekken": 23,
+      "mistral_sp": 28
+     }
+    },
+    "m20": {
+     "morphemes": 14,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 15,
+      "cl100k": 17,
+      "claude_legacy": 21,
+      "llama3": 16,
+      "llama4": 15,
+      "mistral_tekken": 15,
+      "mistral_sp": 21
+     },
+     "tokens_leading_space": {
+      "o200k": 14,
+      "cl100k": 17,
+      "claude_legacy": 21,
+      "llama3": 15,
+      "llama4": 14,
+      "mistral_tekken": 14,
+      "mistral_sp": 22
+     }
+    },
+    "m22": {
+     "morphemes": 18,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 19,
+      "cl100k": 22,
+      "claude_legacy": 26,
+      "llama3": 22,
+      "llama4": 20,
+      "mistral_tekken": 19,
+      "mistral_sp": 26
+     },
+     "tokens_leading_space": {
+      "o200k": 18,
+      "cl100k": 22,
+      "claude_legacy": 25,
+      "llama3": 22,
+      "llama4": 19,
+      "mistral_tekken": 18,
+      "mistral_sp": 27
+     }
+    },
+    "m24": {
+     "morphemes": 21,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 23,
+      "cl100k": 23,
+      "claude_legacy": 26,
+      "llama3": 22,
+      "llama4": 22,
+      "mistral_tekken": 24,
+      "mistral_sp": 31
+     },
+     "tokens_leading_space": {
+      "o200k": 23,
+      "cl100k": 23,
+      "claude_legacy": 26,
+      "llama3": 22,
+      "llama4": 22,
+      "mistral_tekken": 24,
+      "mistral_sp": 32
+     }
+    },
+    "m26": {
+     "morphemes": 15,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 17,
+      "cl100k": 18,
+      "claude_legacy": 19,
+      "llama3": 18,
+      "llama4": 17,
+      "mistral_tekken": 17,
+      "mistral_sp": 23
+     },
+     "tokens_leading_space": {
+      "o200k": 16,
+      "cl100k": 17,
+      "claude_legacy": 19,
+      "llama3": 17,
+      "llama4": 16,
+      "mistral_tekken": 16,
+      "mistral_sp": 24
+     }
+    },
+    "m28": {
+     "morphemes": 19,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 19,
+      "cl100k": 20,
+      "claude_legacy": 24,
+      "llama3": 20,
+      "llama4": 19,
+      "mistral_tekken": 19,
+      "mistral_sp": 29
+     },
+     "tokens_leading_space": {
+      "o200k": 19,
+      "cl100k": 20,
+      "claude_legacy": 24,
+      "llama3": 20,
+      "llama4": 19,
+      "mistral_tekken": 19,
+      "mistral_sp": 30
+     }
+    },
+    "m30": {
+     "morphemes": 22,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 22,
+      "cl100k": 24,
+      "claude_legacy": 27,
+      "llama3": 24,
+      "llama4": 22,
+      "mistral_tekken": 22,
+      "mistral_sp": 30
+     },
+     "tokens_leading_space": {
+      "o200k": 22,
+      "cl100k": 24,
+      "claude_legacy": 27,
+      "llama3": 24,
+      "llama4": 22,
+      "mistral_tekken": 22,
+      "mistral_sp": 31
+     }
+    },
+    "m32": {
+     "morphemes": 24,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 25,
+      "cl100k": 26,
+      "claude_legacy": 28,
+      "llama3": 25,
+      "llama4": 24,
+      "mistral_tekken": 25,
+      "mistral_sp": 29
+     },
+     "tokens_leading_space": {
+      "o200k": 25,
+      "cl100k": 26,
+      "claude_legacy": 28,
+      "llama3": 25,
+      "llama4": 24,
+      "mistral_tekken": 25,
+      "mistral_sp": 30
+     }
+    },
+    "m34": {
+     "morphemes": 16,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 16,
+      "cl100k": 20,
+      "claude_legacy": 26,
+      "llama3": 19,
+      "llama4": 18,
+      "mistral_tekken": 18,
+      "mistral_sp": 23
+     },
+     "tokens_leading_space": {
+      "o200k": 16,
+      "cl100k": 20,
+      "claude_legacy": 26,
+      "llama3": 19,
+      "llama4": 18,
+      "mistral_tekken": 18,
+      "mistral_sp": 24
+     }
+    },
+    "m36": {
+     "morphemes": 16,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 16,
+      "cl100k": 17,
+      "claude_legacy": 20,
+      "llama3": 16,
+      "llama4": 16,
+      "mistral_tekken": 16,
+      "mistral_sp": 20
+     },
+     "tokens_leading_space": {
+      "o200k": 16,
+      "cl100k": 17,
+      "claude_legacy": 20,
+      "llama3": 16,
+      "llama4": 16,
+      "mistral_tekken": 16,
+      "mistral_sp": 21
+     }
+    },
+    "m38": {
+     "morphemes": 29,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 30,
+      "cl100k": 33,
+      "claude_legacy": 38,
+      "llama3": 31,
+      "llama4": 31,
+      "mistral_tekken": 32,
+      "mistral_sp": 38
+     },
+     "tokens_leading_space": {
+      "o200k": 29,
+      "cl100k": 32,
+      "claude_legacy": 38,
+      "llama3": 30,
+      "llama4": 30,
+      "mistral_tekken": 32,
+      "mistral_sp": 39
+     }
+    },
+    "m40": {
+     "morphemes": 11,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 12,
+      "cl100k": 14,
+      "claude_legacy": 15,
+      "llama3": 13,
+      "llama4": 12,
+      "mistral_tekken": 12,
+      "mistral_sp": 17
+     },
+     "tokens_leading_space": {
+      "o200k": 11,
+      "cl100k": 13,
+      "claude_legacy": 14,
+      "llama3": 12,
+      "llama4": 12,
+      "mistral_tekken": 12,
+      "mistral_sp": 18
+     }
+    }
+   },
+   "RELAXATION_raw_digits": {
+    "m02": {
+     "morphemes": 15,
+     "raw_chunks": 1,
+     "tokens": {
+      "o200k": 17,
+      "cl100k": 21,
+      "claude_legacy": 21,
+      "llama3": 21,
+      "llama4": 18,
+      "mistral_tekken": 18,
+      "mistral_sp": 22
+     },
+     "tokens_leading_space": {
+      "o200k": 17,
+      "cl100k": 20,
+      "claude_legacy": 21,
+      "llama3": 20,
+      "llama4": 18,
+      "mistral_tekken": 17,
+      "mistral_sp": 23
+     }
+    },
+    "m04": {
+     "morphemes": 11,
+     "raw_chunks": 1,
+     "tokens": {
+      "o200k": 13,
+      "cl100k": 17,
+      "claude_legacy": 19,
+      "llama3": 17,
+      "llama4": 13,
+      "mistral_tekken": 14,
+      "mistral_sp": 20
+     },
+     "tokens_leading_space": {
+      "o200k": 13,
+      "cl100k": 16,
+      "claude_legacy": 19,
+      "llama3": 16,
+      "llama4": 13,
+      "mistral_tekken": 14,
+      "mistral_sp": 21
+     }
+    },
+    "m06": {
+     "morphemes": 7,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 8,
+      "cl100k": 9,
+      "claude_legacy": 10,
+      "llama3": 9,
+      "llama4": 7,
+      "mistral_tekken": 7,
+      "mistral_sp": 10
+     },
+     "tokens_leading_space": {
+      "o200k": 8,
+      "cl100k": 10,
+      "claude_legacy": 10,
+      "llama3": 10,
+      "llama4": 7,
+      "mistral_tekken": 7,
+      "mistral_sp": 11
+     }
+    },
+    "m08": {
+     "morphemes": 14,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 14,
+      "cl100k": 14,
+      "claude_legacy": 16,
+      "llama3": 14,
+      "llama4": 14,
+      "mistral_tekken": 17,
+      "mistral_sp": 18
+     },
+     "tokens_leading_space": {
+      "o200k": 14,
+      "cl100k": 14,
+      "claude_legacy": 16,
+      "llama3": 14,
+      "llama4": 14,
+      "mistral_tekken": 16,
+      "mistral_sp": 19
+     }
+    },
+    "m10": {
+     "morphemes": 14,
+     "raw_chunks": 1,
+     "tokens": {
+      "o200k": 17,
+      "cl100k": 19,
+      "claude_legacy": 20,
+      "llama3": 19,
+      "llama4": 17,
+      "mistral_tekken": 17,
+      "mistral_sp": 24
+     },
+     "tokens_leading_space": {
+      "o200k": 16,
+      "cl100k": 18,
+      "claude_legacy": 19,
+      "llama3": 18,
+      "llama4": 16,
+      "mistral_tekken": 16,
+      "mistral_sp": 25
+     }
+    },
+    "m12": {
+     "morphemes": 12,
+     "raw_chunks": 2,
+     "tokens": {
+      "o200k": 19,
+      "cl100k": 20,
+      "claude_legacy": 20,
+      "llama3": 20,
+      "llama4": 18,
+      "mistral_tekken": 18,
+      "mistral_sp": 24
+     },
+     "tokens_leading_space": {
+      "o200k": 19,
+      "cl100k": 20,
+      "claude_legacy": 19,
+      "llama3": 20,
+      "llama4": 18,
+      "mistral_tekken": 17,
+      "mistral_sp": 25
+     }
+    },
+    "m14": {
+     "morphemes": 12,
+     "raw_chunks": 1,
+     "tokens": {
+      "o200k": 15,
+      "cl100k": 16,
+      "claude_legacy": 17,
+      "llama3": 16,
+      "llama4": 15,
+      "mistral_tekken": 16,
+      "mistral_sp": 18
+     },
+     "tokens_leading_space": {
+      "o200k": 15,
+      "cl100k": 16,
+      "claude_legacy": 17,
+      "llama3": 16,
+      "llama4": 15,
+      "mistral_tekken": 16,
+      "mistral_sp": 19
+     }
+    },
+    "m16": {
+     "morphemes": 7,
+     "raw_chunks": 1,
+     "tokens": {
+      "o200k": 8,
+      "cl100k": 10,
+      "claude_legacy": 11,
+      "llama3": 10,
+      "llama4": 8,
+      "mistral_tekken": 9,
+      "mistral_sp": 11
+     },
+     "tokens_leading_space": {
+      "o200k": 9,
+      "cl100k": 11,
+      "claude_legacy": 11,
+      "llama3": 11,
+      "llama4": 9,
+      "mistral_tekken": 10,
+      "mistral_sp": 11
+     }
+    },
+    "m18": {
+     "morphemes": 11,
+     "raw_chunks": 1,
+     "tokens": {
+      "o200k": 19,
+      "cl100k": 21,
+      "claude_legacy": 24,
+      "llama3": 21,
+      "llama4": 19,
+      "mistral_tekken": 22,
+      "mistral_sp": 27
+     },
+     "tokens_leading_space": {
+      "o200k": 19,
+      "cl100k": 21,
+      "claude_legacy": 24,
+      "llama3": 21,
+      "llama4": 19,
+      "mistral_tekken": 22,
+      "mistral_sp": 28
+     }
+    },
+    "m20": {
+     "morphemes": 13,
+     "raw_chunks": 1,
+     "tokens": {
+      "o200k": 16,
+      "cl100k": 18,
+      "claude_legacy": 16,
+      "llama3": 18,
+      "llama4": 15,
+      "mistral_tekken": 15,
+      "mistral_sp": 20
+     },
+     "tokens_leading_space": {
+      "o200k": 16,
+      "cl100k": 19,
+      "claude_legacy": 16,
+      "llama3": 19,
+      "llama4": 15,
+      "mistral_tekken": 15,
+      "mistral_sp": 21
+     }
+    },
+    "m22": {
+     "morphemes": 11,
+     "raw_chunks": 2,
+     "tokens": {
+      "o200k": 19,
+      "cl100k": 23,
+      "claude_legacy": 24,
+      "llama3": 22,
+      "llama4": 19,
+      "mistral_tekken": 23,
+      "mistral_sp": 26
+     },
+     "tokens_leading_space": {
+      "o200k": 19,
+      "cl100k": 24,
+      "claude_legacy": 25,
+      "llama3": 23,
+      "llama4": 19,
+      "mistral_tekken": 23,
+      "mistral_sp": 27
+     }
+    },
+    "m24": {
+     "morphemes": 21,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 21,
+      "cl100k": 25,
+      "claude_legacy": 26,
+      "llama3": 25,
+      "llama4": 21,
+      "mistral_tekken": 22,
+      "mistral_sp": 29
+     },
+     "tokens_leading_space": {
+      "o200k": 21,
+      "cl100k": 25,
+      "claude_legacy": 26,
+      "llama3": 25,
+      "llama4": 21,
+      "mistral_tekken": 22,
+      "mistral_sp": 30
+     }
+    },
+    "m26": {
+     "morphemes": 14,
+     "raw_chunks": 1,
+     "tokens": {
+      "o200k": 17,
+      "cl100k": 20,
+      "claude_legacy": 19,
+      "llama3": 20,
+      "llama4": 17,
+      "mistral_tekken": 17,
+      "mistral_sp": 20
+     },
+     "tokens_leading_space": {
+      "o200k": 16,
+      "cl100k": 19,
+      "claude_legacy": 18,
+      "llama3": 19,
+      "llama4": 16,
+      "mistral_tekken": 17,
+      "mistral_sp": 21
+     }
+    },
+    "m28": {
+     "morphemes": 18,
+     "raw_chunks": 1,
+     "tokens": {
+      "o200k": 20,
+      "cl100k": 23,
+      "claude_legacy": 26,
+      "llama3": 22,
+      "llama4": 20,
+      "mistral_tekken": 20,
+      "mistral_sp": 25
+     },
+     "tokens_leading_space": {
+      "o200k": 20,
+      "cl100k": 23,
+      "claude_legacy": 26,
+      "llama3": 22,
+      "llama4": 20,
+      "mistral_tekken": 20,
+      "mistral_sp": 26
+     }
+    },
+    "m30": {
+     "morphemes": 21,
+     "raw_chunks": 1,
+     "tokens": {
+      "o200k": 25,
+      "cl100k": 25,
+      "claude_legacy": 27,
+      "llama3": 25,
+      "llama4": 24,
+      "mistral_tekken": 24,
+      "mistral_sp": 26
+     },
+     "tokens_leading_space": {
+      "o200k": 25,
+      "cl100k": 25,
+      "claude_legacy": 27,
+      "llama3": 25,
+      "llama4": 24,
+      "mistral_tekken": 24,
+      "mistral_sp": 27
+     }
+    },
+    "m32": {
+     "morphemes": 18,
+     "raw_chunks": 3,
+     "tokens": {
+      "o200k": 25,
+      "cl100k": 26,
+      "claude_legacy": 25,
+      "llama3": 26,
+      "llama4": 24,
+      "mistral_tekken": 27,
+      "mistral_sp": 31
+     },
+     "tokens_leading_space": {
+      "o200k": 25,
+      "cl100k": 26,
+      "claude_legacy": 25,
+      "llama3": 26,
+      "llama4": 24,
+      "mistral_tekken": 27,
+      "mistral_sp": 32
+     }
+    },
+    "m34": {
+     "morphemes": 16,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 19,
+      "cl100k": 20,
+      "claude_legacy": 21,
+      "llama3": 20,
+      "llama4": 18,
+      "mistral_tekken": 18,
+      "mistral_sp": 25
+     },
+     "tokens_leading_space": {
+      "o200k": 19,
+      "cl100k": 19,
+      "claude_legacy": 21,
+      "llama3": 19,
+      "llama4": 18,
+      "mistral_tekken": 18,
+      "mistral_sp": 26
+     }
+    },
+    "m36": {
+     "morphemes": 14,
+     "raw_chunks": 2,
+     "tokens": {
+      "o200k": 18,
+      "cl100k": 18,
+      "claude_legacy": 18,
+      "llama3": 18,
+      "llama4": 18,
+      "mistral_tekken": 18,
+      "mistral_sp": 22
+     },
+     "tokens_leading_space": {
+      "o200k": 18,
+      "cl100k": 18,
+      "claude_legacy": 18,
+      "llama3": 18,
+      "llama4": 18,
+      "mistral_tekken": 18,
+      "mistral_sp": 23
+     }
+    },
+    "m38": {
+     "morphemes": 27,
+     "raw_chunks": 2,
+     "tokens": {
+      "o200k": 31,
+      "cl100k": 32,
+      "claude_legacy": 34,
+      "llama3": 32,
+      "llama4": 32,
+      "mistral_tekken": 32,
+      "mistral_sp": 40
+     },
+     "tokens_leading_space": {
+      "o200k": 31,
+      "cl100k": 33,
+      "claude_legacy": 35,
+      "llama3": 33,
+      "llama4": 32,
+      "mistral_tekken": 32,
+      "mistral_sp": 41
+     }
+    },
+    "m40": {
+     "morphemes": 11,
+     "raw_chunks": 0,
+     "tokens": {
+      "o200k": 11,
+      "cl100k": 13,
+      "claude_legacy": 15,
+      "llama3": 13,
+      "llama4": 11,
+      "mistral_tekken": 11,
+      "mistral_sp": 16
+     },
+     "tokens_leading_space": {
+      "o200k": 11,
+      "cl100k": 14,
+      "claude_legacy": 15,
+      "llama3": 14,
+      "llama4": 11,
+      "mistral_tekken": 11,
+      "mistral_sp": 17
+     }
+    }
+   }
+  },
+  "baseline_per_message": {
+   "m02": {
+    "o200k": {
+     "en": 27,
+     "en_terse": 24
+    },
+    "cl100k": {
+     "en": 27,
+     "en_terse": 24
+    },
+    "claude_legacy": {
+     "en": 28,
+     "en_terse": 23
+    },
+    "llama3": {
+     "en": 27,
+     "en_terse": 24
+    },
+    "llama4": {
+     "en": 27,
+     "en_terse": 24
+    },
+    "mistral_tekken": {
+     "en": 29,
+     "en_terse": 26
+    },
+    "mistral_sp": {
+     "en": 32,
+     "en_terse": 29
+    }
+   },
+   "m04": {
+    "o200k": {
+     "en": 18,
+     "en_terse": 17
+    },
+    "cl100k": {
+     "en": 18,
+     "en_terse": 17
+    },
+    "claude_legacy": {
+     "en": 18,
+     "en_terse": 16
+    },
+    "llama3": {
+     "en": 18,
+     "en_terse": 17
+    },
+    "llama4": {
+     "en": 18,
+     "en_terse": 17
+    },
+    "mistral_tekken": {
+     "en": 18,
+     "en_terse": 17
+    },
+    "mistral_sp": {
+     "en": 21,
+     "en_terse": 18
+    }
+   },
+   "m06": {
+    "o200k": {
+     "en": 20,
+     "en_terse": 12
+    },
+    "cl100k": {
+     "en": 21,
+     "en_terse": 13
+    },
+    "claude_legacy": {
+     "en": 22,
+     "en_terse": 14
+    },
+    "llama3": {
+     "en": 21,
+     "en_terse": 13
+    },
+    "llama4": {
+     "en": 22,
+     "en_terse": 14
+    },
+    "mistral_tekken": {
+     "en": 21,
+     "en_terse": 14
+    },
+    "mistral_sp": {
+     "en": 22,
+     "en_terse": 14
+    }
+   },
+   "m08": {
+    "o200k": {
+     "en": 26,
+     "en_terse": 15
+    },
+    "cl100k": {
+     "en": 26,
+     "en_terse": 15
+    },
+    "claude_legacy": {
+     "en": 26,
+     "en_terse": 15
+    },
+    "llama3": {
+     "en": 26,
+     "en_terse": 15
+    },
+    "llama4": {
+     "en": 26,
+     "en_terse": 15
+    },
+    "mistral_tekken": {
+     "en": 26,
+     "en_terse": 15
+    },
+    "mistral_sp": {
+     "en": 26,
+     "en_terse": 16
+    }
+   },
+   "m10": {
+    "o200k": {
+     "en": 20,
+     "en_terse": 17
+    },
+    "cl100k": {
+     "en": 20,
+     "en_terse": 17
+    },
+    "claude_legacy": {
+     "en": 20,
+     "en_terse": 16
+    },
+    "llama3": {
+     "en": 20,
+     "en_terse": 17
+    },
+    "llama4": {
+     "en": 20,
+     "en_terse": 17
+    },
+    "mistral_tekken": {
+     "en": 20,
+     "en_terse": 17
+    },
+    "mistral_sp": {
+     "en": 20,
+     "en_terse": 19
+    }
+   },
+   "m12": {
+    "o200k": {
+     "en": 24,
+     "en_terse": 19
+    },
+    "cl100k": {
+     "en": 24,
+     "en_terse": 19
+    },
+    "claude_legacy": {
+     "en": 25,
+     "en_terse": 20
+    },
+    "llama3": {
+     "en": 24,
+     "en_terse": 19
+    },
+    "llama4": {
+     "en": 23,
+     "en_terse": 18
+    },
+    "mistral_tekken": {
+     "en": 23,
+     "en_terse": 18
+    },
+    "mistral_sp": {
+     "en": 28,
+     "en_terse": 23
+    }
+   },
+   "m14": {
+    "o200k": {
+     "en": 22,
+     "en_terse": 17
+    },
+    "cl100k": {
+     "en": 22,
+     "en_terse": 17
+    },
+    "claude_legacy": {
+     "en": 23,
+     "en_terse": 18
+    },
+    "llama3": {
+     "en": 22,
+     "en_terse": 17
+    },
+    "llama4": {
+     "en": 22,
+     "en_terse": 17
+    },
+    "mistral_tekken": {
+     "en": 22,
+     "en_terse": 17
+    },
+    "mistral_sp": {
+     "en": 23,
+     "en_terse": 19
+    }
+   },
+   "m16": {
+    "o200k": {
+     "en": 16,
+     "en_terse": 11
+    },
+    "cl100k": {
+     "en": 16,
+     "en_terse": 11
+    },
+    "claude_legacy": {
+     "en": 17,
+     "en_terse": 12
+    },
+    "llama3": {
+     "en": 16,
+     "en_terse": 11
+    },
+    "llama4": {
+     "en": 16,
+     "en_terse": 11
+    },
+    "mistral_tekken": {
+     "en": 17,
+     "en_terse": 12
+    },
+    "mistral_sp": {
+     "en": 18,
+     "en_terse": 14
+    }
+   },
+   "m18": {
+    "o200k": {
+     "en": 26,
+     "en_terse": 20
+    },
+    "cl100k": {
+     "en": 26,
+     "en_terse": 20
+    },
+    "claude_legacy": {
+     "en": 29,
+     "en_terse": 23
+    },
+    "llama3": {
+     "en": 26,
+     "en_terse": 20
+    },
+    "llama4": {
+     "en": 26,
+     "en_terse": 20
+    },
+    "mistral_tekken": {
+     "en": 29,
+     "en_terse": 24
+    },
+    "mistral_sp": {
+     "en": 32,
+     "en_terse": 28
+    }
+   },
+   "m20": {
+    "o200k": {
+     "en": 22,
+     "en_terse": 18
+    },
+    "cl100k": {
+     "en": 22,
+     "en_terse": 18
+    },
+    "claude_legacy": {
+     "en": 22,
+     "en_terse": 17
+    },
+    "llama3": {
+     "en": 22,
+     "en_terse": 18
+    },
+    "llama4": {
+     "en": 22,
+     "en_terse": 18
+    },
+    "mistral_tekken": {
+     "en": 22,
+     "en_terse": 18
+    },
+    "mistral_sp": {
+     "en": 22,
+     "en_terse": 20
+    }
+   },
+   "m22": {
+    "o200k": {
+     "en": 31,
+     "en_terse": 23
+    },
+    "cl100k": {
+     "en": 32,
+     "en_terse": 23
+    },
+    "claude_legacy": {
+     "en": 29,
+     "en_terse": 20
+    },
+    "llama3": {
+     "en": 32,
+     "en_terse": 23
+    },
+    "llama4": {
+     "en": 31,
+     "en_terse": 23
+    },
+    "mistral_tekken": {
+     "en": 34,
+     "en_terse": 25
+    },
+    "mistral_sp": {
+     "en": 35,
+     "en_terse": 25
+    }
+   },
+   "m24": {
+    "o200k": {
+     "en": 41,
+     "en_terse": 26
+    },
+    "cl100k": {
+     "en": 41,
+     "en_terse": 26
+    },
+    "claude_legacy": {
+     "en": 41,
+     "en_terse": 26
+    },
+    "llama3": {
+     "en": 41,
+     "en_terse": 26
+    },
+    "llama4": {
+     "en": 40,
+     "en_terse": 26
+    },
+    "mistral_tekken": {
+     "en": 41,
+     "en_terse": 27
+    },
+    "mistral_sp": {
+     "en": 41,
+     "en_terse": 27
+    }
+   },
+   "m26": {
+    "o200k": {
+     "en": 28,
+     "en_terse": 18
+    },
+    "cl100k": {
+     "en": 28,
+     "en_terse": 18
+    },
+    "claude_legacy": {
+     "en": 29,
+     "en_terse": 18
+    },
+    "llama3": {
+     "en": 28,
+     "en_terse": 18
+    },
+    "llama4": {
+     "en": 28,
+     "en_terse": 18
+    },
+    "mistral_tekken": {
+     "en": 30,
+     "en_terse": 21
+    },
+    "mistral_sp": {
+     "en": 31,
+     "en_terse": 22
+    }
+   },
+   "m28": {
+    "o200k": {
+     "en": 31,
+     "en_terse": 22
+    },
+    "cl100k": {
+     "en": 31,
+     "en_terse": 22
+    },
+    "claude_legacy": {
+     "en": 31,
+     "en_terse": 21
+    },
+    "llama3": {
+     "en": 31,
+     "en_terse": 22
+    },
+    "llama4": {
+     "en": 31,
+     "en_terse": 22
+    },
+    "mistral_tekken": {
+     "en": 31,
+     "en_terse": 22
+    },
+    "mistral_sp": {
+     "en": 31,
+     "en_terse": 23
+    }
+   },
+   "m30": {
+    "o200k": {
+     "en": 34,
+     "en_terse": 23
+    },
+    "cl100k": {
+     "en": 34,
+     "en_terse": 23
+    },
+    "claude_legacy": {
+     "en": 34,
+     "en_terse": 22
+    },
+    "llama3": {
+     "en": 34,
+     "en_terse": 23
+    },
+    "llama4": {
+     "en": 34,
+     "en_terse": 23
+    },
+    "mistral_tekken": {
+     "en": 34,
+     "en_terse": 23
+    },
+    "mistral_sp": {
+     "en": 35,
+     "en_terse": 24
+    }
+   },
+   "m32": {
+    "o200k": {
+     "en": 33,
+     "en_terse": 27
+    },
+    "cl100k": {
+     "en": 33,
+     "en_terse": 27
+    },
+    "claude_legacy": {
+     "en": 31,
+     "en_terse": 26
+    },
+    "llama3": {
+     "en": 33,
+     "en_terse": 27
+    },
+    "llama4": {
+     "en": 33,
+     "en_terse": 27
+    },
+    "mistral_tekken": {
+     "en": 37,
+     "en_terse": 31
+    },
+    "mistral_sp": {
+     "en": 37,
+     "en_terse": 31
+    }
+   },
+   "m34": {
+    "o200k": {
+     "en": 39,
+     "en_terse": 27
+    },
+    "cl100k": {
+     "en": 39,
+     "en_terse": 27
+    },
+    "claude_legacy": {
+     "en": 40,
+     "en_terse": 28
+    },
+    "llama3": {
+     "en": 39,
+     "en_terse": 27
+    },
+    "llama4": {
+     "en": 40,
+     "en_terse": 28
+    },
+    "mistral_tekken": {
+     "en": 41,
+     "en_terse": 29
+    },
+    "mistral_sp": {
+     "en": 41,
+     "en_terse": 29
+    }
+   },
+   "m36": {
+    "o200k": {
+     "en": 31,
+     "en_terse": 18
+    },
+    "cl100k": {
+     "en": 31,
+     "en_terse": 18
+    },
+    "claude_legacy": {
+     "en": 31,
+     "en_terse": 17
+    },
+    "llama3": {
+     "en": 31,
+     "en_terse": 18
+    },
+    "llama4": {
+     "en": 31,
+     "en_terse": 18
+    },
+    "mistral_tekken": {
+     "en": 31,
+     "en_terse": 19
+    },
+    "mistral_sp": {
+     "en": 32,
+     "en_terse": 20
+    }
+   },
+   "m38": {
+    "o200k": {
+     "en": 48,
+     "en_terse": 35
+    },
+    "cl100k": {
+     "en": 48,
+     "en_terse": 35
+    },
+    "claude_legacy": {
+     "en": 48,
+     "en_terse": 33
+    },
+    "llama3": {
+     "en": 48,
+     "en_terse": 35
+    },
+    "llama4": {
+     "en": 48,
+     "en_terse": 35
+    },
+    "mistral_tekken": {
+     "en": 48,
+     "en_terse": 35
+    },
+    "mistral_sp": {
+     "en": 49,
+     "en_terse": 38
+    }
+   },
+   "m40": {
+    "o200k": {
+     "en": 25,
+     "en_terse": 17
+    },
+    "cl100k": {
+     "en": 25,
+     "en_terse": 17
+    },
+    "claude_legacy": {
+     "en": 25,
+     "en_terse": 17
+    },
+    "llama3": {
+     "en": 25,
+     "en_terse": 17
+    },
+    "llama4": {
+     "en": 25,
+     "en_terse": 17
+    },
+    "mistral_tekken": {
+     "en": 25,
+     "en_terse": 18
+    },
+    "mistral_sp": {
+     "en": 25,
+     "en_terse": 18
+    }
+   }
+  }
+ }
+}

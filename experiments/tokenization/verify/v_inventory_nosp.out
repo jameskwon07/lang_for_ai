@@ -1,0 +1,3 @@
+6 without mistral_sp: lead-space single 14860, max zipf<3 1344 (consonant-initial 941), English-prefix share 65%
+claude_legacy alone: lead-space single 18710, max zipf<3 3426 (consonant-initial 2552), English-prefix share 39%
+o200k alone: lead-space single 47450, max zipf<3 11968 (consonant-initial 8913), English-prefix share 24%

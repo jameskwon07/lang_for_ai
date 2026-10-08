@@ -1,0 +1,24 @@
+A token_picked (59 roots/34 affixes)
+  o200k           W2 tpm 1.021 R 1.000 P 0.978 | W1 tpm 1.113 R 0.791 P 0.705
+  cl100k          W2 tpm 1.035 R 1.000 P 0.963 | W1 tpm 1.161 R 0.801 P 0.682
+  claude_legacy   W2 tpm 1.091 R 1.000 P 0.911 | W1 tpm 1.125 R 0.765 P 0.674
+  llama3          W2 tpm 1.030 R 1.000 P 0.969 | W1 tpm 1.143 R 0.799 P 0.693
+  llama4          W2 tpm 1.019 R 1.000 P 0.980 | W1 tpm 1.094 R 0.797 P 0.724
+  mistral_tekken  W2 tpm 1.029 R 1.000 P 0.970 | W1 tpm 1.163 R 0.810 P 0.689
+  mistral_sp      W2 tpm 1.310 R 1.000 P 0.750 | W1 tpm 1.222 R 0.825 P 0.666
+B realistic (1000 roots from forms[150:1150], 150 closed)
+  o200k           W2 tpm 1.075 R 1.000 P 0.925 | W1 tpm 1.492 R 0.644 P 0.421
+  cl100k          W2 tpm 1.277 R 1.000 P 0.770 | W1 tpm 1.563 R 0.647 P 0.403
+  claude_legacy   W2 tpm 1.372 R 1.000 P 0.714 | W1 tpm 1.512 R 0.664 P 0.428
+  llama3          W2 tpm 1.224 R 1.000 P 0.806 | W1 tpm 1.550 R 0.646 P 0.406
+  llama4          W2 tpm 1.077 R 1.000 P 0.923 | W1 tpm 1.476 R 0.644 P 0.426
+  mistral_tekken  W2 tpm 1.139 R 1.000 P 0.870 | W1 tpm 1.575 R 0.674 P 0.416
+  mistral_sp      W2 tpm 1.421 R 1.000 P 0.688 | W1 tpm 1.657 R 0.694 P 0.406
+C inventory all7 lead-space pool (205 roots) + 150 closed
+  o200k           W2 tpm 1.036 R 1.000 P 0.963 | W1 tpm 1.446 R 0.694 P 0.469
+  cl100k          W2 tpm 1.041 R 1.000 P 0.957 | W1 tpm 1.496 R 0.697 P 0.454
+  claude_legacy   W2 tpm 1.029 R 1.000 P 0.970 | W1 tpm 1.417 R 0.734 P 0.507
+  llama3          W2 tpm 1.040 R 1.000 P 0.958 | W1 tpm 1.489 R 0.696 P 0.456
+  llama4          W2 tpm 1.030 R 1.000 P 0.968 | W1 tpm 1.418 R 0.697 P 0.481
+  mistral_tekken  W2 tpm 1.044 R 1.000 P 0.955 | W1 tpm 1.541 R 0.719 P 0.454
+  mistral_sp      W2 tpm 1.000 R 1.000 P 1.000 | W1 tpm 1.547 R 0.736 P 0.463

@@ -1,0 +1,344 @@
+KODEX-1 spec. AI-to-AI language. A message = lexicon forms separated by single spaces; each form is one
+entry below (case is part of the form). No punctuation.
+RAW: Q1, Q2, Q3 = the next 1, 2, 3 space-separated chunks are raw text copied verbatim (paths, code, names, URLs).
+NUMBERS: digit forms 0..9 (table). Consecutive number forms are one number: concatenate their digits
+(4 0 = 40; 2 0 2 4 = 2024). POINT = decimal point (3 POINT 1 1 = 3.11). A number before a noun is a
+count (3 column = 3 columns); a number right after a noun is a label (claim 2 = claim #2 = the second claim).
+ORD n = n-th; n TIMES = n times.
+CLASSES: roots are nouns, verbs or modifiers as in English (one root covers noun/verb/adjective/adverb uses);
+G = grammar; P = codebook phrase (S = whole clause, NP, VP, M = modifier/adverbial).
+NOUN PHRASE: [quantifier|number] [modifier]* [noun]* head. Earlier nouns modify the last (billing service). Plural is
+unmarked. A verb root before the head is its past participle when that reading fits (cite source = cited sources;
+update table = updated table); a verb root as head is the action (data clean = data cleaning). A modifier alone can
+be the head (MORE new = the newer one). Lists: AND / OR between items.
+CLAUSE: [subject] [TAM]* predicate [object] [complements] [adverbs]. Predicate = verb, or modifier (copula omitted:
+answer wrong = the answer is wrong), or IS + NP. Prepositions precede their NP. A modifier after the verb phrase is an
+adverb (change X direct = change X directly). A verb after a complete verb phrase starts a second verb phrase with
+the same subject (decline X propose Y).
+OMITTED SUBJECT: verb-first clause without TAM = imperative to the addressee; clause opened by a TAM (PAST PROG FUT
+DONE ALREADY NOTYET CAN FAIL SHOULD MUST MAY) = speaker (I); HORT = we (let us / I propose we); after a connective
+(BUT CAUSE CONSE IF THEN OR) = same subject as the previous clause; PASS without subject = the last-mentioned thing.
+CLAUSE BOUNDARIES: SEP ends a clause. A new clause starts without SEP at: a connective; a TAM, HORT or DONT when the
+current clause already has its predicate; a pronoun subject (I YOU WE THEY IT, or MY/YOUR + NP) after a complete
+clause; a wh-word; a clause phrase (P:S). Otherwise write SEP. CNT = ':' (elaboration: namely / consisting of /
+which is / with content). IF A B: A = condition, B = consequence.
+QUESTIONS: QUES at clause end = yes/no question. A clause opened by a wh-word is a question (no QUES).
+HORT ... QUES = shall we / can we ...?
+PRAGMATICS: unmarked = plain assertion, normal confidence. CONF phrases state the speaker's confidence in the
+preceding clause(s); a following NP names the tool or source. PER NP = according to NP; at message end it covers
+the whole message.
+LEXICON (form gloss). G and numbers first, then phrases (P), then roots by frequency.
+GRAMMAR (form NAME meaning):
+recogn SEP end of clause/sentence (like '.')
+sequ CNT ':' elaboration: namely / consisting of / which is / with content
+requ AND and (between list items; between clauses only when needed)
+isol NEG not (before predicate or NP)
+occup PAST TAM past: did / -ed
+integr QUES yes/no question (clause-final)
+virt IS equative copula: is / = (NP IS NP)
+lect TO to / into / toward (goal, recipient, target value)
+anth IN in / at (place, container)
+phen ON about / on (topic)
+ordin FOR for (purpose, beneficiary, duration)
+nost WITH with / having
+Equ BY by (agent of passive; deadline)
+appe OF of (head OF possessor/whole)
+mant AT at (point: value, time)
+Camb FROM from
+chron OR or / either...or
+urg BUT but (contrast; starts clause)
+Mult CAUSE because (starts reason clause)
+Pred CONSE so / therefore (starts consequence clause)
+curr IF if (condition clause; consequence starts at next TAM/verb/connective)
+Appro THEN then / next step
+guid I I / me
+Compar YOU you
+ener WE we / us
+activ THEY they / them / singular they
+Produ IT it / that one
+stre MY my
+Contin YOUR your
+gle THEIR their
+Vict THIS this / these
+Domin THAT that / those
+Blo PROG TAM progressive: currently ...-ing (now)
+sym FUT TAM future: will
+Dest DONE TAM/predicate completive: is done / finished
+educ ALREADY TAM already / have ...-ed
+indic NOTYET TAM not yet / have not ...-ed yet
+emb STILL still
+compet AGAIN again
+veh CAN TAM can / able to
+conv FAIL TAM could not / failed to
+mul SHOULD TAM should
+Prec MUST TAM must / have to
+bour MAY TAM may / might
+poss HORT TAM let us / we should / I propose we
+Fant DONT do not (negative imperative)
+Enc NEVER never
+Anim PASS passive: subject undergoes V (is/was V-ed)
+Ident NO no / none of (quantifier)
+Serv ALL all / everything
+dro P:M PER according to (NP); at message end covers the whole message
+Rect P:S CONF_HIGH I am highly confident
+circ P:S CONF_FAIR I am fairly confident
+radi P:S CONF_LOW my confidence is low
+pron P:S CONF_UNKNOWN I do not know / cannot tell
+contr P:S CONF_HIGH_TOOL highly confident, based on tool output (tool NP may follow)
+vig P:S CONF_FAIR_TOOL fairly confident, based on tool output (tool NP may follow)
+conc P:S CONF_LOW_TOOL low confidence, based on tool output
+aqu P:S CONF_HIGH_TEST highly confident, verified by running it
+cer P:S CONF_HIGH_DOCS highly confident, per the documentation
+accur P:S CONF_FAIR_INFER fairly confident, inferred (not verified)
+cycl P:S CONF_LOW_INFER low confidence, inferred (not verified)
+templ ANY any / anything
+preced SOME some / something
+appropri EACH each
+charg EVERY every
+imag OTHER other / another / else
+compan ONLY only
+scient MORE more / -er (comparative)
+spir MOST most / -est (superlative)
+instr LESS less / fewer
+mour TOO too (excessively)
+Observ VERY very
+hyp ALSO also
+Autom NOW now
+unders HERE here
+spect FIRST first
+histor LAST last
+Clar AFTER after
+fid BEFORE before
+cust THAN than
+Soph UNTIL until
+kle WITHOUT without
+subst INSTEAD instead of
+benef EXCEPT except
+esper PER per (rate)
+Phot APPROX about / approximately
+pref WHAT what (question / embedded)
+succ WHICH which (question / embedded)
+Krist WHO who
+auss WHERE where
+liqu WHEN when
+aggreg WHY why
+multip HOW how (question / embedded: how X V Y)
+introdu YES yes
+veget Q1 quote: next 1 space-separated chunk is raw text
+Manufact Q2 quote: next 2 chunks are raw text
+accum Q3 quote: next 3 chunks are raw text
+infl POINT decimal point
+redu ORD ordinal: ORD n = n-th
+estim TIMES n TIMES = n times
+famil HUNDRED x100
+necess THOUSAND x1000
+scal MILLION x1000000
+deriv PERCENT percent
+NUMBERS 0-9 in order: consum Comput inj neur Particip conj extr larg artic cler
+PHRASES (form class meaning):
+hra P:VP add a source / citation
+rique P:S everything is done
+aper P:M almost done
+avan P:M as planned
+olt P:M as soon as possible
+angu P:M at the end
+ods P:M behind schedule
+oci P:VP is blocked by
+odb P:M by end of day
+rett P:S context for the next agent:
+furt P:S does that work for you? / OK with you?
+oks P:VP double-check
+uro P:NP edge case
+strate P:NP error message
+amm P:NP first draft
+rist P:M for backward compatibility
+ance P:M for your review
+thal P:NP GPU hour(s)
+ater P:S proposed plan, steps strictly in this order:
+alent P:M in progress
+istor P:NP invalid input
+embro P:VP keep (NP) unchanged
+elog P:M later this week
+azon P:VP let me know
+alist P:NP most likely cause (compound head: X likely_cause = most likely cause of X)
+uner P:NP literature search
+acus P:S looks good
+keh P:VP make sure that
+arro P:NP minor issue
+egin P:NP my previous answer
+iniz P:S (this) needs human approval
+alian P:S needs more work
+ennen P:NP the next step
+enga P:M next week
+empre P:S no blockers so far
+reten P:S no changes needed
+opl P:S (it) does not exist / was not found
+preci P:M on track / on schedule
+erne P:NP one-sentence summary
+estre P:VP open a pull request
+dle P:S out of memory
+enk P:VP I am passing (NP) back to you
+otten P:S permission denied
+olib P:S please confirm
+upro P:M ready for review
+urma P:S everything else is correct
+alue P:VP return the top N most relevant (N follows)
+unei P:VP review the changes
+tect P:NP root cause
+adec P:VP run the test suite
+quals P:NP short summary
+ovat P:NP side effect
+izm P:M so far
+plen P:NP stack trace
+inters P:NP status update
+acom P:M step by step
+jde P:S some tests fail
+lant P:S all tests pass
+Qo P:M this week
+jis P:S (it) timed out
+onge P:NP token count
+poch P:NP unexpected error
+ceb P:S the user said:
+vro P:VP waiting for
+kish P:VP do you want me to ...?
+tabl P:S your decision
+ROOTS (pairs: form meaning; one root covers noun/verb/modifier uses; names marked =name):
+indu like Associ time intr make Phill year fle people absor new evalu work undert want acceler know initi think resc look Corpor see categor good vacc need squ take organiz come
+tempor thing ignor go diagn right analy said opin way obt say mechan state Municip use declar day deleg love Econom call Ferr play simpl going exper made explo game cand show
+Prest world prote start Balt try reven great proble life capac live neut give imper help belie part Cann feel compl find vot place Wik home trib mean Tamb best acknow include
+commod man inher change achie long frequ something divid high satisf school quadr used proced house dynam end escal own incent follow concent around forg always determin better administr keep memor team
+Pract little imagin old innov since Suz point Catal week ampl company magn friend energ family Lanc talk kne under incre put conver during Charl found gradu number synt service tob ask
+Hil group meas read bibli second Insp open syst sure suc next Besch without manip tell cere system abund against antib run sympt city trunc move reconc big Indones happen anticip set
+discipl support fract base pregn free compens thought incorpor unit nucle stop horm plan privile turn affili night denom country propag head recomm money influ report summar hand turb month punct post
+slic book epid order apost area furn someone recip believe femin name conven away cogn left arist business difer days stere hour dispon lot resid different doub problem precip government separ power
+efect few regul real conten kill constitu public offic general divis party purch girl Palest watch circum interest Portug question llam issue oblig become relig face therm top quar person Carn side
+flav actual pict close repe however conse meet Kre cause dys leave zwe member transl result neigh seem libert women Rou getting Hend story fif final wur water Myst care overl word
+prow build conce provide desp wait suff anything bicy case eyeb nothing inev player kidn today murm miss obsc level togg force vibr win advoc enough appet everything arrog full aspir told
+dimin hard embod bad imped national indul once inhab season irrit car persu study reass white uniqu music apolog seen archae video bacter control correl record devast kind emphas men expans small
+oscill took overse form prejud far reluct came strugg job transc went complic add conting understand denomin current disappe fact equival body exagger later proport line suscept on-call volunte says contempl learn
+distingu pay intellig reason interrog course predomin continue substant lead contempor black controvers increase elabor stay sevent market inhib minute assass term coinc complete misunder mind unw train discre idea newsp allow
+mascul matter comprom children incred everyone dispers president rhet list innoc clear prohib local stret return explan share myster deal puzz class advers law explos together decre war therap whole dign important
+renov check Alexand large breat single collabor court phenomen light signific offer lingu create encuent death reprodu act migr hold caut student invol maybe reput room Legisl office exerc cost consolid remember
+conqu test exped bring promot food convin easy navig experience independ fire cosm health nomin hope aggress news spont within popul consider aument social desper event applic design heav community Democr receive
+eleg release traff sign sigu able investig early reun information delet young disg fight advis university oppos type perman pass inspir price prepar buy mamm program Conserv human financ ago definit hit
+alleg others thous save exempl walk anx given acqu guys susp half citiz often condu sound divor vote depos view nons stand sque research Eug guy encontr song Freder south evangel true
+fost history excell present experi wrong congr air pione process seiz cover surv hear sanct star entert bit wholes nice Hern almost franch known fres lost conoc several milit certain caract project
+comport action qued rule toler account exh along lleg anyone sust else dedic pretty perpet international swo heart caus note incon total partic happy Shir street dece break accus land coron probably
+gover drive inaug special sinc example cush film Celt past verschied possible Carm expect secre phone estud claim defe serie pseud require Craw short Pav picture unf due Bapt woman demol attack
+espec fall coff age surg appear Salv development occas future polic answer Miche official enf data convers late Parl north compos saw exhib morning dispar pick suiv police arom third barg field
+decid main Schl position Holl bank reson begin espa moment dispos remain disput speak vulner chance accompl cut ceremon recent intimid fucking Confeder low celebr source cancell step Ukrain taken enthusi decide
+accommod serious overwhel direct acknowled baby psychiat road surviv charge demonstr feature interven rather neces red guarante soon arbitr shot tremend former ubic accord stri sit preg model eing parent empt political
+urb board elong movie acet eat astr major ocup sometime resh character pard among rupt college angi further orn goal brid myself cess yourself antic park alph perfect enth reach unde serve
+estr figure agon value perc child orch fun bew media oxid trade ogr policy aque ready entr develop inh product frac town proj involve phon near zs enjoy enumer march elic match
+embr original vect common interp finish registr personal midd quick equiv strong gly art unic behind Comple non shr quite gev review summ west prox mother cron carry kter drop communic father
+attrib front interpre join regist link juven space hely limit constit wish egy center creat club chol particular tox available illustr education prin kids segu son irr couple verw relationship verd tax
+samp visit versch heard adequ department phosph rest retr effect combin period chall send accom fund agre nam nud usual forc bill spre similar unus grow contrib agree minist industry compr officer
+vap listen gep condition angl race epis describe tert produce Herm across rept brother instit gave fluor gets vz himself allerg outside criter self duplic security anthrop decision advant entire isot summer
+Scre ground traj focus omn article ostr beautiful indiv exact embar held memb instead entwick king organis energy constr page obed property apare fine vra press hous individual xen county coment role
+Harr sell zaw de glu round rodz sense sce wife zaj dead dend director epit comment olig sex arbit size autoc previous disag standard disgu card fluct toward melod practice progn store
+scrut date ancest election arrang goes conced relate corrid site disadv wear immigr private incarn travel pedest ship presum amount replic performance submar stage traged title congreg raise contrad church coordin especially
+earthqu eyes subsequ june substit piece effic trust surpr guess incons average consequ concern befind photo asym explain recuper score excit society restaur style lumin exist inoc track Sebast natural destac above
+conflic died telev knew conjug likely cryst military relev tv sulf paper vagy drink immedi operation comenz cool Bened publish condem rat volunt science colleg sport incap april veloc detail fict door
+meille inside intest online Reyn wall hogy activity anomal cross escap leader accomp enter sovere sleep recib spend provinc suggest surve situation inex award preval economic comerc language utiliz writ bamb image
+dirig material aplic higher Kend middle realiz sorry concl stuff lyr choice Maced box escrit boy Garc gold syll gone assum july recher attempt Rodr medical delic plant nouve production rele beat
+curs apply decom loss tecn pull absol shop incor voice includ fail pobl wonder pentru al gioc alone piv brought Lond east obten hot propriet longer consid lower delt sent compt themselves
+llev worth mism los pys technology arriv chief fich patient smo surprise evac ball Schwe league sout green Wend benefit pharm effort sost network ausge became caval protect distrib september Ferd evidence
+lavor message pob forward Verm risk mell accept legis quality prv version capit deep Hir normal schn rock erh worry Tul mention Giov perform Aleks hospital reco nation provoc station wyst website
+publi fast citt lord adip marry dyst rate eyel whatever gluc challenge unle federal adher treat adjud union aliqu block apopt daughter atroc legal careg remove coerc judge dereg difference diarr poor
+epile professional etiqu blue excav felt hepat letter incub management insol contain locom dream nanop notice polym central protr island releg region scept safe squir animal stagn drug unlaw coach aggrav lady
+antiqu approach carcin text congen key conson mom encaps paid errone range evapor respect follic table frustr various handic improve implic minister indign hair insign scene metaph teacher metast compare multic search
+multid absolute multif amazing progen cell promin significant prosec district simult organization subsid financial synerg opportunity unanim reduce antagon career compuls color confisc attention conject cannot deliber council kilomet cup postpon football
+incompet hate decentral led multiplic october unpredict immediate Rodrig clean facult blood extraordin shoot seper dance competit touch Vaugh file deton river newcom sort illumin gain advertis potential biod response televis suppose
+challeng credit facilit draw antim manage unve push contamin slow uncon august seab dog pharmac heavy formul hell lact itself afirm november pequ oil compart staff interf wide anarch announce indef century
+procur damage coer engineer tranqu forget theoret statement glac contact ninete culture interfer represent congest address Gamb contract caric regular adul establish metab female solic operate protagon access cuid author throm born
+melan january illeg met deline perhaps Kov section scaff written enlight army panc campaign hyster manager Maver william empir fix ethn subject Veranst degree undis double perfor tour infinit demand subt realize
+scand measure theor hop retros success metabol album guit code interess episode cerv foreign comunic lose Yosh simple explic simply evid super recru washington percept bed abst fly erfol hurt probabil tree
+Miy huge casc roll agreg fit Trit population adap supply Ezek began freel built sprink crazy immobil daily nause december fantas die lign difficult Coch modern biom ones padd popular Guill truth
+electr earth Gonz spot sucess russian recre weight Schwar fear Mitar prepare lamin welcome bestimm application cyn count relat sister diagon worker suprem associate transf laugh perme speed Vij movement princ paint
+deix advance Humph successful escol cas Nug content Crom lin repro computer satur doctor culp internet Kob sea tamp sir Lomb ways Gur treatment Sloven fill sph option probl master embry pain
+Kash teach Guang secret Obl pressure fron seat foc arrive conna conference combust promise Sask stock pesso association intuit opinion plag below Khal brown rall la bif owner guar user anatom target
+vener fish Aure additional vib necessary ammon handle irres mix muc partner donn committee einf method fug purpose perplex prove Kra specific lith artist fertil dress microbi murder hypoc update cultiv dark
+photoc straight redund wrote apprent interview refriger lack discrimin rise predecess launch cruc primary sincer refer territor agency synthes addition apresent affect trabal effective hypers machine trabaj host pneum separate catast dat
+lubric positive crystall gas sympath sal concentr ability pierws collection Nikol authority asympt battle commemor boys congrat fans dissip february inaugur growth infring physical electroly tonight practition write Buddh band deterior income
+sacrific capital inconsist grant squeez choose fingert husband objc resource elig structure omin hotel athe obvious ativ mil bers purchase uten centre amaz earn rew radio llen regard annon cold aph except
+ked eye antis funny enn ii iar peace iod spent inet throw cil tomorrow lle via estruct crime cerr extreme emple request ostat favorite ench burn descr ice hyd reveal quat heat
+cient honest diag kick simp screen lij ahead aggi anti etter disease dlg function opc trip esk western fq active sembl adult enums direction Yii suffer onc annual Parm determine beb brand
+elems location Retrie customer incess avoid paralle solution atrib spring ingred fair restr agent Academ angel emoc despite undes kept erad nearly unst extra indust christian coh cry Chel discuss arbe imagine
+eru impact nale vehicle nije commission Canc dollar wirk independent verg indian geg brain acad skill ovar catch ocas justice Pemb express autop floor uncert occur approxim feet emph kid determ sale
+conex throughout penet item komb definite intu copy categ deliver compagn introduce perturb weekend Derm employee vinc memory rasp proper dib camera inclu firm chir global Lep beyond Ced earlier vog jobs
+deput maintain guint nature oppon unless prere construction scarc identify withd waste alumin trial announ channel hypert hill landsc prevent testim commercial unre bear uncomfort safety forsk san contribut sold helic sun
+adoles connect predic doubt encour arm Slov cloth integ glass aseg driver refr theory csak anyway funct beach retir secretary jsou seek enjo gift circul rank exem relative vess replace invo engine
+conect excite strs shape Canad transfer kond gun cach knowledge internation wow ridic jump sinh skin tekn smoke concer weapon gouver wind trong destroy kho http utilis print agric ring Matth senior
+trg wood Serg cent hig influence philos discover nebo factor discour cook Gree defense unl mission revol winner curios correct Andr australian verz agreement Muk cancer pued dad Claud gotta unh marriage
+wom nobody regener plus pog pre ambit depend centr flight nig attend atol reference cres competition muj document wsz investment sider pop suppl arrest begr professor acab admit Laur exchange hilar administration
+fod anymore szy bar tup camp etern insurance wicht literal Ultr majority ausp meant canv pro ferv stupid fibr communication nond stone prer extend seaw farm sple initial Dimit library Euras pack
+accol schedule acest conduct alkal device allev horse asign facility asoci generation consc sweet dific division dilig mountain divul robert downt struggle emanc biggest emiss civil holog collect incid none inhal rare
+inund russia mitig worst monoc executive mutil load obliv rich overd scale pedig spread plung assume rearr environment remed select showc writer skept basic unint glad wrink apparent Wolver queen accred locate
+calend confirm cellul estimate chocol mental diffic africa disreg awesome embell balance insurg cash intric fan multim latest persec multiple multin older pestic click pollut mass segreg trouble thrott guide vestib session
+volupt bird Britann injury centrif loan cinemat garden conspir guard convinc reality coorden candidate fluores captain superst economy accompan recommend configur stick destabil winter orchestr republican testimon suit especific lake intermitt analysis
+recycl bought disfr eventual distra grand elast hall Dmit luck menj sing avanz thus antid yesterday modific achieve disposit village bisc soul overhe surface lehet traditional humili argue entfer ticket concess typical
+gastr min hypoth hang triang joke caratter cast refin sexual espos spirit atrav caught panor congress distint gay exig greater penc largest proph overall symb refuse Nicar shown Amph foot autob quarter
+subdiv speech vign strike behand appeal recl element troub soldier purpos connection poate deserve revital bus Humb register pisc wed trif airport recal cars quotid distance recommand fully konk laws assort male
+invis recognize imposs worse afect programme risult citizen dwar concept Californ square decad commit negoci evening depr coast Aless freedom membr repeat explor conversation morb profile neph royal acept stress ofrec advice
+pratic broken ajust equipment domic holy romant lots Smy otherwise escre payment injust responsible retorn sick rempl uses Alic warn mostr complex entreg promote dazz pair chiff critical superf enemy verbess protection
+cheg taste ocur tool confl metal gemeins mistake menc fashion scav tire affid combine theat equal wors strategy cabel display busc flow forb muslim conosc stream despre wave ofere wonderful aeros politics
+conduc ran intelig status antig sudden danh therefore Cald truly espect weather acum foundation ejec indicate verv rid respir bomb empez lock fourn estate recom feed enqu volume cumpl champion detr flower
+schle define refl smile aprend profit impres talent incontr advantage volum mouth Columb slight ajud bottom adicion victim Himal app dziew coffee descon highest interv investigation noct famous presup command profund duty
+coleg honor contag african Giul engage zost switch Frem appreciate Merr object incom bet inici budget Gaut fresh nuest quote volont reserve carc bridge padr dry peny boat sarc institute spos lawyer
+mennes wake cerc decade horr reaction obrig finance simul ultimate Bulg wing Gund border kvinn broke Lup edge sanit essential ayud fat hym fell dout finding krij hat camer hire indis mobile
+commenc northern Flem powerful acess prior Vish religious empres ride plur species constru traffic komment propose irrig digital Tud intend kako criminal parch discussion sammen hero Gret progress Perr representative Vand responsibility
+Copp edition diret respond invers actor impost encourage Garr prison Kens strength sper exercise timp restaurant Anast yard monot expert cuer everybody flere lie trov runs admir sad Sadd secure Duis southern
+gost twice palp negative Kirst surround emerg zone azt celebrate garg technical chac alternative Zah constant Guil email einz shut leth map Gabri survive chois wild rencontr hole Hamp route trium sentence
+Hib blog yog careful unbe corner conhe escape refurb signal Madd americans Fah ensure dhe fourth Evel mostly Zust resident Pey smart nive ban Karn crowd libr journal fiss length hvis lucky
+impe relation invit aid Byz witness forn affair Gord magazine Thur inspire kone shift chiar belong hvor prefer prolet invite pud arms Ches faith nied larger multis theme letz accident pne blow
+svo survey koje billion Joi bond Sext boss vorhand desire Kag port tratt rain Morr warm zab proud Krak suck compil variety Guth argument molt background sve task cuc temperature Flam capture
+fantast abuse Coul basis Svens dangerous jorn obtain Huss prime Gos silver masc weird sond defend ingres guest anv audience baj fellow Scha shoe patt contribute plut download buc joint foll sample
+pien ignore baff mail Bhar dinner Trom institution scop license hypnot shock replen birth compreh hunt cryptoc chairman inaccur deny intoler grade domest healthy priorit religion demasi reply guerr senate commerc smaller
+Sylv somebody migli window sacr client wykon fuel intrig holiday pilgr failure neurop platform sensit chair telesc description intoxic giant prosecut manufacture appreci dear funkc debate kunne pattern lucr blame Bulld edit
+griev finger neglig forest aproxim kiss intertw path consegu requirement pamph technique sulph truck reconoc bag incapac graduate reminis greatest improvis indeed sophistic television bureauc till rehears lift veterin appearance enfrent transport
+prolifer cycle gebru historical glyc consumer cytok crash rhyth sky elucid approve pancre birthday aconte conflict preocup cultural inadvert settle persever classic desarroll victory exacerb apart infiltr aware mitochond cat antidepress eastern
+incarcer fifth dismant herself Hodg impossible corrobor joe reak mary iler remind stru youth uter expand acos frame omp chain azi festival cott governor ipt nurse ress unique comed bowl erv medicine
+atra shirt yc attorney krit liberal rov reflect avo entry ush museum uch olympic aven planet quir charles lique dogs iid israel xn labor ouv leadership zem possibly unn software tep thousands
+fst threat ogl tough prav beauty hlas debt arqu quiet rych declare territ pound incr flat hydr studio okol beside haf mount ghi beer voj lay ersch tear heur aim topl crew
+ischem tend otom root hran alive podob category espan easier jih magic pozn monitor Hamb net scri newspaper obec unlike kube canadian quen prince zv sector boj trend klin aspect ambul assistant
+energet brief displ chapter unin draft ansch evil Punj gather informat iron Ngh qualify vej valley upl wash Barcel behavior pev defeat osg emotional ugl storm ilg busy tham ends cof mexico
+hik pure ziy violence surn willing autof breath calib emergency inequ grab invas scar amplit ocean behavi solid enthus assist invari bottle negoti massive penetr tank satell regulation preserv elect refres folk
+edific illegal extens novel laund suspect aband revenue crimin adam transm apartment grud bigger proxim forever Leop frequent neutr henry Sver mad defens martin clen parliament somet plate analyt somewhere jedin web
+americ wine popula label nurs unfortunate weap conservative illust ruin aup dick behav oppose resol branch servic native doct pool magaz capacity secur mess stran adopt commer guarantee provid rough provin split
+Leip bay etm closer wides consist Quy core zav corporation descript democratic deven excellent janu exclusive getopt jones monaster lee Peb lies sugg nuclear Trung presence anys protest Nort soft semp spanish
+presid tea ecl rent Prel climate degener lesson Zent proceed Zel asset seva colour tiem inch trang error gou delay Oliv generate semin environmental sre threaten Syl convince Alber editor spett girlfriend
+cens phase besk afternoon giorn britain Zy electric Riy harry oyn ill uyg johnson vyb moon Ethi plane Mahm plenty Swal proof bilg regional dlou scott ensl upper fauc useful hlad flag
+hlav appropriate mlad severe neby chemical ngay democrat svou participate truy asian tvor crack tvrd wheel vagu decline ypos package Barcl anywhere Beled bore Evrop cheap anest fantastic aneur industrial annih internal
+antiv knock belir organize derog prize deset steel disin steve emuls terrible endot vice filmm circle forfe electronic ineff possibility obnov identity obsah rush parap expose reimb senator resil procedure samot sugar
+scint drama semif instance tomto rapid ubiqu squad unatt territory velik afraid velmi arts attenu intelligence bronch italian convol jersey culmin labour disple wins dispro solve extrad wound extrav enable hairst divide
+halluc fake incumb plot indist strip miscon improvement multil topic multit favor neighb gate nutrit producer overst reform podnik chicken podpor dye posled inform postup invest sublic permanent supern politician uncomp ben
+uncont domestic unsett expensive videog grew artific heaven heredit minimum inflamm ray nostalg sets electrom supreme collectiv tech vyt yellow Morm younger Mathemat bless vyp fruit dobu journey desn leg lze smell
+troph incident rekl troop plaus component Sidd fault discrim investigate euth vision viscos attitude visc fox trao lunch vyd scream kdy speaker kuv strange Dund principle mirac approximate vys steal accr ancient
+remin angry Gerr scheme Manit scientist horiz scotland vlast stuck opport taught ocor highlight utens height palab twenty spoj combination antip consistent soud reader hemis plea potom random encont repair phim kitchen
+mezi sight etk panel langu retire entrev trick clich accurate conden acquire odv bell Sabb distribution Schro boston grotes ca collaps era spro false vua golden rozs grown physi legs haem lying
+cung publication nghe scientific Austr shoulder exer belief giao danger notor ministry zde daniel Seah minor lept upset theolog vary odst context amort origin titul protein descri selection serm pilot burgl chase
+snork seed Commiss spell komun employ khu volunteer Chrys appoint infr reward serr stadium Gug surgery leuc button kolem passenger argu andrew xem comfortable kvin et personn everywhere acomp guns toget ireland
+Pett italy kinh max predis meal habl meat dve milk proti monster jov practical nhu snow exce sub spol weak Assy jail fanc attract suy championship rooft chat corros demonstrate Intelli proposal
+eup wage ilma excuse tinh kingdom respe neck delimit orange kys trap semic advertise camin tight bekl concert disen contest homolog asia finan confidence Thess confuse Shak cute Krish definition grd hits
+evol korea linh mm scol numerous Jub specifically noss taylor Chern urban consol battery Phar motor bekom peak speci compete Caj factory gamm suicide zast bike induct mayor Zub tradition crian explore
+monop photograph dne recover escri edward empath install psik perspective quas chart Gron resolution Schne pitch muit assembly mesmer contribution repre expression sebe observe vrou tip fibro acts cuis aircraft Arth corporate
+galer crown preco faster Kons millions condi respective Burl sam dred sat toho tony verr wire nisi submit tq bright wre circumstance ingl delivery unr flood afore journalist kaps personality podr portion
+crem cloud radix experiment znal implement Leist seal nack tournament Utt academic tradi swim kulture wal nors adventure retal ally underst household stej complain assur solo Chal layer dobr mill ragaz reject
+admi ah scl basically vitam bob zaz coverage rozp forgot Hels iii grou incredible phong ma Lec mode hva statistic sklad whenever konz zero doma hopeful Biol motion meis catholic dij custom
+Erl salt asiat manner prefab pocket calam row podle occasion zosta quit inexp accuse enlarg cable geomet stretch intrins tower melanch counter consecut republic distribut emerge maneu poll bubb recall jedis alex
+pubblic boyfriend trouv cancel derni cream druh crisis gravit diet jednu eu jednot iran retali jim philanth literature particul opposite Agricult ourselves sopr permit barric temporary cylind tiny describ un entreprene virginia
+magnific voter Gujar bother capacit depth societ disappoint Hispan favourite Amerik subsequent incentiv consequence souha muscle fluctu dedicate policym comic antibiot noise reciproc rescue fierc visitor pouze chamber discrep farmer exhilar cake
+moistur empty perpetr tweet Venezuel relevant bureaucr index chauff rate-limit szcz approval colabor permission hjem tone miesz server anecd formal dermat formula ellipt thread Scandin confident jeopard output altru priority irradi log
+oportun summary jeho script anunci exception gubern input znaj alert clandest column conglomer feedback indispens database bedeut terminal pessim agenda attravers reliable indemn filter relinqu scope Mediterr accuracy accompagn upgrade mathematic backup
+extravag criteria amphib evaluation erfolgre bug narciss patch disproportion bias olem restore uning significance metic partial imit react=name uko compromise onders timeline uits abstract abil instruction ople migration sted deadline ating interface
+ial variable inic preference ered consensus olid leak urm confirmation rup layout zeich scan chy subscription arra measurement ador median vre stack ence pipeline ril container oll disk oly precision chod cluster
+legg linux=name auff negotiate folg compatible joht sprint amist documentation emper aggregate vezet directory embra translate kih outline chied polite ensin batch itse deployment qar rejection semb module zir metric rije node
+vaj peer-reviewed qal verify prud hypothesis kog correlation archa prompt illum url estis prototype Atlant citation byg methodology auft token rul python=name apie queue ryt calculation enca merge trast folder jum hedge
+qat excel=name koj null exter cpu zuk backward arque milestone nore slack=name auk baseline naud delegate aport deploy baix transcript izan api pren cite emis assign acu query bih cache trak reproduce
+pover benchmark arri billing hul duplicate nje heap alde parameter fz encryption gior quota rech syntax vyk dependency ymp appendix szak javascript=name embol regression prowad retrospective ennem revise adott rewrite efic checklist
+geleg variance igre migrate koht repository voud persuasive alve authoritative laug validate mynd checkpoint clav overflow alap compile venc sql ifad compiler arh git=name axi authentication menn azure=name kori escalate fum pip=name
+prek dashboard nuc visualization falt latency pril spreadsheet eit constraint wod invoice imme outage Norweg inference prak downgrade journ gpu ydk backlog hled timeout igaz blocker izol diff izra epoch kezd github=name
+olev throughput onts aws=name zomb infer Bangl roadmap Pokud workflow abbre pandas=name beteg schema impat snippet inade slowdown negot runtime szere paraphrase commut shortlist symmet dataset resur stakeholder inad embedding inspe lint
+inwon docker=name avut parse stric config anul endpoint apag annotation oubl flaky subm backend pozi debug compon outlier agot uptime Theod credential bekan json desl workaround fej rollback curv tradeoff establ profiler
+impul proofread qan typescript=name assembl csv volv retry agrad mockup armon handoff fek frontend pregunt deliverable vaid npm=name jenter breakpoint territo deprecation aussch changelog aiz kubernetes=name Treas gcp=name attra jira=name Eliz redis=name
+Brend postgres=name ngu numpy=name foly counteroffer symp refactor dets rebase conve pytorch=name krv finetune vorg subtask comand preprocess ricon hyperparameter

@@ -1,0 +1,56 @@
+config               variant              o200k    cl100k claude_le    llama3    llama4 mistral_t mistral_s
+baseline             en                     562       564       569       564       563       579       601
+baseline             en_terse               406       407       402       407       408       428       457
+A_num100             main              338(0.83)  384(0.94)  423(1.05)  379(0.93)  335(0.82)  345(0.81)  445(0.97)
+A_num100             macros_expanded   375(0.92)  415(1.02)  460(1.14)  409(1.00)  370(0.91)  386(0.90)  485(1.06)
+A_num100             even_spread       348(0.86)  377(0.93)  433(1.08)  365(0.90)  344(0.84)  350(0.82)  462(1.01)
+A_num100             RELAXATION_raw_d  354(0.87)  399(0.98)  423(1.05)  394(0.97)  351(0.86)  365(0.85)  466(1.02)
+A_num100             main+lead_space   335(0.83)  381(0.94)  422(1.05)  375(0.92)  332(0.81)  339(0.79)  465(1.02)
+A_num100             spec_tokens           7239      7742      8630      7588      7279      7705      9311
+B_num10              main              340(0.84)  379(0.93)  413(1.03)  377(0.93)  336(0.82)  349(0.82)  437(0.96)
+B_num10              macros_expanded   377(0.93)  414(1.02)  452(1.12)  411(1.01)  376(0.92)  389(0.91)  477(1.04)
+B_num10              even_spread       342(0.84)  378(0.93)  434(1.08)  366(0.90)  342(0.84)  357(0.83)  459(1.00)
+B_num10              RELAXATION_raw_d  352(0.87)  390(0.96)  409(1.02)  388(0.95)  348(0.85)  365(0.85)  454(0.99)
+B_num10              main+lead_space   338(0.83)  378(0.93)  412(1.02)  376(0.92)  334(0.82)  345(0.81)  457(1.00)
+B_num10              spec_tokens           7118      7532      8433      7378      7164      7577      9108
+C_num10_agentfreq    main              349(0.86)  374(0.92)  414(1.03)  362(0.89)  343(0.84)  354(0.83)  416(0.91)
+C_num10_agentfreq    macros_expanded   381(0.94)  409(1.00)  454(1.13)  396(0.97)  374(0.92)  387(0.90)  460(1.01)
+C_num10_agentfreq    even_spread       345(0.85)  379(0.93)  433(1.08)  367(0.90)  341(0.84)  363(0.85)  461(1.01)
+C_num10_agentfreq    RELAXATION_raw_d  361(0.89)  385(0.95)  410(1.02)  373(0.92)  355(0.87)  370(0.86)  433(0.95)
+C_num10_agentfreq    main+lead_space   342(0.84)  363(0.89)  410(1.02)  351(0.86)  338(0.83)  350(0.82)  436(0.95)
+C_num10_agentfreq    spec_tokens           7166      7631      8471      7484      7202      7618      9165
+D_num100_agentfreq   main              338(0.83)  366(0.90)  408(1.01)  360(0.88)  345(0.85)  359(0.84)  438(0.96)
+D_num100_agentfreq   macros_expanded   369(0.91)  403(0.99)  444(1.10)  396(0.97)  376(0.92)  391(0.91)  473(1.04)
+D_num100_agentfreq   even_spread       349(0.86)  373(0.92)  429(1.07)  363(0.89)  345(0.85)  352(0.82)  462(1.01)
+D_num100_agentfreq   RELAXATION_raw_d  354(0.87)  381(0.94)  408(1.01)  375(0.92)  361(0.88)  379(0.89)  459(1.00)
+D_num100_agentfreq   main+lead_space   329(0.81)  356(0.87)  405(1.01)  350(0.86)  337(0.83)  349(0.82)  458(1.00)
+D_num100_agentfreq   spec_tokens           7291      7805      8647      7659      7323      7742      9307
+E_num10_claude_first main              357(0.88)  367(0.90)  392(0.98)  367(0.90)  358(0.88)  365(0.85)  455(1.00)
+E_num10_claude_first macros_expanded   393(0.97)  405(1.00)  424(1.05)  405(1.00)  392(0.96)  401(0.94)  494(1.08)
+E_num10_claude_first even_spread       394(0.97)  398(0.98)  375(0.93)  397(0.98)  390(0.96)  401(0.94)  472(1.03)
+E_num10_claude_first RELAXATION_raw_d  369(0.91)  378(0.93)  388(0.97)  378(0.93)  370(0.91)  381(0.89)  472(1.03)
+E_num10_claude_first main+lead_space   350(0.86)  358(0.88)  388(0.97)  358(0.88)  351(0.86)  355(0.83)  475(1.04)
+E_num10_claude_first spec_tokens           7777      7925      7794      7914      7782      8135      9350
+
+MAIN B_num10 entries 2399 used: {'core': 105, 'domain': 33, 'grammar': 52, 'macro': 16, 'number': 6, 'macro (closed: confidence/evidence)': 3, 'tech': 2}
+wins/ties vs en_terse: {'o200k': '18/1', 'cl100k': '13/2', 'claude_legacy': '7/2', 'llama3': '14/1', 'llama4': '18/2', 'mistral_tekken': '17/2', 'mistral_sp': '11/2'}
+m02 o200k 16/24 claude 21/23 sp 21/29 | compl ceremon vaj persu phen multip sovere refriger apresent evalu vinc recogn alue conj erne appropri
+m04 o200k 12/17 claude 19/16 sp 19/18 | unin chied demasi sequ vagu conse emple provinc inj chac Associ elog
+m06 o200k 8/12 claude 10/14 sp 10/14 | uner Dest Blo meas commut sulf empre
+m08 o200k 14/15 claude 16/15 sp 18/16 | spect influ unin Dest sequ molt requ einf requ transl recogn parch emb murm
+m10 o200k 16/17 claude 20/16 sp 23/19 | Vaugh zeich sequ Ident hul recogn neur clandest nost murm agon Evel anth congest barg
+m12 o200k 19/19 claude 20/20 sp 24/23 | Manufact Maria Lopez escal arri synt recogn Manufact Kenji Sato virt mathematic suscept dro ampl vezet
+m14 o200k 15/17 claude 17/18 sp 18/19 | mul inher veget parse_config() overwhel chron complic absor dlg administr imagin rist integr
+m16 o200k 8/11 claude 11/12 sp 10/14 | inj celebr muj neut resid sted succ alve
+m18 o200k 19/20 claude 24/23 sp 27/28 | conv Insp veget data/2024/q3_sales.csv Mult opl Anim trunc lect imag trast integr
+m20 o200k 15/18 claude 16/17 sp 19/20 | egin experi Mult occup Thess inj symmet recogn estr Anim curios anth hypoc follic
+m22 o200k 18/23 claude 25/20 sp 24/25 | ater accompagn ngu lect inj infl Comput empir territo Alic congreg heredit rul lect neur infl Comput Comput
+m24 o200k 21/26 claude 26/26 sp 29/27 | poss provin evalu sequ guid ammon enf Rodrig Compar ammon nuc ener enca transl fif poss contrib clandest femin spect furt
+m26 o200k 16/18 claude 19/18 sp 19/22 | Guth voud urg Ident pren celebr discipl estud inj recogn complic celebr chron jum estud
+m28 o200k 19/22 claude 26/21 sp 24/23 | occup renov Contin ryt sequ cancell neur trang sequ verd Anim curs gost Pred fif presum mul consid urma
+m30 o200k 24/23 claude 27/22 sp 25/24 | veh squ fek sve urg vacc inj scient declar cust Compar provinc curr mour convers veh categ metic prv Equ embr scrut
+m32 o200k 25/27 claude 28/26 sp 28/31 | Contin Particip consum thal cellul neigh divid stre scand provinc inj conj advoc poss uko mant neur consum gev compet Clar spect antib integr
+m34 o200k 19/27 claude 21/28 sp 25/29 | inade alist sequ absor irradi stric practition charg emple lect oll vig establ indic conqu empir
+m36 o200k 16/18 claude 18/17 sp 20/20 | conv compl attravers polic recogn inj compl celebr aconte recogn scient absor discipl sph inj radi
+m38 o200k 29/35 claude 34/33 sp 38/38 | rett guar hvor Craw polic activ educ ragaz spect inj applic activ occup indu applic neur compuls Gerr urg isol rup recogn inici Anim empir Pred Fant tob compet
+m40 o200k 11/17 claude 15/17 sp 16/18 | enk sve Mult iniz Serv aque recogn compan fif urm murm

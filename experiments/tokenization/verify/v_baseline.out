@@ -1,0 +1,23 @@
+per-message mismatches vs baseline.json: 0 []
+ids in baseline.json per_message == corpus ids: True
+
+tok                en  terse    ko  json  terse/en ko/en json/en
+o200k            1160    848  1512  1120  0.731   1.303 0.966
+cl100k           1164    851  2377  1091  0.731   2.042 0.937
+claude_legacy    1179    855  2605  1244  0.725   2.209 1.055
+llama3           1164    851  1560  1091  0.731   1.340 0.937
+llama4           1159    848  1347  1096  0.732   1.162 0.946
+mistral_tekken   1202    899  1428  1237  0.748   1.188 1.029
+mistral_sp       1268    969  2908  1434  0.764   2.293 1.131
+mean over 7: {'en': 1.0, 'en_terse': 0.737, 'ko': 1.648, 'json': 1.0}
+min/max over 7: {'en': (1.0, 1.0), 'en_terse': (0.725, 0.764), 'ko': (1.162, 2.293), 'json': (0.937, 1.131)}
+o200k json/en per-msg median 0.95 min 0.56 max 1.67; terse/en median 0.73 min 0.55 max 0.94
+claude_legacy json/en per-msg median 1.04 min 0.68 max 1.89; terse/en median 0.71 min 0.54 max 0.90
+
+o200k           en total as-is 1160, with leading space 1160, with leading newline 1200
+cl100k          en total as-is 1164, with leading space 1164, with leading newline 1204
+claude_legacy   en total as-is 1179, with leading space 1179, with leading newline 1219
+llama3          en total as-is 1164, with leading space 1164, with leading newline 1204
+llama4          en total as-is 1159, with leading space 1159, with leading newline 1199
+mistral_tekken  en total as-is 1202, with leading space 1202, with leading newline 1242
+mistral_sp      en total as-is 1268, with leading space 1308, with leading newline 1350

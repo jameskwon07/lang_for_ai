@@ -1,0 +1,144 @@
+{
+ "strategy": "Codebook / macro-morpheme encoding with spaced single-token forms (attempt 1, advocate). Grammar: telegraphic and predicate-centred: [subject] [TAM] predicate [object] [obliques]. There are no role affixes, no default pragmatics and no compound linkers. About 93 grammar markers replace en_terse punctuation (SEP, CNT ':', AND, CAUSE, CONSE, IF, QUES, PASS, HORT, DONE, NOTYET...). Omitted subjects are resolved by rule: verb-first = imperative, TAM-first = speaker, after a connective = previous subject. Numbers use 10 digit forms that concatenate (4 0 = 40, POINT for decimals). Raw strings use a count-delimited quote marker (Q1/Q2/Q3 = the next 1/2/3 space-separated chunks are verbatim).\n\nCodebook: 78 phrase macros for agent traffic (status, requests, errors, hand-off, review, time, fused confidence x evidence). 12 of them, the confidence/evidence family and PER 'according to', are treated as closed class. Roots: the 2,000 most frequent English content lemmas from wordfreq, plus 196 work/software/data/research roots and 22 tech names. Spec total: 2,399 entries.\n\nForms: I scanned all 7 tokenizer vocabularies for space-prefixed letter strings and kept those with max zipf < 3.0 over 11 languages and English zipf < 2.5. Excluded: forms of 7+ letters unless they are truncated fragments, about 300 code identifiers, and sensitive fragments. That leaves 14.8k forms, 519 of them single tokens in all 7. The cheapest forms go to grammar, digits and confidence macros; roots and macros follow in order of estimated frequency (wordfreq zipf; macros assumed zipf 4.0). An automatic prefix check plus a manual review of every used form-meaning pair removed meaning leaks such as autobi=write, preci=summary and Expl=because.\n\nScripts are in verify/; the main run is config B_num10 in verify/attempt_1.py.",
+ "relaxations": [
+  "None in the main encoding (letters a-z with case, spaces, and raw strings only inside quote markers). One interpretation to flag: quote markers are count-delimited (Q1/Q2/Q3 cover the next 1/2/3 chunks) instead of open+close pairs.",
+  "Reported separately, not used in main: RELAXATION_raw_digits variant (numbers as raw Arabic digits). It measured worse than the letter digit forms on 5 of 7 tokenizers: o200k 352 vs 340, cl100k 390 vs 379, llama3 388 vs 377, llama4 348 vs 336, mistral_tekken 365 vs 349; better only on claude_legacy 409 vs 413 and mistral_sp 454 vs 437. Cause: the tokenizers split the space before a digit into its own token."
+ ],
+ "spec_estimate_tokens": 8433,
+ "messages": [
+  "m02",
+  "m04",
+  "m06",
+  "m08",
+  "m10",
+  "m12",
+  "m14",
+  "m16",
+  "m18",
+  "m20",
+  "m22",
+  "m24",
+  "m26",
+  "m28",
+  "m30",
+  "m32",
+  "m34",
+  "m36",
+  "m38",
+  "m40"
+ ],
+ "totals": {
+  "o200k": {
+   "en": 562,
+   "en_terse": 406,
+   "mine": 340
+  },
+  "cl100k": {
+   "en": 564,
+   "en_terse": 407,
+   "mine": 379
+  },
+  "claude_legacy": {
+   "en": 569,
+   "en_terse": 402,
+   "mine": 413
+  },
+  "llama3": {
+   "en": 564,
+   "en_terse": 407,
+   "mine": 377
+  },
+  "llama4": {
+   "en": 563,
+   "en_terse": 408,
+   "mine": 336
+  },
+  "mistral_tekken": {
+   "en": 579,
+   "en_terse": 428,
+   "mine": 349
+  },
+  "mistral_sp": {
+   "en": 601,
+   "en_terse": 457,
+   "mine": 437
+  },
+  "_ratios_mine_vs_en_terse": {
+   "o200k": 0.837,
+   "cl100k": 0.931,
+   "claude_legacy": 1.027,
+   "llama3": 0.926,
+   "llama4": 0.824,
+   "mistral_tekken": 0.815,
+   "mistral_sp": 0.956
+  },
+  "_ablation_macros_expanded_mine": {
+   "o200k": 377,
+   "cl100k": 414,
+   "claude_legacy": 452,
+   "llama3": 411,
+   "llama4": 376,
+   "mistral_tekken": 389,
+   "mistral_sp": 477
+  },
+  "_even_spread_form_assignment_mine": {
+   "o200k": 342,
+   "cl100k": 378,
+   "claude_legacy": 434,
+   "llama3": 366,
+   "llama4": 342,
+   "mistral_tekken": 357,
+   "mistral_sp": 459
+  },
+  "_claude_first_dialect_ratio_vs_en_terse": {
+   "o200k": 0.88,
+   "cl100k": 0.9,
+   "claude_legacy": 0.98,
+   "llama3": 0.9,
+   "llama4": 0.88,
+   "mistral_tekken": 0.85,
+   "mistral_sp": 1
+  },
+  "_spec_tokens": {
+   "o200k": 7118,
+   "cl100k": 7532,
+   "claude_legacy": 8433,
+   "llama3": 7378,
+   "llama4": 7164,
+   "mistral_tekken": 7577,
+   "mistral_sp": 9108
+  },
+  "_per_message_wins_vs_en_terse_of_20": {
+   "o200k": 18,
+   "cl100k": 13,
+   "claude_legacy": 7,
+   "llama3": 14,
+   "llama4": 18,
+   "mistral_tekken": 17,
+   "mistral_sp": 11
+  }
+ },
+ "files": [
+  "/home/user/lang_for_ai/experiments/tokenization/verify/attempt_1.json",
+  "/home/user/lang_for_ai/experiments/tokenization/verify/attempt_1.py",
+  "/home/user/lang_for_ai/experiments/tokenization/verify/attempt_1_spec.txt",
+  "/home/user/lang_for_ai/experiments/tokenization/verify/analysis_attempt_1.py",
+  "/home/user/lang_for_ai/experiments/tokenization/verify/analysis_attempt_1.json",
+  "/home/user/lang_for_ai/experiments/tokenization/verify/lexicon_attempt_1.py",
+  "/home/user/lang_for_ai/experiments/tokenization/verify/core_attempt_1.py",
+  "/home/user/lang_for_ai/experiments/tokenization/verify/forms_attempt_1.py",
+  "/home/user/lang_for_ai/experiments/tokenization/verify/pool.py",
+  "/home/user/lang_for_ai/experiments/tokenization/verify/pool_attempt_1.json",
+  "/home/user/lang_for_ai/experiments/tokenization/verify/run_log_attempt_1.txt"
+ ],
+ "beats_en_terse_on": [
+  "o200k",
+  "cl100k",
+  "llama3",
+  "llama4",
+  "mistral_tekken",
+  "mistral_sp"
+ ],
+ "why_it_works_or_fails": "C3 is refuted for 5 of 7 tokenizers. It is not refuted for claude_legacy (Claude proxy), where the result is parity to a slight loss.\n\nMain measured result (letters only, 20 even messages):\n- Beats en_terse: o200k 0.84x, llama4 0.82x, mistral_tekken 0.82x, cl100k 0.93x, llama3 0.93x.\n- mistral_sp: 0.96x, but this is fragile; it ranges from 0.91x to 1.00x across the configurations I ran.\n- claude_legacy: 1.03x, a loss. Other configurations give 0.98x to 1.05x.\n- Against plain en: 0.60x on o200k, 0.73x on claude_legacy.\n- For comparison, projection S5 (which even used raw digits) was 1.27-1.30x en_terse on o200k and 1.53-1.59x on claude_legacy.\n\nWhere the gain comes from (o200k token accounting, analysis_attempt_1.json):\n- Structure costs the same: en_terse spends 108 tokens on punctuation and spaces; my encoding spends 103 on grammar markers.\n- The whole gain is in content: 274 English word tokens become 212 tokens (167 roots = 174 tokens, 19 macros = 21, raw strings = 17).\n\nFour things made this work:\n- A telegraphic grammar with no role, linker or default-pragmatic affixes: about 15.6 morphemes per message, against 21.7-22.6 in S5.\n- A vocabulary-wide form scan: 519 forms are single tokens in all 7 tokenizers, against 205 with fixed CV shapes. Root cost on o200k is about 1.04 tokens.\n- The phrase codebook. Ablation with every macro expanded: o200k 377 (0.93x), claude_legacy 452 (1.12x). Macros save about 10%.\n- Digit forms cost 1 token each, while en_terse pays a separate space token before every digit.\n\nWhy it fails on claude_legacy:\n- Only about the first 600 pool forms are single tokens there.\n- The 167 root uses cost 232 tokens (1.39 each), and macros cost 33 tokens for 19 uses, because their estimated frequency ranks them past 2,000.\n- Ordering forms by claude_legacy cost first (variant E) reaches 0.98x on claude_legacy but costs o200k (0.88x).\n\nSpec size: 2,399 entries in a compact pair format, 7,118 tokens (o200k) to 9,108 (mistral_sp), 8,433 on claude_legacy. Break-even against en_terse, if the spec is resent in every context: about 2,000 messages on o200k, llama4 and tekken; about 5,000 on cl100k and llama3; about 9,100 on mistral_sp; never on claude_legacy. As a token saver per conversation, it does not pay off unless the spec is cached or fine-tuned in.\n\nHonesty caveats:\n- The grammar, the 19 used macros and the 33 used domain roots were written after reading the test messages. The 105 used core roots come from an untailored frequency list.\n- Each used macro occurs once in the test half. By keyword match, 18 of 19 never occur in the odd half.\n- Manual reading (my judgement) finds about 15 codebook uses in the odd messages, mostly from entries never used in the test half: m01, m05, m07 ×3, m11, m19, m21, m27, m33 ×2, m35 ×2, m37, m39. That suggests partial but real generality.\n- Form assignment noise across equally valid blacklists moved claude_legacy between 406 and 423 tokens.",
+ "risks_for_llm_reading": "No model was run (no API access), so comprehension is entirely untested. Specific risks:\n- Many forms are fragments of English or other-language words used with unrelated meanings (persu=study, evalu=work, compl=find, Contin=YOUR, Manufact=Q2). That invites strong prior-meaning interference. Some confusable pairs exist, e.g. requ=AND next to request, relev=paper next to relevant.\n- Case is significant in forms (Contin, Anim, Serv).\n- The grammar relies on English-like heuristics that are not strictly unambiguous. Examples: participle vs compound reading of a verb root before a noun (update table, data clean); clause boundaries inferred from TAM markers, pronouns and connectives; omitted-subject rules; macros with implicit arguments and scope (likely_cause compounding, PER at message end covering the whole message).\n- The reader must look up 2,399 arbitrary form-meaning pairs in context.\n- Digit concatenation merges adjacent numbers unless they are separated.\n- Count-delimited quotes (Q2 Maria Lopez) fail silently if the count is wrong.\n- Some information is approximated in the same way en_terse does it: 'engineer', 'section', 'to me' and 'about it' are dropped, 'modify' becomes change, 'proposed' becomes suggest, 'shortlisted' and 'soften' map to closest roots."
+}

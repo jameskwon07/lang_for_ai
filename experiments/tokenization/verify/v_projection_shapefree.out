@@ -1,0 +1,8 @@
+root forms[150:1150] mean tokens: {'o200k': 1.006, 'cl100k': 1.115, 'claude_legacy': 1.344, 'llama3': 1.037, 'llama4': 1.02, 'mistral_tekken': 1.098, 'mistral_sp': 1.44}
+ [shape-free all-7 pool first]  cells = tokens (x en, x en_terse)
+  g1 S1 m/msg  30.7 | o200k 1334 (1.15,1.57) | claude_legacy 1434 (1.22,1.68) | llama3 1341 (1.15,1.58) | mistral_sp 1449 (1.14,1.50)
+  g1 S4 m/msg  24.1 | o200k 1071 (0.92,1.26) | claude_legacy 1171 (0.99,1.37) | llama3 1078 (0.93,1.27) | mistral_sp 1186 (0.94,1.22)
+  g1 S5 m/msg  21.7 | o200k 1052 (0.91,1.24) | claude_legacy 1115 (0.95,1.30) | llama3 1059 (0.91,1.24) | mistral_sp 1186 (0.94,1.22)
+  g2 S1 m/msg  29.2 | o200k 1267 (1.09,1.49) | claude_legacy 1371 (1.16,1.60) | llama3 1278 (1.10,1.50) | mistral_sp 1403 (1.11,1.45)
+  g2 S4 m/msg  25.0 | o200k 1099 (0.95,1.30) | claude_legacy 1203 (1.02,1.41) | llama3 1110 (0.95,1.30) | mistral_sp 1235 (0.97,1.27)
+  g2 S5 m/msg  22.6 | o200k 1080 (0.93,1.27) | claude_legacy 1147 (0.97,1.34) | llama3 1091 (0.94,1.28) | mistral_sp 1235 (0.97,1.27)

@@ -1,0 +1,47 @@
+a/b/c. per-scenario decomposition (sum over 40 messages)
+ g1 S1 morphemes 1229
+    o200k: total 1357, morpheme-only tpm 1.040, raw-string tokens 79 (5.8%), with leading space 1329 (initial penalty 28)
+    claude_legacy: total 1629, morpheme-only tpm 1.242, raw-string tokens 102 (6.3%), with leading space 1624 (initial penalty 5)
+    mistral_sp: total 1719, morpheme-only tpm 1.308, raw-string tokens 112 (6.5%), with leading space 1719 (initial penalty 0)
+ g1 S4 morphemes 966
+    o200k: total 1094, morpheme-only tpm 1.051, raw-string tokens 79 (7.2%), with leading space 1066 (initial penalty 28)
+    claude_legacy: total 1365, morpheme-only tpm 1.307, raw-string tokens 102 (7.5%), with leading space 1361 (initial penalty 4)
+    mistral_sp: total 1456, morpheme-only tpm 1.391, raw-string tokens 112 (7.7%), with leading space 1456 (initial penalty 0)
+ g1 S5 morphemes 868
+    o200k: total 1075, morpheme-only tpm 1.056, raw-string tokens 79 (7.3%), with leading space 1047 (initial penalty 28)
+    claude_legacy: total 1310, morpheme-only tpm 1.343, raw-string tokens 102 (7.8%), with leading space 1305 (initial penalty 5)
+    mistral_sp: total 1456, morpheme-only tpm 1.435, raw-string tokens 112 (7.7%), with leading space 1456 (initial penalty 0)
+ g2 S1 morphemes 1169
+    o200k: total 1292, morpheme-only tpm 1.040, raw-string tokens 76 (5.9%), with leading space 1268 (initial penalty 24)
+    claude_legacy: total 1583, morpheme-only tpm 1.269, raw-string tokens 99 (6.3%), with leading space 1583 (initial penalty 0)
+    mistral_sp: total 1656, morpheme-only tpm 1.323, raw-string tokens 109 (6.6%), with leading space 1656 (initial penalty 0)
+ g2 S4 morphemes 1001
+    o200k: total 1124, morpheme-only tpm 1.047, raw-string tokens 76 (6.8%), with leading space 1100 (initial penalty 24)
+    claude_legacy: total 1415, morpheme-only tpm 1.315, raw-string tokens 99 (7.0%), with leading space 1415 (initial penalty 0)
+    mistral_sp: total 1488, morpheme-only tpm 1.378, raw-string tokens 109 (7.3%), with leading space 1488 (initial penalty 0)
+ g2 S5 morphemes 903
+    o200k: total 1105, morpheme-only tpm 1.052, raw-string tokens 76 (6.9%), with leading space 1081 (initial penalty 24)
+    claude_legacy: total 1359, morpheme-only tpm 1.349, raw-string tokens 99 (7.3%), with leading space 1359 (initial penalty 0)
+    mistral_sp: total 1488, morpheme-only tpm 1.419, raw-string tokens 109 (7.3%), with leading space 1488 (initial penalty 0)
+ raw strings (both glossers): 45 chars 606 non-a-z chars 164
+
+d. word-filter sensitivity (rebuild candidate list with a different zipf cut)
+ zipf < 3.0: candidates 100240; root forms[150:1150] mean tokens o200k 1.07, claude_legacy 1.82, mistral_sp 1.93
+   g1 S4: o200k 1094 (0.94x en, 1.29x terse), claude_legacy 1365 (1.16x en, 1.60x terse)
+   g1 S5: o200k 1075 (0.93x en, 1.27x terse), claude_legacy 1310 (1.11x en, 1.53x terse)
+   g2 S4: o200k 1124 (0.97x en, 1.33x terse), claude_legacy 1415 (1.20x en, 1.65x terse)
+   g2 S5: o200k 1105 (0.95x en, 1.30x terse), claude_legacy 1359 (1.15x en, 1.59x terse)
+ zipf < 4.0: candidates 104512; root forms[150:1150] mean tokens o200k 1.00, claude_legacy 1.32, mistral_sp 1.60
+   g1 S4: o200k 1058 (0.91x en, 1.25x terse), claude_legacy 1156 (0.98x en, 1.35x terse)
+   g1 S5: o200k 1039 (0.90x en, 1.23x terse), claude_legacy 1101 (0.93x en, 1.29x terse)
+   g2 S4: o200k 1089 (0.94x en, 1.28x terse), claude_legacy 1194 (1.01x en, 1.40x terse)
+   g2 S5: o200k 1070 (0.92x en, 1.26x terse), claude_legacy 1138 (0.97x en, 1.33x terse)
+ zipf < 99: candidates 108150; root forms[150:1150] mean tokens o200k 1.00, claude_legacy 1.00, mistral_sp 1.00
+   g1 S4: o200k 1051 (0.91x en, 1.24x terse), claude_legacy 1080 (0.92x en, 1.26x terse)
+   g1 S5: o200k 1032 (0.89x en, 1.22x terse), claude_legacy 1025 (0.87x en, 1.20x terse)
+   g2 S4: o200k 1082 (0.93x en, 1.28x terse), claude_legacy 1111 (0.94x en, 1.30x terse)
+   g2 S5: o200k 1063 (0.92x en, 1.25x terse), claude_legacy 1055 (0.89x en, 1.23x terse)
+
+e. break-even: tokens per message en_terse vs language S4/S5 (o200k, claude_legacy)
+  o200k: en_terse 21.2/msg, en 29.0/msg
+  claude_legacy: en_terse 21.4/msg, en 29.5/msg
