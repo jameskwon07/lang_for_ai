@@ -1,0 +1,1169 @@
+{
+ "labels": {
+  "writer-haiku-low": "Z1",
+  "careful-tool-encoder": "Z2",
+  "writer-default": "Z3"
+ },
+ "note": "작성자는 사양(verify/a2_spec_A_conservative.txt)과 write_task.md만 읽었다. careful-tool-encoder는 verify/heldout_lean.json의 인코딩이고, 독자에게는 동결 후 추가된 6항목을 덧붙인 사양을 주었다. 판정자는 Z1~Z3 라벨만 보았다.",
+ "chains": {
+  "writer-default": {
+   "cond": "writer-default",
+   "written": {
+    "messages": [
+     {
+      "id": "m01",
+      "lean": "aqu podat espa src/net/client.py ple bicy overw accus poden ener wyst bicy mour vig clar aprend aqu espan aprend spl fres aqu dro inhib femin besie"
+     },
+     {
+      "id": "m03",
+      "lean": "aqu inhib accompan acceler spl espa SQL evacu vec realiz assol relig anth communic conc frac dro communic evacu"
+     },
+     {
+      "id": "m05",
+      "lean": "anx evol flav liqu forg lect perc squ foss liqu perc cort pract exh eas coch vac immuno indu fres distingu squ psz undis"
+     },
+     {
+      "id": "m07",
+      "lean": "anx clar annot ener annot cach fibr vec auss atrav dys cancell veh annot ener annot uniq imped acqu eas resid artific veh empre vig barg coch"
+     },
+     {
+      "id": "m09",
+      "lean": "anx caut obl antib imag fost frac fle oll expl theor pengh urg espa https://docs.python.org/3/whatsnew/3.13.html ener lyr hydr desap"
+     },
+     {
+      "id": "m11",
+      "lean": "anx embol underst reconoc interfer proj carn kne reconoc forc pione"
+     },
+     {
+      "id": "m13",
+      "lean": "cov anunc irradi monoc mov anth irradi deput anx determ taxp econom enfr vec nug"
+     },
+     {
+      "id": "m15",
+      "lean": "tob vacc kaps cyl aest newsp fle persec ausge succ kaps mov aest newsp energ elucid kaps"
+     },
+     {
+      "id": "m17",
+      "lean": "anx dets erinn artific superst swo espa HTTP 503 vac foss conce aprend acqu offic overw ple acqu dro eas proced syl undis"
+     },
+     {
+      "id": "m19",
+      "lean": "anx handic ener demok spectro superst obt armon fos libert vot syl commer fantas enh astron spectro spl intrig rav enh overw cov relig appe"
+     },
+     {
+      "id": "m21",
+      "lean": "anx tinh foss handic bru analyt vagu franch proport occ famil anim squ hib occ recip hib squ barg dimin anx deriv handic expl fle neces ple acqu reun deriv hidro vac anth eas ignor analyt mul aest dro svol aqu accom pred frac abol conce explan"
+     },
+     {
+      "id": "m23",
+      "lean": "anx ampl enh escol exces viv hypert evacu rav enh dro communic uniq desap coinc appe expl fos disappe penet bicy olvid particip"
+     },
+     {
+      "id": "m25",
+      "lean": "anx bedro aven kne espa merge_records() ril invol clar tyd veh clar tyd anth eas hom hypert swo flav lect liqu tyd ple aest exc crystall espa ID interf expir pamph"
+     },
+     {
+      "id": "m27",
+      "lean": "anx anunc phys autob anth hom abund scarc anth eas dro fos abund vot espan mul aest casc monop democr"
+     },
+     {
+      "id": "m29",
+      "lean": "anx theoret auth auc swo flav inhib aqu relig fos quen explic cosm rav accus fos libert veh conc neces indul"
+     },
+     {
+      "id": "m31",
+      "lean": "anx dro theoret auc ener meille ocult estud carre agr diagno tempor anim ple ampl exc anot anim rav exc dro auton anim"
+     },
+     {
+      "id": "m33",
+      "lean": "anx espa Australia tecn expl espa Canberra anth dro expl espa Sydney epid exemp arrog releg expl espa Australia explo jov midd rav forg hik comput"
+     },
+     {
+      "id": "m35",
+      "lean": "anx appe aven bedre dyn enjo vac espa 4.2.1 nex espa https://github.com/example-org/tilemap/blob/main/CHANGELOG.md pengh underst appe acqu annot enjo vec auss atrav epid exemp arrog"
+     },
+     {
+      "id": "m37",
+      "lean": "anx caut expl parec auss enjo vec espa fix/login-timeout aleg acqu enc descri espa test_auth.py appe expl forc sque geleg annot expl espa test_session_expiry ener superst vac immuno flav relig squ imag"
+     },
+     {
+      "id": "m39",
+      "lean": "anx caut expl advoc cort espa Lisbon revis dyn tvr veh forg inhab ener immigr kne acad dro dyn tvr cort accompan reun equival psychiat aspir delt epid forc reconoc expl heav lect inst espa EUR"
+     }
+    ]
+   },
+   "read": {
+    "translations": [
+     {
+      "id": "m01",
+      "english": "Refactor src/net/client.py so that its retry logic uses a backoff that doubles its wait time after every attempt. Limit the attempts to 5. Do not change the public interface."
+     },
+     {
+      "id": "m03",
+      "english": "Turn the user's question into a SQL query against the sales database, run it, and write out only the results — do not write out the query."
+     },
+     {
+      "id": "m05",
+      "english": "I have handled 1,200 records out of 3,000 so far. The job will probably finish in about 25 minutes, based on the current rate."
+     },
+     {
+      "id": "m07",
+      "english": "Every unit test passes on my machine. I am waiting for the tests that exercise the whole system; I will open a merge request after they finish."
+     },
+     {
+      "id": "m09",
+      "english": "This search found 14 results. The most relevant one is the official changelog at https://docs.python.org/3/whatsnew/3.13.html, which lists the removed modules."
+     },
+     {
+      "id": "m11",
+      "english": "The calculation confirms that the budget covers the total cost, but the remaining budget is small."
+     },
+     {
+      "id": "m13",
+      "english": "Should the summary target executives, or should it target the [edition]? The level of technical detail depends on the audience."
+     },
+     {
+      "id": "m15",
+      "english": "About last quarter: do you mean the most recent ordinary calendar quarter, or do you mean the company's fiscal quarter?"
+     },
+     {
+      "id": "m17",
+      "english": "The payment API request failed with HTTP 503 on three consecutive attempts. I stopped retrying, so I will not hit the maximum rate limit."
+     },
+     {
+      "id": "m19",
+      "english": "The step that translates the document failed, because the input is larger than the maximum context size. I can split the document into pieces and retry. Should I do that?"
+     },
+     {
+      "id": "m21",
+      "english": "I propose three steps. Let's collect the customer complaint reports, then group them by theme, then order the themes by their count. The second step is the hardest, so I want a second reviewer on it. I will start the collection if you do not [object]. Expect the first results within the next hour."
+     },
+     {
+      "id": "m23",
+      "english": "We can add a cache in front of the slow query, and then we do not have to rewrite the whole module again. That is lower [risk — literally 'lower ten'], and rolling it back is easy."
+     },
+     {
+      "id": "m25",
+      "english": "The patch is correct, but the loop in merge_records() reads every row for every row. It will be too slow with 100,000 rows, so you should consider a hash table keyed by ID."
+     },
+     {
+      "id": "m27",
+      "english": "The summary is good overall. It is slightly too long. It will not be longer than the limit if you cut the background section."
+     },
+     {
+      "id": "m29",
+      "english": "I agree with your plan, with one change: run the cheaper model first, and use the larger one only for the hard cases."
+     },
+     {
+      "id": "m31",
+      "english": "I do not agree with the plan that drops the outliers: they are real measurements [agr — unclear, perhaps 'incoming'], and a fault causes them. So we should flag them, and we should not delete them."
+     },
+     {
+      "id": "m33",
+      "english": "Australia's capital is Canberra; it is not Sydney. My confidence is high. The sources are the Australian government website and two reference books."
+     },
+     {
+      "id": "m35",
+      "english": "That is correct. The bug was fixed in version 4.2.1. The changelog at https://github.com/example-org/tilemap/blob/main/CHANGELOG.md confirms that. I tested the fix on my machine. My confidence is high."
+     },
+     {
+      "id": "m37",
+      "english": "This is a handoff. My fix is on the branch fix/login-timeout. I have not yet updated test_auth.py; that is the rest of the work. The unreliable test is test_session_expiry, which fails in roughly 1 run out of 10."
+     },
+     {
+      "id": "m39",
+      "english": "This is the state of things so far. The Lisbon flight is booked for the two people travelling, but the hotel is not booked yet. The user wants to stay near the old town. The rest of the budget is 850 EUR."
+     }
+    ]
+   }
+  },
+  "writer-haiku-low": {
+   "cond": "writer-haiku-low",
+   "written": {
+    "messages": [
+     {
+      "id": "m01",
+      "lean": "aqu inhib alumin pseud coinc vac espa src/net/client.py accus exacerb cancell mour swo fle fres pseud deleg femin besie dro inhib"
+     },
+     {
+      "id": "m03",
+      "lean": "aqu redu acceler spl evacu vac realiz hosp rav relig anth aqu proport conc frac dro evacu"
+     },
+     {
+      "id": "m05",
+      "lean": "acqu evol flav liqu forg lect eleg foss liqu compens cort urg psz escrit pract exc coch tob indu fres mour"
+     },
+     {
+      "id": "m07",
+      "lean": "clar annot succ misc vac acqu dys cancell annot wor coch viv resid empre artific"
+     },
+     {
+      "id": "m09",
+      "lean": "obl agreg imag fost frac fle oll theor antif espa https://docs.python.org/3/whatsnew/3.13.html lyr hydr part"
+     },
+     {
+      "id": "m11",
+      "lean": "devel underst proj carn compar reconoc kne forc rest pione"
+     },
+     {
+      "id": "m13",
+      "lean": "cov anunc sesu monoc mov determ econom taxp enfr nug"
+     },
+     {
+      "id": "m15",
+      "lean": "cyl aest newsp persec mour mov energ"
+     },
+     {
+      "id": "m17",
+      "lean": "artific dets espa API dro succ foss dece acqu offic pseud coinc invis espan"
+     },
+     {
+      "id": "m19",
+      "lean": "handic demok dro succ obt armon espan commer acqu enh astron spectro tob advis rav pseud coinc cov rhet"
+     },
+     {
+      "id": "m21",
+      "lean": "tinh alleg handic analyt vagu troub famil hib recip frequ acqu enh famil expl hard kne aest dro obl ... acqu dys analyt rav fres hour"
+     },
+     {
+      "id": "m23",
+      "lean": "bru redu wor kle ... inhib spl sym kle spl cach vec veh slow fle expl low risk rav easy revert"
+     },
+     {
+      "id": "m25",
+      "lean": "patch expl correct kne loop espa merge_records() expl kle slow foss liqu ... aqu redu dict kel ID"
+     },
+     {
+      "id": "m27",
+      "lean": "expl good summary kle fos long kne cort ... crit paragraph aqu cut ... within limit"
+     },
+     {
+      "id": "m29",
+      "lean": "acqu agre veh plan kne one change aqu run cheap model first rav larg one only hard case"
+     },
+     {
+      "id": "m31",
+      "lean": "acqu dro agre drop outlier anim come spl real sensor fault aqu flag dro delet"
+     },
+     {
+      "id": "m33",
+      "lean": "capital Australia expl Canberra dro Sydney acqu conf kle sure source gov website rav forg encycl"
+     },
+     {
+      "id": "m35",
+      "lean": "ple expl bug fix version 4.2.1 changelog espa https://github.com/example-org/tilemap/blob/main/CHANGELOG.md confirm acqu reproduce fix local acqu conf kle"
+     },
+     {
+      "id": "m37",
+      "lean": "handing off fix branch fix/login-timeout remain work update test_auth.py flaky test test_session_expiry fails tob one run ten"
+     },
+     {
+      "id": "m39",
+      "lean": "state cort flight Lisbon book both travelers hotel dro book remain budget 850 euro user want stay near old town"
+     }
+    ]
+   },
+   "read": {
+    "translations": [
+     {
+      "id": "m01",
+      "english": "Change the retry method in src/net/client.py to use increasing wait times, with at most five retries, and keep the public interface unchanged."
+     },
+     {
+      "id": "m03",
+      "english": "Turn the question into a query against the sales [data] store and run it; report only the results, not the query."
+     },
+     {
+      "id": "m05",
+      "english": "I have handled 1,200 of 3,000 data records so far. At the current speed the job should finish in about 25 [minutes]."
+     },
+     {
+      "id": "m07",
+      "english": "Every test passed [successfully] on my side. I am waiting for the tests to finish before opening the merge request."
+     },
+     {
+      "id": "m09",
+      "english": "I searched and returned 14 results; the most relevant is the official log at https://docs.python.org/3/whatsnew/3.13.html — the list of removed parts."
+     },
+     {
+      "id": "m11",
+      "english": "My calculation confirms that the total cost is within budget, but what is left over is small."
+     },
+     {
+      "id": "m13",
+      "english": "Should I aim the summary at executives, or at a technical level of detail? That depends on the audience."
+     },
+     {
+      "id": "m15",
+      "english": "Do you mean [the] recent time, or the company?"
+     },
+     {
+      "id": "m17",
+      "english": "The [payment] request to the API did not succeed three times; I stopped retrying, to avoid the [rate] limit."
+     },
+     {
+      "id": "m19",
+      "english": "The translation step did not succeed, because the input exceeds the context limit. I can split the document into parts and retry — should I go ahead?"
+     },
+     {
+      "id": "m21",
+      "english": "I propose three steps: collect customer [feedback], group it by theme, and order it by frequency. I can do the grouping — it is hard — but you do not [need to] search ... I am collecting now, and [it will take] five hours."
+     },
+     {
+      "id": "m23",
+      "english": "Let us make [the change] ... change it to ... without ... the [per-]unit cache ... for the slow [path]: it is the lowest risk and easy to revert."
+     },
+     {
+      "id": "m25",
+      "english": "The patch is correct, but the loop in merge_records() is very slow [with] 3,000 ... — make a dict keyed by ID."
+     },
+     {
+      "id": "m27",
+      "english": "The summary is good, but it is much too long so far ... the final paragraph. Cut [it] ... to get within the limit."
+     },
+     {
+      "id": "m29",
+      "english": "I agree with the plan, but with one change: run the cheap model first, and [use] the large one only for the hard cases."
+     },
+     {
+      "id": "m31",
+      "english": "I do not agree with dropping the outliers — they come from a real sensor fault. Flag them, do not delete them."
+     },
+     {
+      "id": "m33",
+      "english": "The capital of Australia is Canberra, not Sydney. I am very confident; sources: a government website and two encyclopedias."
+     },
+     {
+      "id": "m35",
+      "english": "So the bug is fixed in version 4.2.1. The changelog at https://github.com/example-org/tilemap/blob/main/CHANGELOG.md confirms it, and I reproduced the fix locally. I am very confident."
+     },
+     {
+      "id": "m37",
+      "english": "Handing off the fix on branch fix/login-timeout. The remaining work is to update test_auth.py. The flaky test test_session_expiry fails in about one run in ten."
+     },
+     {
+      "id": "m39",
+      "english": "State so far: the flight to Lisbon is booked for both travelers; the hotel is not booked. The remaining budget is 850 euros. The user wants to stay near the old town."
+     }
+    ]
+   }
+  },
+  "careful-tool-encoder": {
+   "cond": "careful-tool-encoder",
+   "written": {
+    "messages": [
+     {
+      "id": "m01",
+      "lean": "aqu podat overw eleg contamin vac espa src/net/client.py accus prist poden swo syl fres aprend dro inhib femin besie"
+     },
+     {
+      "id": "m03",
+      "lean": "aqu accommod accompan acceler spl espa SQL evacu vec realiz assol relig anth agreg conc frac dro agreg evacu"
+     },
+     {
+      "id": "m05",
+      "lean": "abst flav liqu forg lect squ foss liqu perc cort pract exc coch vac indu fres distingu immuno urg psz undis"
+     },
+     {
+      "id": "m07",
+      "lean": "clar cach eleg annot fibr vec conven atrav dys cancell veh extrav advis eleg annot eleg coch occ eas resid bedeut artific"
+     },
+     {
+      "id": "m09",
+      "lean": "imag fost frac squ obl fle oll expl theor pengh urg espa https://docs.python.org/3/whatsnew/3.13.html ener lyr hydr desap"
+     },
+     {
+      "id": "m11",
+      "lean": "embol agot underst reconoc interfer proj carn kne reconoc eleg forc pione"
+     },
+     {
+      "id": "m13",
+      "lean": "determ taxp eleg econom enfr vec nug cyl anunc exc irradi monoc mov anth exc irradi downt"
+     },
+     {
+      "id": "m15",
+      "lean": "tob vacc kaps cyl aest newsp fle persec progr kaps mov aest newsp energ eleg elucid kaps"
+     },
+     {
+      "id": "m17",
+      "lean": "dets erinn artific superst swo espa HTTP 503 vec foss aprend vac accompl offic overw veh undis eleg espan eleg invis"
+     },
+     {
+      "id": "m19",
+      "lean": "superst vac demok eleg handic obt armon fos abund vot commer eleg espan enh astron spectro vac advis rav enh overw cov deterior"
+     },
+     {
+      "id": "m21",
+      "lean": "tinh foss handic bru analyt habl vagu asseg famil squ hib destac hib squ aproxim anx fle neces handic expl famil ple reun deriv hidro veh anth eas ignor analyt mul aest dro svol aqu accom pred frac compar flav explan"
+     },
+     {
+      "id": "m23",
+      "lean": "ampl enh escol exces vac hypert evacu eleg inh cron appe expl particip olvid rav fos disappe homic vot uniqu desap dyn communic coinc"
+     },
+     {
+      "id": "m25",
+      "lean": "bedro aven kne espa merge_records() eleg proib prosp anth eas hom hypert swo flav lect liqu tyd ple aqu crystall espa ID interf uncomp"
+     },
+     {
+      "id": "m27",
+      "lean": "anunc phys autob anth hom abund scarc monop advis eleg casc eas omn anth compar espan"
+     },
+     {
+      "id": "m29",
+      "lean": "theoret auth auc swo flav inhib aqu relig fos quen explic cosm accus fos libert veh conc neces indul"
+     },
+     {
+      "id": "m31",
+      "lean": "dro theoret ocult eleg meille anim activ squ estud carre agricult diagno ple ampl exc anot cron"
+     },
+     {
+      "id": "m33",
+      "lean": "espa Australia tecn expl espa Canberra rav dro expl espa Sydney epid exemp arrog releg expl espa Australian explo jov midd rav forg przek"
+     },
+     {
+      "id": "m35",
+      "lean": "espa https://github.com/example-org/tilemap/blob/main/CHANGELOG.md pengh underst bedre dyn enjo vac fost magn forg magn flav acqu desej enjo vec conven atrav epid exemp arrog"
+     },
+     {
+      "id": "m37",
+      "lean": "veh parec engra enjo spl espa fix/login-timeout aleg epid forc expl espa test_auth.py eleg descri geleg annot expl espa test_session_expiry ener superst vac flav squ imag relig immuno"
+     },
+     {
+      "id": "m39",
+      "lean": "advoc cort espa Lisbon revis dyn comput veh forg immigr inhab kne acum dro dyn comput reconoc eleg forc expl heav lect inst przes epid accompan reun equival psychiat aspir delt"
+     }
+    ]
+   },
+   "read": {
+    "translations": [
+     {
+      "id": "m01",
+      "english": "Refactor the retry code in src/net/client.py to use exponential backoff with a maximum of 5 attempts; do not change the public interface."
+     },
+     {
+      "id": "m03",
+      "english": "Turn user questions into SQL queries against the sales database, run it, and return only the result — do not return the query."
+     },
+     {
+      "id": "m05",
+      "english": "So far I have processed 1,200 of 3,000 records. The job should finish in approximately 25 minutes at the current rate."
+     },
+     {
+      "id": "m07",
+      "english": "Every unit test passes on the local machine. I am waiting for the integration tests to finish, and then I will open a pull request."
+     },
+     {
+      "id": "m09",
+      "english": "There are 14 results from the search. The most relevant one is the official changelog at https://docs.python.org/3/whatsnew/3.13.html, which lists the removed modules."
+     },
+     {
+      "id": "m11",
+      "english": "The calculator tool confirmed that the budget covers the total cost, but the rest of the budget is small."
+     },
+     {
+      "id": "m13",
+      "english": "The level of technical detail depends on the audience. Should the summary target executives, or should it target engineers?"
+     },
+     {
+      "id": "m15",
+      "english": "About \"last quarter\": do you mean the most recent calendar quarter, or do you mean the company's financial (fiscal) quarter?"
+     },
+     {
+      "id": "m17",
+      "english": "The payment API request failed with HTTP 503 on three attempts in a row. I stopped retrying, to avoid the rate limit."
+     },
+     {
+      "id": "m19",
+      "english": "I failed at the translation step, because the input is longer than the context limit. I can split the document into parts and retry — should I go ahead?"
+     },
+     {
+      "id": "m21",
+      "english": "I propose three steps. Let's collect negative customer feedback, group it by theme, and sort the themes by count. The hardest step is the grouping, so I want a second reviewer for it. I will start collecting if you do not object. Expect the first results within one hour."
+     },
+     {
+      "id": "m23",
+      "english": "We can add a cache in front of the slow queries instead. That is an easy rollback and lower risk than the whole module being rewritten."
+     },
+     {
+      "id": "m25",
+      "english": "The patch is correct, but the loop in merge_records() is quadratic — it will be too slow with 100,000 rows. So please consider an ID-keyed map."
+     },
+     {
+      "id": "m27",
+      "english": "The summary is good overall. It is slightly too long. Cutting the background section will bring it within the limit."
+     },
+     {
+      "id": "m29",
+      "english": "I agree with your plan, with one change: run the cheaper model first, and use the larger one only for the hard cases."
+     },
+     {
+      "id": "m31",
+      "english": "I do not agree with dropping the outliers — they come from a real measurement-device fault, so we should flag them instead."
+     },
+     {
+      "id": "m33",
+      "english": "Australia's capital is Canberra, and it is not Sydney. Confidence is high. The sources are the Australian government web site and two encyclopedias."
+     },
+     {
+      "id": "m35",
+      "english": "The changelog at https://github.com/example-org/tilemap/blob/main/CHANGELOG.md confirms that the bug was fixed in [4.2.1]. I verified the fix on the local machine. Confidence is high."
+     },
+     {
+      "id": "m37",
+      "english": "For handoff: I committed the fix to the fix/login-timeout branch. What is left is updating test_auth.py. The unreliable (flaky) test is test_session_expiry, which fails in roughly 1 out of 10 runs."
+     },
+     {
+      "id": "m39",
+      "english": "The state of things so far: the Lisbon flight is booked for two travellers, but the hotel is not booked. The rest of the budget is 850 euros. The user wants to stay near the old town."
+     }
+    ]
+   }
+  }
+ },
+ "grades": [
+  {
+   "sets": [
+    {
+     "label": "Z1",
+     "total": 24,
+     "scores": [
+      {
+       "id": "m01",
+       "score": 1,
+       "errors": "'exponential backoff' weakened to 'increasing wait times'; '5 attempts' became 'five retries' (changes the count)"
+      },
+      {
+       "id": "m03",
+       "score": 1,
+       "errors": "'SQL' dropped, and 'the user's' question lost"
+      },
+      {
+       "id": "m05",
+       "score": 2,
+       "errors": "none ('minutes' was a bracketed guess, but correct)"
+      },
+      {
+       "id": "m07",
+       "score": 1,
+       "errors": "unit vs integration tests lost: 'every test passed' yet 'waiting for the tests', which is contradictory; 'locally' became 'on my side'"
+      },
+      {
+       "id": "m09",
+       "score": 1,
+       "errors": "'changelog' became 'log'; 'removed modules' became 'removed parts'; 'I searched and returned' changes who returned the results"
+      },
+      {
+       "id": "m11",
+       "score": 1,
+       "errors": "'the calculator' (a tool) became 'my calculation' (credited to the speaker)"
+      },
+      {
+       "id": "m13",
+       "score": 1,
+       "errors": "'engineers' lost; the choice is now executives vs 'a technical level of detail'"
+      },
+      {
+       "id": "m15",
+       "score": 0,
+       "errors": "'last quarter', 'calendar quarter' and 'fiscal quarter' all lost; 'recent time, or the company' is meaningless"
+      },
+      {
+       "id": "m17",
+       "score": 1,
+       "errors": "HTTP 503 and 'in a row' missing"
+      },
+      {
+       "id": "m19",
+       "score": 2,
+       "errors": "none (tense exceeded→exceeds, which is harmless)"
+      },
+      {
+       "id": "m21",
+       "score": 0,
+       "errors": "complaints→feedback; second reviewer missing; 'you do not need to search' is invented; 'unless you object' became 'collecting now'; 'within the hour' became 'five hours'"
+      },
+      {
+       "id": "m23",
+       "score": 0,
+       "errors": "Garbled: 'instead of rewriting the whole module' and 'slow queries' are not recoverable; only the cache, low risk and easy revert survive"
+      },
+      {
+       "id": "m25",
+       "score": 1,
+       "errors": "'quadratic' missing; 100,000 rows became 3,000 (wrong number); 'consider' became the command 'make'"
+      },
+      {
+       "id": "m27",
+       "score": 1,
+       "errors": "'slightly too long' became 'much too long'; 'background paragraph' became 'final paragraph' (wrong paragraph)"
+      },
+      {
+       "id": "m29",
+       "score": 2,
+       "errors": "none (cheaper/larger became cheap/large, which is minor)"
+      },
+      {
+       "id": "m31",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m33",
+       "score": 1,
+       "errors": "'the Australian government website' became 'a government website'"
+      },
+      {
+       "id": "m35",
+       "score": 2,
+       "errors": "'Yes' became 'So' (minor)"
+      },
+      {
+       "id": "m37",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m39",
+       "score": 2,
+       "errors": "none"
+      }
+     ]
+    },
+    {
+     "label": "Z2",
+     "total": 40,
+     "scores": [
+      {
+       "id": "m01",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m03",
+       "score": 2,
+       "errors": "none ('user questions' is plural, which is minor)"
+      },
+      {
+       "id": "m05",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m07",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m09",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m11",
+       "score": 2,
+       "errors": "none ('remaining margin' became 'rest of the budget', which is acceptable)"
+      },
+      {
+       "id": "m13",
+       "score": 2,
+       "errors": "none (sentence order swapped)"
+      },
+      {
+       "id": "m15",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m17",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m19",
+       "score": 2,
+       "errors": "none ('I failed at the translation step' is a harmless rephrasing)"
+      },
+      {
+       "id": "m21",
+       "score": 2,
+       "errors": "none ('complaints' became 'negative feedback', which is acceptable)"
+      },
+      {
+       "id": "m23",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m25",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m27",
+       "score": 2,
+       "errors": "none ('paragraph' became 'section', which is minor)"
+      },
+      {
+       "id": "m29",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m31",
+       "score": 2,
+       "errors": "none ('sensor' became 'measurement-device', which is acceptable)"
+      },
+      {
+       "id": "m33",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m35",
+       "score": 2,
+       "errors": "'Yes' dropped (minor); '4.2.1' was bracketed but correct"
+      },
+      {
+       "id": "m37",
+       "score": 2,
+       "errors": "none ('committed' is a slight addition)"
+      },
+      {
+       "id": "m39",
+       "score": 2,
+       "errors": "none"
+      }
+     ]
+    },
+    {
+     "label": "Z3",
+     "total": 35,
+     "scores": [
+      {
+       "id": "m01",
+       "score": 2,
+       "errors": "none (exponential backoff rendered as doubling, which is acceptable)"
+      },
+      {
+       "id": "m03",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m05",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m07",
+       "score": 2,
+       "errors": "none ('integration tests' became 'tests that exercise the whole system', a loose but acceptable paraphrase)"
+      },
+      {
+       "id": "m09",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m11",
+       "score": 1,
+       "errors": "'the calculator' (a tool) became 'the calculation'"
+      },
+      {
+       "id": "m13",
+       "score": 1,
+       "errors": "'engineers' became '[edition]', so the second audience is lost"
+      },
+      {
+       "id": "m15",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m17",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m19",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m21",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m23",
+       "score": 1,
+       "errors": "Spurious 'again' (implies an earlier rewrite); 'queries' became singular 'query'; 'risk' only guessed from the garbled 'lower ten'"
+      },
+      {
+       "id": "m25",
+       "score": 2,
+       "errors": "none ('quadratic' paraphrased as 'reads every row for every row')"
+      },
+      {
+       "id": "m27",
+       "score": 2,
+       "errors": "none ('paragraph' became 'section', which is minor)"
+      },
+      {
+       "id": "m29",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m31",
+       "score": 1,
+       "errors": "'sensor' lost; 'real' moved from 'fault' onto 'measurements' ('they are real measurements' muddles the claim); '[agr]' garbled"
+      },
+      {
+       "id": "m33",
+       "score": 1,
+       "errors": "'two encyclopedias' became 'two reference books' (generalized)"
+      },
+      {
+       "id": "m35",
+       "score": 2,
+       "errors": "none ('reproduced' became 'tested', which is acceptable)"
+      },
+      {
+       "id": "m37",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m39",
+       "score": 2,
+       "errors": "none (sentence order swapped)"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "sets": [
+    {
+     "label": "Z1",
+     "total": 25,
+     "scores": [
+      {
+       "id": "m01",
+       "score": 1,
+       "errors": "'exponential backoff' weakened to 'increasing wait times'; '5 attempts' became 'five retries', which allows 6 attempts"
+      },
+      {
+       "id": "m03",
+       "score": 1,
+       "errors": "'SQL' dropped; 'the user's question' became 'the question'"
+      },
+      {
+       "id": "m05",
+       "score": 2,
+       "errors": "none ('[minutes]' is a correct inferred unit)"
+      },
+      {
+       "id": "m07",
+       "score": 1,
+       "errors": "'unit' and 'integration' tests lost (waiting for 'the tests'), so it is unclear which tests passed and which are pending; 'pass' became 'passed'"
+      },
+      {
+       "id": "m09",
+       "score": 1,
+       "errors": "'changelog' became 'log'; 'removed modules' became 'removed parts'"
+      },
+      {
+       "id": "m11",
+       "score": 2,
+       "errors": "minor: 'the calculator' became 'my calculation'"
+      },
+      {
+       "id": "m13",
+       "score": 1,
+       "errors": "'engineers' lost (became 'a technical level of detail'); 'depends on the audience' now refers to the choice, not to the level of technical detail"
+      },
+      {
+       "id": "m15",
+       "score": 0,
+       "errors": "'last quarter', 'calendar quarter' and 'fiscal quarter' all lost; reads 'recent time, or the company'"
+      },
+      {
+       "id": "m17",
+       "score": 1,
+       "errors": "'HTTP 503' missing; 'in a row' missing"
+      },
+      {
+       "id": "m19",
+       "score": 2,
+       "errors": "none (minor tense: 'exceeds')"
+      },
+      {
+       "id": "m21",
+       "score": 0,
+       "errors": "second half wrong: second reviewer lost, 'unless you object' lost, 'I am collecting now' (original: will start unless you object), 'five hours' instead of 'within the hour', invented 'you do not need to search'; 'complaints' became 'feedback'"
+      },
+      {
+       "id": "m23",
+       "score": 0,
+       "errors": "garbled fragments; 'instead of rewriting the whole module' and 'caching layer in front of slow queries' not conveyed"
+      },
+      {
+       "id": "m25",
+       "score": 1,
+       "errors": "'quadratic' lost; 100,000 rows became '3,000' (wrong number); 'consider' became the order 'make'"
+      },
+      {
+       "id": "m27",
+       "score": 1,
+       "errors": "'slightly too long' became 'much too long'; 'background paragraph' became 'final paragraph'"
+      },
+      {
+       "id": "m29",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m31",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m33",
+       "score": 1,
+       "errors": "'Australian government website' became 'a government website' (source no longer named)"
+      },
+      {
+       "id": "m35",
+       "score": 2,
+       "errors": "minor: 'Yes' became 'So'"
+      },
+      {
+       "id": "m37",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m39",
+       "score": 2,
+       "errors": "none"
+      }
+     ]
+    },
+    {
+     "label": "Z2",
+     "total": 40,
+     "scores": [
+      {
+       "id": "m01",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m03",
+       "score": 2,
+       "errors": "minor: plural 'user questions'"
+      },
+      {
+       "id": "m05",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m07",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m09",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m11",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m13",
+       "score": 2,
+       "errors": "none (sentence order swapped)"
+      },
+      {
+       "id": "m15",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m17",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m19",
+       "score": 2,
+       "errors": "minor: 'I failed at the translation step' instead of 'the translation step failed'"
+      },
+      {
+       "id": "m21",
+       "score": 2,
+       "errors": "none ('negative customer feedback' is close enough to 'complaints')"
+      },
+      {
+       "id": "m23",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m25",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m27",
+       "score": 2,
+       "errors": "minor: 'paragraph' became 'section'"
+      },
+      {
+       "id": "m29",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m31",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m33",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m35",
+       "score": 2,
+       "errors": "minor: 'Yes' dropped; version number given in brackets"
+      },
+      {
+       "id": "m37",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m39",
+       "score": 2,
+       "errors": "none"
+      }
+     ]
+    },
+    {
+     "label": "Z3",
+     "total": 37,
+     "scores": [
+      {
+       "id": "m01",
+       "score": 2,
+       "errors": "none ('doubles wait time' reads as exponential backoff)"
+      },
+      {
+       "id": "m03",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m05",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m07",
+       "score": 2,
+       "errors": "minor: 'integration tests' paraphrased as 'tests that exercise the whole system'; 'merge request' for 'pull request'"
+      },
+      {
+       "id": "m09",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m11",
+       "score": 2,
+       "errors": "minor: 'calculator' became 'calculation'"
+      },
+      {
+       "id": "m13",
+       "score": 1,
+       "errors": "'engineers' became '[edition]'; the second audience is wrong"
+      },
+      {
+       "id": "m15",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m17",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m19",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m21",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m23",
+       "score": 1,
+       "errors": "added 'again' (implies the module was rewritten before); 'risk' recovered only as an uncertain bracketed guess"
+      },
+      {
+       "id": "m25",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m27",
+       "score": 2,
+       "errors": "minor: 'paragraph' became 'section'"
+      },
+      {
+       "id": "m29",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m31",
+       "score": 1,
+       "errors": "'they come from a real sensor fault' became 'they are real measurements ... and a fault causes them'; 'sensor' lost and the meaning is muddled"
+      },
+      {
+       "id": "m33",
+       "score": 2,
+       "errors": "minor: 'encyclopedias' became 'reference books'"
+      },
+      {
+       "id": "m35",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m37",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m39",
+       "score": 2,
+       "errors": "none (sentence order changed)"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

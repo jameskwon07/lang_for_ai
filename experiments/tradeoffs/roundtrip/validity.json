@@ -1,0 +1,122 @@
+{
+ "writer-default": {
+  "n_msgs": 20,
+  "words": 489,
+  "out_of_lexicon": 0,
+  "out_of_lexicon_examples": [],
+  "tokens": {
+   "o200k": 570,
+   "cl100k": 624,
+   "claude_legacy": 675,
+   "llama3": 616,
+   "llama4": 563,
+   "mistral_tekken": 572,
+   "mistral_sp": 717
+  },
+  "ratio_vs_en": {
+   "o200k": 0.953,
+   "cl100k": 1.04,
+   "claude_legacy": 1.107,
+   "llama3": 1.027,
+   "llama4": 0.945,
+   "mistral_tekken": 0.918,
+   "mistral_sp": 1.075
+  },
+  "ratio_vs_en_terse": {
+   "o200k": 1.29,
+   "cl100k": 1.405,
+   "claude_legacy": 1.49,
+   "llama3": 1.387,
+   "llama4": 1.28,
+   "mistral_tekken": 1.214,
+   "mistral_sp": 1.4
+  }
+ },
+ "writer-haiku-low": {
+  "n_msgs": 20,
+  "words": 332,
+  "out_of_lexicon": 87,
+  "out_of_lexicon_examples": [
+   "part",
+   "rest",
+   "hard",
+   "hour",
+   "slow",
+   "low",
+   "risk",
+   "easy",
+   "revert",
+   "patch",
+   "correct",
+   "loop",
+   "slow",
+   "dict",
+   "kel",
+   "good",
+   "summary",
+   "long",
+   "paragraph",
+   "cut"
+  ],
+  "tokens": {
+   "o200k": 396,
+   "cl100k": 412,
+   "claude_legacy": 442,
+   "llama3": 410,
+   "llama4": 397,
+   "mistral_tekken": 402,
+   "mistral_sp": 470
+  },
+  "ratio_vs_en": {
+   "o200k": 0.662,
+   "cl100k": 0.687,
+   "claude_legacy": 0.725,
+   "llama3": 0.683,
+   "llama4": 0.666,
+   "mistral_tekken": 0.645,
+   "mistral_sp": 0.705
+  },
+  "ratio_vs_en_terse": {
+   "o200k": 0.896,
+   "cl100k": 0.928,
+   "claude_legacy": 0.976,
+   "llama3": 0.923,
+   "llama4": 0.902,
+   "mistral_tekken": 0.854,
+   "mistral_sp": 0.918
+  }
+ },
+ "careful-tool-encoder": {
+  "n_msgs": 20,
+  "words": 434,
+  "out_of_lexicon": 0,
+  "out_of_lexicon_examples": [],
+  "tokens": {
+   "o200k": 504,
+   "cl100k": 554,
+   "claude_legacy": 606,
+   "llama3": 549,
+   "llama4": 500,
+   "mistral_tekken": 506,
+   "mistral_sp": 656
+  },
+  "ratio_vs_en": {
+   "o200k": 0.843,
+   "cl100k": 0.923,
+   "claude_legacy": 0.993,
+   "llama3": 0.915,
+   "llama4": 0.839,
+   "mistral_tekken": 0.812,
+   "mistral_sp": 0.984
+  },
+  "ratio_vs_en_terse": {
+   "o200k": 1.14,
+   "cl100k": 1.248,
+   "claude_legacy": 1.338,
+   "llama3": 1.236,
+   "llama4": 1.136,
+   "mistral_tekken": 1.074,
+   "mistral_sp": 1.281
+  }
+ }
+}

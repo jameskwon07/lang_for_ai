@@ -12,6 +12,7 @@
 - [00. 기초](docs/00-foundations.md): 전제 점검, 사람과 LLM의 비대칭, 설계 목표, 평가 방법
 - [01. 언어 구조](docs/01-structure.md): 계층별 선택지와 1단계 권장안, 로드맵
 - [02. 표기와 형태소](docs/02-tokens-and-forms.md): 토큰화 실험, 토큰 절약 검증, Claude 읽기 실험 (2단계 결과)
+- [03. 별도 언어의 득실](docs/03-tradeoffs.md): 영어·전보체 영어·JSON과 비교해 좋아지는 점, 나빠지는 점, 그대로인 점. 쓰고 읽는 왕복 시험
 - [결정 기록](docs/decisions.md): 확정된 결정
 - [실험](experiments/tokenization/): 토크나이저 7종 측정 스크립트, AI 메시지 말뭉치, 검증 기록
 

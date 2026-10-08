@@ -1,0 +1,725 @@
+{
+ "note": "첫 실행. Haiku 저노력 작성자가 과제 대신 함께 전달된 소유자 질문에 한국어로 답해 무효 처리했다(written 참고). 과제를 고정해 다시 돌린 결과가 results.json이다.",
+ "haiku_written_invalid": {
+  "messages": [
+   {
+    "id": "pro-1",
+    "lean": "[좋아지는 점] 토큰 수와 길이: 소문자, 단어 사이 공백 한 칸, 굴절과 구두점 없음, 한 형태소 = 한 단어 규칙이라 같은 내용을 영어보다 짧게 쓸 수 있다. 다만 실제 절감은 어휘 토큰화 비용에 따라 달라지므로 측정이 필요하다."
+   },
+   {
+    "id": "pro-2",
+    "lean": "[좋아지는 점] 화행과 확신도가 명시된다: MODE 단어(anx, aqu, cov, cyl 등)가 질문, 명령, 제안, 결정 요청을 구분하고, OP(exh=probably, equ=cannot 등)가 확신도와 가능성을 한 단어로 고정한다. 영어에서 흔히 생기는 '~일 수도 있다' 류의 모호함이 줄어든다."
+   },
+   {
+    "id": "pro-3",
+    "lean": "[좋아지는 점] 품사가 사전에서 고정된다: 모든 단어가 N, A, V0/V1/V2, VC 등 하나의 클래스를 가진다. 같은 철자가 품사에 따라 뜻이 바뀌는 영어의 문제(run, fix 등)가 어휘 단위에서는 사라진다. 단, 아래 NP 규칙의 V 명사화와 분사 규칙은 여전히 문맥 의존이다."
+   },
+   {
+    "id": "pro-4",
+    "lean": "[좋아지는 점] 역할과 주어가 기본값으로 정해진다: DECL/Q/DELIB는 주어 I, IMP는 you, HORT/SUGQ는 we. 주어를 매번 쓰지 않아도 되어 메시지가 짧아지고 누가 행위자인지 규칙으로 복원할 수 있다. 같은 규칙을 모델이 일관되게 적용한다면 장점이다."
+   },
+   {
+    "id": "pro-5",
+    "lean": "[좋아지는 점] 기계적 검증과 파싱이 쉬워질 가능성: 공백으로 나뉘고 사전 조회로 클래스가 결정되며, 구두점이 없다. 정규식이나 작은 파서로 구조 검증을 할 수 있어, 자연어 메시지보다 자동 검사와 로그 분석이 쉽다."
+   },
+   {
+    "id": "pro-6",
+    "lean": "[좋아지는 점] 원문 보존 장치: QT와 espa 규칙으로 경로, 식별자, URL을 그대로 복사하므로 숫자와 식별자가 번역 과정에서 바뀌는 문제가 줄어든다. 모델끼리 주고받을 때 정확도가 중요한 작업에 유리하다."
+   },
+   {
+    "id": "con-1",
+    "lean": "[나빠지는 점] 학습 데이터의 이점을 버린다: LLM은 영어 문장을 대량으로 학습했다. 새로 만든 어휘(예: ayud, zost, amph)와 규칙 체계는 학습 사전 지식이 없어서, 생성과 해석 모두 프롬프트에 적힌 규칙을 그대로 따라야 한다. 규칙을 놓치면 실패율이 올라간다. 이 점이 영어 대비 가장 큰 리스크다."
+   },
+   {
+    "id": "con-2",
+    "lean": "[나빠지는 점] 무작위 철자 어휘는 토큰 효율이 낮을 수 있다: 'ayud', 'bekl', 'tekn'처럼 의미와 연관이 없는 짧은 철자는 토큰을 여러 개 차지하는 경우가 많다. 영어의 'need', 'check' 같은 흔한 단어는 토큰 1개인 경우가 많아서, 단어 수는 줄어도 실제 토큰 절감은 생각보다 작을 수 있다. 토큰 수를 실제 토크나이저로 측정해야 한다."
+   },
+   {
+    "id": "con-3",
+    "lean": "[나빠지는 점] 규칙이 많고 일부는 모호하다: 탐욕적 좌에서 우 읽기, 'V 뒤에 N이 오면 분사, 아니면 명사' 규칙, raw span이 앞 N 복합어를 끊는 규칙, PD를 쓰는 조건 등은 예외가 많다. 같은 문장을 두 사람이 다르게 해석할 수 있고, 모델도 해석이 갈릴 수 있다. 명세 자체의 정확성 검증 비용이 든다."
+   },
+   {
+    "id": "con-4",
+    "lean": "[나빠지는 점] 어휘 목록이 미완성이다: 명세에 클래스가 '?'인 항목이 수천 개 있다. 이 상태로는 모델이 단어의 품사를 알 수 없고, 실제 사용 시 어휘 조회 실패가 자주 생긴다. 또한 'fuck', 'bitch', 'sex' 같은 부적절한 항목이 포함되어 있어, 정제 없이 쓰면 안 된다."
+   },
+   {
+    "id": "con-5",
+    "lean": "[나빠지는 점] 표현 불가능한 개념이 생긴다: 어휘에 없는 개념은 기존 단어를 조합해 돌려 말해야 한다. 이 과정에서 뜻이 조금씩 바뀌고 왕복 변환(영어 -> LEAN -> 영어) 시 정보가 손실된다. 예를 들어 write_task의 'stop retrying to avoid rate limit' 같은 인과 구조는 CONJ와 P를 조합해야 해서 복원이 불안정하다."
+   },
+   {
+    "id": "con-6",
+    "lean": "[나빠지는 점] 사람이 읽고 검수하기 어렵다: 디버깅과 로그 리뷰 때 사람이 메시지를 바로 이해할 수 없고, 사전과 명세를 옆에 두고 해독해야 한다. AI 간 통신이라도 사람이 개입하는 순간 비용이 크다."
+   },
+   {
+    "id": "con-7",
+    "lean": "[나빠지는 점] 도구와 생태계가 없다: 영어 기반 도구(검색, 번역, 요약, 코드 주석, 로그 분석)가 그대로 쓰이지 않는다. 명세 변경 때마다 파서, 테스트 코퍼스, 사전을 함께 갱신해야 하며, 유지보수 비용이 계속 든다."
+   },
+   {
+    "id": "same-1",
+    "lean": "[차이가 거의 없는 점] 표현할 수 있는 의미의 범위: 별도 언어든 제한된 영어(controlled English)든, 결국 같은 명제를 전달한다. 차이는 표현 방식이지 표현력이 아니다. 따라서 '새 언어가 더 많은 것을 말할 수 있다'는 근거는 약하다."
+   },
+   {
+    "id": "same-2",
+    "lean": "[차이가 거의 없는 점] 메시지 길이의 큰 부분은 내용이 결정한다: 숫자, 경로, 조건, 부정 같은 정보는 어떤 표현에서도 같은 양이 필요하다. 문법을 바꿔도 줄어드는 양은 구문 부분에 한정된다."
+   },
+   {
+    "id": "same-3",
+    "lean": "[차이가 거의 없는 점] 명확한 제약 포맷과의 비교: JSON 스키마나 구조화된 템플릿으로 화행, 확신도, 주어, 대상을 필드로 나누면 같은 정보를 더 안정적으로 교환할 수 있다. 새 언어의 장점 중 상당 부분(명시성, 파싱 가능성, 원문 보존)은 이 방법으로도 얻을 수 있다."
+   },
+   {
+    "id": "note-1",
+    "lean": "[명세에서 확인된 점] 강점으로 보이는 부분은 MODE, OP, DEG, CONJ 같은 기능어 체계, 원문 보존(QT, espa), 기본 주어 규칙이다. 약점은 '?' 항목 대량 존재, 무작위 철자 어휘, 탐욕적 파싱과 명사화 규칙, 부적절한 항목이다. 설계 변경 시 이 네 가지를 먼저 손보는 것이 우선순위가 높다."
+   },
+   {
+    "id": "next-1",
+    "lean": "[설계 변경 제안] 먼저 목적을 정해야 한다: (1) AI 간 대화의 토큰 절감인지, (2) 의미 정확도인지, (3) 검증 가능성인지. 목적에 따라 답이 달라진다. 토큰 절감이 목적이면 실제 토크나이저로 영어 대비 측정을 먼저 하고, 차이가 작으면 별도 언어 대신 구조화된 영어 템플릿을 시도하는 것이 낫다. 정확도가 목적이면 왕복 변환 테스트(write_task 방식)를 기준 지표로 쓰고, 어휘 철자는 의미와 연관된 형태로 바꾸는 것을 검토한다."
+   }
+  ]
+ },
+ "grades_first_run": [
+  {
+   "sets": [
+    {
+     "label": "Z1",
+     "total": 0,
+     "scores": [
+      {
+       "id": "m01",
+       "score": 0,
+       "errors": "No translation of m01 present; Z1 contains unrelated content (a pro/con analysis of a constructed language, ids pro-*/con-*/same-*/note-*/next-*)."
+      },
+      {
+       "id": "m03",
+       "score": 0,
+       "errors": "Missing; set holds unrelated content."
+      },
+      {
+       "id": "m05",
+       "score": 0,
+       "errors": "Missing; set holds unrelated content."
+      },
+      {
+       "id": "m07",
+       "score": 0,
+       "errors": "Missing; set holds unrelated content."
+      },
+      {
+       "id": "m09",
+       "score": 0,
+       "errors": "Missing; set holds unrelated content."
+      },
+      {
+       "id": "m11",
+       "score": 0,
+       "errors": "Missing; set holds unrelated content."
+      },
+      {
+       "id": "m13",
+       "score": 0,
+       "errors": "Missing; set holds unrelated content."
+      },
+      {
+       "id": "m15",
+       "score": 0,
+       "errors": "Missing; set holds unrelated content."
+      },
+      {
+       "id": "m17",
+       "score": 0,
+       "errors": "Missing; set holds unrelated content."
+      },
+      {
+       "id": "m19",
+       "score": 0,
+       "errors": "Missing; set holds unrelated content."
+      },
+      {
+       "id": "m21",
+       "score": 0,
+       "errors": "Missing; set holds unrelated content."
+      },
+      {
+       "id": "m23",
+       "score": 0,
+       "errors": "Missing; set holds unrelated content."
+      },
+      {
+       "id": "m25",
+       "score": 0,
+       "errors": "Missing; set holds unrelated content."
+      },
+      {
+       "id": "m27",
+       "score": 0,
+       "errors": "Missing; set holds unrelated content."
+      },
+      {
+       "id": "m29",
+       "score": 0,
+       "errors": "Missing; set holds unrelated content."
+      },
+      {
+       "id": "m31",
+       "score": 0,
+       "errors": "Missing; set holds unrelated content."
+      },
+      {
+       "id": "m33",
+       "score": 0,
+       "errors": "Missing; set holds unrelated content."
+      },
+      {
+       "id": "m35",
+       "score": 0,
+       "errors": "Missing; set holds unrelated content."
+      },
+      {
+       "id": "m37",
+       "score": 0,
+       "errors": "Missing; set holds unrelated content."
+      },
+      {
+       "id": "m39",
+       "score": 0,
+       "errors": "Missing; set holds unrelated content."
+      }
+     ]
+    },
+    {
+     "label": "Z2",
+     "total": 40,
+     "scores": [
+      {
+       "id": "m01",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m03",
+       "score": 2,
+       "errors": "none ('return' for 'report' is fine)"
+      },
+      {
+       "id": "m05",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m07",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m09",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m11",
+       "score": 2,
+       "errors": "none ('calculation tool' = calculator; 'rest of the budget' = remaining margin)"
+      },
+      {
+       "id": "m13",
+       "score": 2,
+       "errors": "none; the sentences are in a different order and the bracketed '[depends]' is harmless"
+      },
+      {
+       "id": "m15",
+       "score": 2,
+       "errors": "none ('financial quarter' = fiscal quarter)"
+      },
+      {
+       "id": "m17",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m19",
+       "score": 2,
+       "errors": "Minor: 'I failed at the translation step' instead of 'the step failed'; the meaning is effectively the same"
+      },
+      {
+       "id": "m21",
+       "score": 2,
+       "errors": "none ('negative customer feedback' for complaints and 'sort by count' for rank by frequency are fine)"
+      },
+      {
+       "id": "m23",
+       "score": 2,
+       "errors": "Minor: 'can' instead of 'could', and 'query' is singular; the content is otherwise preserved"
+      },
+      {
+       "id": "m25",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m27",
+       "score": 2,
+       "errors": "Minor: 'part' instead of 'paragraph'"
+      },
+      {
+       "id": "m29",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m31",
+       "score": 2,
+       "errors": "Minor: plural 'measurement-device faults' for 'a sensor fault'; 'instead of deleting' is implied"
+      },
+      {
+       "id": "m33",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m35",
+       "score": 2,
+       "errors": "Minor: the leading 'Yes' is dropped, but the claim is preserved"
+      },
+      {
+       "id": "m37",
+       "score": 2,
+       "errors": "Minor: adds 'I committed'; the original only says the fix is on the branch"
+      },
+      {
+       "id": "m39",
+       "score": 2,
+       "errors": "none"
+      }
+     ]
+    },
+    {
+     "label": "Z3",
+     "total": 36,
+     "scores": [
+      {
+       "id": "m01",
+       "score": 2,
+       "errors": "none; 'exponential backoff' is paraphrased as a doubling wait time, which is acceptable"
+      },
+      {
+       "id": "m03",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m05",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m07",
+       "score": 1,
+       "errors": "'integration tests' is rendered as a single 'test that tests the [whole] system' (a system test), which distorts the test type; singular and plural are also inconsistent ('they finish')"
+      },
+      {
+       "id": "m09",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m11",
+       "score": 2,
+       "errors": "Minor: 'calculation' instead of 'calculator' (the tool attribution is weakened)"
+      },
+      {
+       "id": "m13",
+       "score": 1,
+       "errors": "The option 'engineers' is replaced with '[the edition]', so the second audience choice is wrong"
+      },
+      {
+       "id": "m15",
+       "score": 2,
+       "errors": "Minor: the bracketed '[ordinary]' is inserted but does not change the meaning"
+      },
+      {
+       "id": "m17",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m19",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m21",
+       "score": 2,
+       "errors": "none ('second step' = grouping; 'problem reports' = complaints)"
+      },
+      {
+       "id": "m23",
+       "score": 1,
+       "errors": "Adds a false presupposition with 'not rewrite the whole module again'; also 'could' becomes 'can' and 'query' is singular"
+      },
+      {
+       "id": "m25",
+       "score": 2,
+       "errors": "none; 'quadratic' is paraphrased as reading every row for every row, and a hash table is equivalent to a dictionary"
+      },
+      {
+       "id": "m27",
+       "score": 2,
+       "errors": "Minor: 'section' instead of 'paragraph'"
+      },
+      {
+       "id": "m29",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m31",
+       "score": 1,
+       "errors": "'sensor fault' is distorted into '[income-]measurement faults' (a spurious 'income'), and the noun is plural"
+      },
+      {
+       "id": "m33",
+       "score": 2,
+       "errors": "Minor: 'reference books' for 'encyclopedias'"
+      },
+      {
+       "id": "m35",
+       "score": 2,
+       "errors": "none ('tested' is close to 'reproduced')"
+      },
+      {
+       "id": "m37",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m39",
+       "score": 2,
+       "errors": "Minor: singular 'flight' for 'flights'"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "sets": [
+    {
+     "label": "Z1",
+     "total": 0,
+     "scores": [
+      {
+       "id": "m01",
+       "score": 0,
+       "errors": "No translation of m01. Z1 is a list of analysis points (pro-/con-/same-/note-/next-), not translations of the corpus."
+      },
+      {
+       "id": "m03",
+       "score": 0,
+       "errors": "No translation of m03 (Z1 is not a translation set)."
+      },
+      {
+       "id": "m05",
+       "score": 0,
+       "errors": "No translation of m05."
+      },
+      {
+       "id": "m07",
+       "score": 0,
+       "errors": "No translation of m07."
+      },
+      {
+       "id": "m09",
+       "score": 0,
+       "errors": "No translation of m09."
+      },
+      {
+       "id": "m11",
+       "score": 0,
+       "errors": "No translation of m11."
+      },
+      {
+       "id": "m13",
+       "score": 0,
+       "errors": "No translation of m13."
+      },
+      {
+       "id": "m15",
+       "score": 0,
+       "errors": "No translation of m15."
+      },
+      {
+       "id": "m17",
+       "score": 0,
+       "errors": "No translation of m17. con-5 only quotes a fragment ('stop retrying to avoid rate limit') as an example, not as a translation."
+      },
+      {
+       "id": "m19",
+       "score": 0,
+       "errors": "No translation of m19."
+      },
+      {
+       "id": "m21",
+       "score": 0,
+       "errors": "No translation of m21."
+      },
+      {
+       "id": "m23",
+       "score": 0,
+       "errors": "No translation of m23."
+      },
+      {
+       "id": "m25",
+       "score": 0,
+       "errors": "No translation of m25."
+      },
+      {
+       "id": "m27",
+       "score": 0,
+       "errors": "No translation of m27."
+      },
+      {
+       "id": "m29",
+       "score": 0,
+       "errors": "No translation of m29."
+      },
+      {
+       "id": "m31",
+       "score": 0,
+       "errors": "No translation of m31."
+      },
+      {
+       "id": "m33",
+       "score": 0,
+       "errors": "No translation of m33."
+      },
+      {
+       "id": "m35",
+       "score": 0,
+       "errors": "No translation of m35."
+      },
+      {
+       "id": "m37",
+       "score": 0,
+       "errors": "No translation of m37."
+      },
+      {
+       "id": "m39",
+       "score": 0,
+       "errors": "No translation of m39."
+      }
+     ]
+    },
+    {
+     "label": "Z2",
+     "total": 38,
+     "scores": [
+      {
+       "id": "m01",
+       "score": 2,
+       "errors": "None ('retry code' for 'retry logic' is fine)."
+      },
+      {
+       "id": "m03",
+       "score": 2,
+       "errors": "None ('results' for 'result' and 'return' for 'report' are fine)."
+      },
+      {
+       "id": "m05",
+       "score": 2,
+       "errors": "None."
+      },
+      {
+       "id": "m07",
+       "score": 2,
+       "errors": "None."
+      },
+      {
+       "id": "m09",
+       "score": 2,
+       "errors": "None. URL and count intact."
+      },
+      {
+       "id": "m11",
+       "score": 2,
+       "errors": "None ('calculation tool' = calculator; 'rest of the budget' = remaining margin)."
+      },
+      {
+       "id": "m13",
+       "score": 2,
+       "errors": "None. Sentence order swapped; [depends] bracket is harmless."
+      },
+      {
+       "id": "m15",
+       "score": 2,
+       "errors": "None ('financial quarter' = fiscal quarter)."
+      },
+      {
+       "id": "m17",
+       "score": 2,
+       "errors": "None ('payment API' for 'payments API' is negligible)."
+      },
+      {
+       "id": "m19",
+       "score": 2,
+       "errors": "None. 'I failed at the translation step' recasts the subject slightly but keeps the meaning."
+      },
+      {
+       "id": "m21",
+       "score": 2,
+       "errors": "None ('negative customer feedback' for complaints, 'sort by count' for rank by frequency are fine)."
+      },
+      {
+       "id": "m23",
+       "score": 1,
+       "errors": "Plural changed to singular: 'the slow queries' became 'the slow query', which narrows the scope. 'Caching layer' became 'cache' and 'could' became 'can' (minor)."
+      },
+      {
+       "id": "m25",
+       "score": 2,
+       "errors": "None ('ID-keyed map' = dictionary keyed by ID)."
+      },
+      {
+       "id": "m27",
+       "score": 2,
+       "errors": "None ('background part' is a slightly vaguer word for 'background paragraph'; not deducted)."
+      },
+      {
+       "id": "m29",
+       "score": 2,
+       "errors": "None."
+      },
+      {
+       "id": "m31",
+       "score": 1,
+       "errors": "'A real sensor fault' (one fault) became 'real measurement-device faults' (several faults), and 'sensor' was generalized."
+      },
+      {
+       "id": "m33",
+       "score": 2,
+       "errors": "None."
+      },
+      {
+       "id": "m35",
+       "score": 2,
+       "errors": "Leading 'Yes' dropped, but the statement still affirms it. 'Reproduced' became 'verified' (minor). Not deducted."
+      },
+      {
+       "id": "m37",
+       "score": 2,
+       "errors": "None. 'I committed the fix' adds who did it, which the handoff already implies."
+      },
+      {
+       "id": "m39",
+       "score": 2,
+       "errors": "None ('two travelers' = both travelers)."
+      }
+     ]
+    },
+    {
+     "label": "Z3",
+     "total": 35,
+     "scores": [
+      {
+       "id": "m01",
+       "score": 2,
+       "errors": "None. Exponential backoff is paraphrased as doubling the wait time, which is acceptable; dropping 'please' loses no information."
+      },
+      {
+       "id": "m03",
+       "score": 2,
+       "errors": "None."
+      },
+      {
+       "id": "m05",
+       "score": 2,
+       "errors": "None ('probably' matches 'should')."
+      },
+      {
+       "id": "m07",
+       "score": 1,
+       "errors": "'Integration tests' became 'the test that tests the [whole] system' (a system test, and singular), which distorts the test type. 'Merge request' for pull request is acceptable."
+      },
+      {
+       "id": "m09",
+       "score": 2,
+       "errors": "None. URL and count intact."
+      },
+      {
+       "id": "m11",
+       "score": 2,
+       "errors": "None ('calculation' for 'calculator' is minor)."
+      },
+      {
+       "id": "m13",
+       "score": 1,
+       "errors": "Second option 'engineers' was mistranslated as '[the edition]', so one of the two audience choices is lost. Order swapped."
+      },
+      {
+       "id": "m15",
+       "score": 2,
+       "errors": "None. The added '[ordinary]' is harmless."
+      },
+      {
+       "id": "m17",
+       "score": 2,
+       "errors": "None."
+      },
+      {
+       "id": "m19",
+       "score": 2,
+       "errors": "None."
+      },
+      {
+       "id": "m21",
+       "score": 2,
+       "errors": "None ('customer problem reports' for complaints; 'second step' = grouping)."
+      },
+      {
+       "id": "m23",
+       "score": 1,
+       "errors": "'Rewrite the whole module again' adds 'again', which implies an earlier rewrite that the original does not mention. Also 'slow queries' became the singular 'slow query'."
+      },
+      {
+       "id": "m25",
+       "score": 2,
+       "errors": "None ('reads every row for every row' = quadratic; 'hash table keyed by ID' = dictionary)."
+      },
+      {
+       "id": "m27",
+       "score": 2,
+       "errors": "None ('background section' for 'background paragraph' is a minor wording change; not deducted)."
+      },
+      {
+       "id": "m29",
+       "score": 2,
+       "errors": "None."
+      },
+      {
+       "id": "m31",
+       "score": 1,
+       "errors": "'Sensor fault' became '[income-]measurement faults', a wrong term, and singular became plural."
+      },
+      {
+       "id": "m33",
+       "score": 2,
+       "errors": "None ('reference books' is a mild generalization of 'encyclopedias')."
+      },
+      {
+       "id": "m35",
+       "score": 2,
+       "errors": "None ('That is correct' = Yes; 'tested the fix on my machine' is close to 'reproduced locally')."
+      },
+      {
+       "id": "m37",
+       "score": 2,
+       "errors": "None."
+      },
+      {
+       "id": "m39",
+       "score": 1,
+       "errors": "'Flights to Lisbon' became the singular 'The Lisbon flight'. Otherwise complete: 2 travelers, hotel not booked, 850 EUR, near the old town."
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
