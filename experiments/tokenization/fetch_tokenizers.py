@@ -1,10 +1,11 @@
-"""토크나이저 파일을 PyPI 패키지에서 꺼내 .cache/tokenizers/ 에 저장한다.
+"""Extracts tokenizer files from PyPI packages and saves them to .cache/tokenizers/.
 
-토크나이저 원본 배포처(openaipublic, Hugging Face)에 접근할 수 없는 환경에서도
-재현할 수 있도록, 같은 파일을 동봉한 PyPI 패키지를 버전 고정으로 내려받는다.
-파일 무결성은 SHA-256으로 확인한다. o200k/cl100k 해시는 tiktoken 공식 expected_hash와 같다.
+It downloads pinned versions of PyPI packages that bundle the same files,
+so the results can be reproduced even where the original tokenizer sources
+(openaipublic, Hugging Face) are unreachable.
+File integrity is checked with SHA-256. The o200k/cl100k hashes match tiktoken's official expected_hash.
 
-사용법: python3 fetch_tokenizers.py
+Usage: python3 fetch_tokenizers.py
 """
 
 import hashlib
@@ -16,7 +17,7 @@ from pathlib import Path
 
 CACHE = Path(__file__).resolve().parent / ".cache" / "tokenizers"
 
-# (pip 요구사항, pip 추가 인자, 휠 안의 경로, 저장 이름, sha256)
+# (pip requirement, extra pip arguments, path inside the wheel, saved name, sha256)
 FILES = [
     ("litellm==1.104.1",
      ["--platform", "manylinux_2_28_x86_64", "--python-version", "3.10", "--only-binary=:all:"],

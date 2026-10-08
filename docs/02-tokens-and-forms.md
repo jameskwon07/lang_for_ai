@@ -1,172 +1,186 @@
-# 02. 표기와 형태소: 토큰화 실험 결과 (2단계)
+# 02. Spelling and morphemes: tokenization results (stage 2)
 
-목적이 "AI 간 통신 + 토큰 절약 + 실험"으로 정해진 뒤(D-002), 문자 집합(L0)과 형태소 모양(L1)을 정하려고 진행한 실험이다.
-실험은 위층 설계(L2~L5)까지 건드렸고, 토큰 절약 목표 자체에 대한 답도 나왔다.
+After the purpose was set to "AI-to-AI communication + token savings + experiment" (D-002), we ran this experiment to settle the character set (L0) and the morpheme shape (L1).
+The experiment also touched on the design of the upper layers (L2–L5), and it produced an answer on the token-savings goal itself.
 
-## 요약
+## Summary
 
-1. **형태소마다 띄어 쓰고, 소문자만 쓴다.** 7개 중 5개 토크나이저에서 띄어쓰기 앞 공백은 토큰 비용이 0이고, 토큰 경계와 형태소 경계가 맞는다. 붙여 쓰면 경계가 어긋나고, 대문자는 토큰이 늘어난다.
-2. **형태는 모양 규칙(CVC/VC)이 아니라 토크나이저 어휘를 훑어서 고른다.** 띄어쓰기가 경계를 맡으므로 모양 규칙이 필요 없다. 모양을 고정하면 1토큰 후보가 205개, 어휘 전체를 훑으면 657개다(7개 토크나이저 모두 기준).
-3. **1단계 초안 문법(교착어, 역할 접사, 매 절 필수 표지)은 토큰을 절약하지 못한다.** 전보체 영어보다 1.26~2.20배 많은 토큰이 든다.
-4. **군살 없는 분석어 문법으로 바꾸면 일반 영어보다는 싸지만, 전보체 영어는 이기지 못한다.** 설계에 쓰지 않은 새 메시지에서 전보체 영어의 1.07~1.34배, 일반 영어의 0.81~0.99배였다. 설계에 쓴 메시지에서는 7개 중 5개 토크나이저에서 전보체 영어보다 쌌지만(0.84~0.97배), 과적합이었다.
-5. **Claude는 컨텍스트에 넣은 사양(8,400~10,300토큰, Claude 대용 토크나이저 기준 9,747토큰)만으로 이 언어를 읽는다.** 단순한 설계(LEAN)는 기본 모델 98%, Haiku 저노력 86%의 정보를 보존했다. 장치가 많은 설계(KODEX)는 Haiku가 사전 대신 영어 생김새로 추측해서 5%에 그쳤다.
-6. **토큰을 아끼는 형태는 거의 다 영어 단어 조각이다(84%).** 의미 간섭 위험이 실제로 관찰됐다(5번).
+1. **Put one space between morphemes, and use lowercase only.** On 5 of 7 tokenizers, the leading space costs 0 tokens, and token boundaries match morpheme boundaries. Glued spelling misaligns the boundaries, and capital letters add tokens.
+2. **Choose forms by scanning the tokenizer vocabulary, not by a shape rule (CVC/VC).** Spaces mark the boundaries, so no shape rule is needed. With fixed shapes there are 205 single-token candidates; a scan of the whole vocabulary finds 657 (counting forms that are single tokens on all 7 tokenizers).
+3. **The stage-1 draft grammar (agglutinative, role affixes, markers mandatory in every clause) does not save tokens.** It takes 1.26–2.20x as many tokens as terse English.
+4. **Switching to a lean analytic grammar makes it cheaper than plain English, but it does not beat terse English.** On held-out messages not used in the design, it cost 1.07–1.34x terse English and 0.81–0.99x plain English. On the design-set messages it was cheaper than terse English on 5 of 7 tokenizers (0.84–0.97x), but that was overfitting.
+5. **Claude reads this language with only the spec in its context (8,400–10,300 tokens, or 9,747 tokens on the Claude proxy tokenizer, claude_legacy).** The simple design (LEAN) preserved 98% of the information with the default model and 86% with Haiku at low effort. On the design with many devices (KODEX), Haiku guessed from what the words look like in English instead of using the dictionary, and scored only 5%.
+6. **Almost all forms that save tokens are fragments of English words (84%).** The risk of semantic interference was actually observed (item 5).
 
-토큰 절약 폭이 작고 사양 비용이 있어서, 목표를 다시 정해야 한다. [6절](#6-사용자-결정이-필요한-것)에 질문을 정리했다.
+The savings are small and the spec has a cost, so the goal needs to be reset. [Section 6](#6-decisions-needed-from-the-owner) lists the questions.
 
 ---
 
-## 1. 방법
+## 1. Method
 
-| 항목 | 내용 |
+| Item | Details |
 |---|---|
-| 토크나이저 7종 | o200k (GPT-4o·GPT-5 계열), cl100k (GPT-4), claude_legacy (Claude 2 시절, **현행 Claude 토크나이저는 비공개라 대용**), llama3, llama4, mistral_tekken, mistral_sp (32K) |
-| 단어 필터 | wordfreq 11개 언어(en es de fr it pt nl tr id pl sv)에서 max zipf < 3.0 |
-| 말뭉치 | AI 에이전트끼리 주고받는 메시지 40개. 같은 내용을 일반 영어(en), 전보체 영어(en_terse), 한국어(ko), JSON으로 적었다 |
-| 피험자 | Claude 서브에이전트. 사양 파일과 과제 파일만 읽고 다른 도구는 쓰지 않았다(실행 기록으로 확인) |
-| 재현 | `experiments/tokenization/`에서 `python3 fetch_tokenizers.py` 후 각 스크립트 실행. 출력은 실행 시간 필드를 빼면 실행마다 같다. 단 `verify/a2_build.py`는 빈도가 같은 단어의 순서가 해시 시드에 따라 바뀌므로, LEAN을 재현할 때는 동결 사전 `verify/a2_lexicon_A_conservative.json`을 쓴다 |
+| 7 tokenizers | o200k (GPT-4o and GPT-5 family), cl100k (GPT-4), claude_legacy (Claude 2 era; **a proxy, because the current Claude tokenizer is not public**), llama3, llama4, mistral_tekken, mistral_sp (32K) |
+| Word filter | max zipf < 3.0 across 11 languages in wordfreq (en es de fr it pt nl tr id pl sv) |
+| Corpus | 40 messages exchanged between AI agents. The same content is written in plain English (en), terse English (en_terse), Korean (ko) and JSON |
+| Subjects | Claude subagents. They read only the spec file and the task file and used no other tools (confirmed from the run logs) |
+| Reproduction | In `experiments/tokenization/`, run `python3 fetch_tokenizers.py`, then each script. Apart from the run-time field, the output is the same on every run. Exception: in `verify/a2_build.py`, the order of words with equal frequency changes with the hash seed, so to reproduce LEAN, use the frozen lexicon `verify/a2_lexicon_A_conservative.json` |
 
-실험별 상세는 `experiments/tokenization/results/*.md`, 검증 기록은 `experiments/tokenization/verify/`에 있다.
+Details for each experiment are in `experiments/tokenization/results/*.md`. Verification records are in `experiments/tokenization/verify/`.
 
-## 2. 표기 (L0, L1)
+## 2. Spelling (L0, L1)
 
-### 2.1 1토큰 형태 후보 — `inventory.py`, `verify/v_inventory.py`
+### 2.1 Single-token form candidates
 
-| 조건 (앞 공백 포함, zipf < 3) | 7종 모두 1토큰 | mistral_sp 제외 6종 |
+Scripts: `inventory.py`, `verify/v_inventory.py`.
+
+| Condition (leading space included, zipf < 3) | Single token on all 7 | On the 6 other than mistral_sp |
 |---|---|---|
-| CVC 모양만 | 32 | 50 |
-| 자음 시작 8가지 모양 | 205 | 319 |
-| 모양 제한 없음 (어휘 전체 스캔) | **657** | **1,344** |
+| CVC shape only | 32 | 50 |
+| 8 shapes that start with a consonant | 205 | 319 |
+| No shape limit (full vocabulary scan) | **657** | **1,344** |
 
-- 1토큰인 문자열일수록 실제 단어다. CVC에서 7종 모두 1토큰인 형태의 95%가 zipf ≥ 3인 단어였다.
-- 필터를 통과한 1토큰 형태의 84%는 흔한 영어 단어의 앞부분이다(`calc`, `gover`). 같은 길이의 무작위 문자열은 0%다.
-- 문법 형태 후보 VC(모음+자음) 105개 중 단어 필터를 통과하는 것은 1개뿐이다. 1단계 스케치(어근 CVC + 접사 VC)는 성립하지 않는다.
+- Strings that are single tokens tend to be real words. Of the CVC forms that are single tokens on all 7 tokenizers, 95% were words with zipf ≥ 3.
+- 84% of the single-token forms that pass the filter are the beginnings of common English words (`calc`, `gover`). For random strings of the same length, the figure is 0%.
+- Of the 105 VC (vowel + consonant) candidates for grammatical forms, only 1 passes the word filter. The stage-1 sketch (CVC root + VC affix) does not work.
 
-### 2.2 경계 정렬 — `alignment.py`
+### 2.2 Boundary alignment
 
-| 표기 | 형태소당 토큰 | 경계 재현율 / 정밀도 |
+Script: `alignment.py`.
+
+| Spelling | Tokens per morpheme | Boundary recall / precision |
 |---|---|---|
-| W1 붙여 쓰기 `katenmirob` | 1.10~1.26 | 0.79~0.85 / 0.67~0.75 |
-| **W2 형태소마다 띄어 쓰기** `kat en mir ob` | **1.01** (5종), claude_legacy 1.13, mistral_sp 1.33 | 1.00 / 0.99 (5종), claude_legacy 0.89, mistral_sp 0.75 |
-| W3 단어마다 띄어 쓰기 | 1.02~1.19 | 단어 안 재현율 0.74~0.85 |
-| W4·W5 대문자 표기 | 1.18~1.87 | 재현율 0.97~1.00 |
+| W1 glued (no spaces) `katenmirob` | 1.10–1.26 | 0.79–0.85 / 0.67–0.75 |
+| **W2 one space between morphemes** `kat en mir ob` | **1.01** (5 tokenizers), claude_legacy 1.13, mistral_sp 1.33 | 1.00 / 0.99 (5 tokenizers), claude_legacy 0.89, mistral_sp 0.75 |
+| W3 one space between words | 1.02–1.19 | recall inside words 0.74–0.85 |
+| W4, W5 spellings with capital letters | 1.18–1.87 | recall 0.97–1.00 |
 
-- 토큰에 맞춰 고른 형태라면 o200k, cl100k, llama3, llama4, mistral_tekken에서 W2의 공백은 공짜다(`" kat"`이 1토큰). 메시지당 토큰도 W1보다 3.0~5.3개 적다. claude_legacy(앞 공백 형태의 88%만 1토큰)와 mistral_sp(67%)에서는 공짜가 아니다.
-- 실제 규모의 어휘(1,150개)에서는 형태소당 토큰이 o200k 1.04~1.08, claude_legacy 1.24~1.37로 올라간다.
+- If the forms are chosen to fit the tokenizer, the space in W2 is free on o200k, cl100k, llama3, llama4 and mistral_tekken (`" kat"` is 1 token). Each message also takes 3.0–5.3 fewer tokens than in W1. On claude_legacy (only 88% of leading-space forms are 1 token) and mistral_sp (67%), the space is not free.
+- With a vocabulary of realistic size (1,150 entries), tokens per morpheme rise to 1.04–1.08 on o200k and 1.24–1.37 on claude_legacy.
 
-### 2.3 Claude의 읽기·쓰기 파일럿 — `results/pilot.md`
+### 2.3 Claude read/write pilot
 
-장난감 언어(어근 24개, 접사 12개)를 네 가지 표기로 적고 문장 20개 분석과 20개 생성을 시켰다.
+Results: `results/pilot.md`.
 
-| 표기 | 기본 모델 | Haiku 저노력 |
+We wrote a toy language (24 roots, 12 affixes) in four spellings and asked Claude to analyze 20 sentences and generate 20.
+
+| Spelling | Default model | Haiku, low effort |
 |---|---|---|
-| 붙여 쓰기 | 60/60 | 60/60 |
-| 형태소마다 띄어 쓰기 | 60/60 | 55/60 |
-| 단어마다 띄어 쓰기 | 60/60 | 60/60 |
-| 대문자 표기 | 60/60 | 58/60 |
+| Glued (no spaces) | 60/60 | 60/60 |
+| One space between morphemes | 60/60 | 55/60 |
+| One space between words | 60/60 | 60/60 |
+| Capital letters | 60/60 | 58/60 |
 
-- **분절 오류는 0건이었다.** 표기 방식은 Claude의 이해도를 가르지 않으므로 토큰 비용으로 고르면 된다.
-- Haiku의 오류 7건은 모두 어휘 혼동이었다. 철자만 뒤바뀐 어근(`fek` result / `kef` file)과 이름표와 닮은 형태(`ag` INS ↔ AGT)에서 나왔다.
+- **There were 0 segmentation errors.** The spelling does not change how well Claude understands, so choose it by token cost.
+- All 7 of Haiku's errors were vocabulary confusions. They came from roots that differ only in letter order (`fek` result / `kef` file) and from forms that resemble a gloss label (`ag` INS ↔ AGT).
 
-## 3. 토큰 절약 (L2~L5까지)
+## 3. Token savings
 
-### 3.1 기준선 — `baseline.py`
+This section also covers layers L2–L5.
 
-| 표현 | 일반 영어 대비 토큰 (7종 평균) |
+### 3.1 Baselines
+
+Script: `baseline.py`.
+
+| Representation | Tokens relative to plain English (mean of 7 tokenizers) |
 |---|---|
-| 전보체 영어 | **0.74** |
+| Terse English | **0.74** |
 | JSON | 1.00 |
-| 한국어 | 1.65 (o200k 1.30, claude_legacy 2.21) |
+| Korean | 1.65 (o200k 1.30, claude_legacy 2.21) |
 
-사양 없이 쓸 수 있는 가장 강한 경쟁자는 전보체 영어다. 메시지 40개 중 271/280칸(메시지×토크나이저)에서 가장 쌌다.
+The strongest competitor that needs no spec is terse English. Across the 40 messages, it was the cheapest in 271/280 cells (message × tokenizer).
 
-### 3.2 1단계 초안 문법의 비용 — `projection.py`
+### 3.2 Cost of the stage-1 draft grammar
 
-두 추정자가 독립적으로 단 형태소 분석(메시지당 36~37개)을 실제 문자열로 바꿔 쟀다.
+Script: `projection.py`.
 
-| 시나리오 (누적) | 형태소/메시지 | o200k (전보체 대비) | claude_legacy (전보체 대비) |
+Two estimators independently produced morpheme analyses (36–37 morphemes per message). We turned these into actual strings and measured them.
+
+| Scenario (cumulative) | Morphemes/message | o200k (vs terse) | claude_legacy (vs terse) |
 |---|---|---|---|
-| S0 초안 그대로 | 36~37 | 1.85~1.90 | 2.17~2.20 |
-| S1 기본값 표지 생략 | 29~31 | 1.52~1.60 | 1.85~1.91 |
-| S3 역할 접사를 어순으로 | 25~27 | 1.35~1.42 | 1.67~1.72 |
-| S4 연결·수식 표지 제거 | 24~25 | 1.29~1.33 | 1.60~1.65 |
-| S5 숫자를 아라비아 숫자로 | 22~23 | 1.27~1.30 | 1.53~1.59 |
+| S0 draft as is | 36–37 | 1.85–1.90 | 2.17–2.20 |
+| S1 omit markers for default values | 29–31 | 1.52–1.60 | 1.85–1.91 |
+| S3 replace role affixes with word order | 25–27 | 1.35–1.42 | 1.67–1.72 |
+| S4 remove linking and modifier markers | 24–25 | 1.29–1.33 | 1.60–1.65 |
+| S5 write numbers as Arabic numerals | 22–23 | 1.27–1.30 | 1.53–1.59 |
 
-- 독립 재구현으로 모든 수치가 정확히 재현됐다(`verify/report_audit.json`).
-- 화행·확신도·증거성을 한 접사로 합쳐도 기본값 생략 이상의 이득은 없었다. 이 말뭉치에서는 기본값이 아닌 값이 한 절에 둘 이상 나오는 일이 거의 없다.
-- 감사 결과 이 언어에 불리한 쪽의 편향(형태 모양 제한, 엄격한 단어 필터 등)이 있었지만, 고쳐도 전보체 영어보다 1.2배 이상 비싸다.
+- An independent reimplementation reproduced every figure exactly (`verify/report_audit.json`).
+- Merging speech act, confidence and evidentiality into one affix gave no gain beyond omitting defaults. In this corpus, a clause almost never has more than one non-default value.
+- The audit found biases against this language (shape limits on forms, a strict word filter, and others). Even with them fixed, it costs at least 1.2x as much as terse English.
 
-### 3.3 반박 시도: 전보체 영어를 이길 수 있는가
+### 3.3 Rebuttal attempts: can anything beat terse English?
 
-에이전트 둘이 이 언어 편에 서서 각자 설계를 만들었다. 둘 다 짝수 메시지 20개를 보며 설계했다.
+Two agents took this language's side and each built a design. Both designed while looking at the 20 even-numbered messages.
 
-| 설계 | 전략 | 사양 크기 | 설계용 메시지 (전보체 대비) | **새 메시지 (전보체 대비)** | 새 메시지 (일반 영어 대비) |
+| Design | Strategy | Spec size | Design-set messages (vs terse) | **Held-out messages (vs terse)** | Held-out messages (vs plain English) |
 |---|---|---|---|---|---|
-| KODEX-1 | 상투구 78개를 포함한 사전 2,399항목 + 전보체 문법 | 7.1K~9.1K 토큰 | 0.82~0.96, claude_legacy 1.03 | **1.04~1.31** | 0.78~0.97 |
-| LEAN | 최소 문법(분석어, 어순, 기본값 무표지) + 어휘 2,313개 | 8.4K~10.3K 토큰 | 0.84~1.01, claude_legacy 1.04 | **1.07~1.34** | 0.81~0.99 |
+| KODEX-1 | A 2,399-entry dictionary that includes 78 stock phrases + terse grammar | 7.1K–9.1K tokens | 0.82–0.96, claude_legacy 1.03 | **1.04–1.31** | 0.78–0.97 |
+| LEAN | Minimal grammar (analytic, word order, defaults unmarked) + a 2,313-word vocabulary | 8.4K–10.3K tokens | 0.84–1.01, claude_legacy 1.04 | **1.07–1.34** | 0.81–0.99 |
 
-새 메시지(홀수 20개)는 사양을 동결한 채 다른 에이전트가 인코딩했다. 원래 인코딩을 정확히 재현하는지 먼저 확인한 뒤 진행했다.
+A different agent encoded the held-out messages (the 20 odd-numbered ones) with the spec frozen. We first checked that it reproduced the original encodings exactly, then went ahead.
 
-- **설계용 메시지에서의 우위는 과적합이었다.** KODEX의 상투구는 설계용에서 토큰을 10% 줄였지만, 새 메시지에서는 2%만 줄였다.
-- LEAN은 새 메시지에서 단어가 늘었다(형태소 313 → 418개). 품사를 하나로 고정한 탓에 "unit test", "the fix" 같은 표현을 우회해야 했다.
-- 토큰당 효율은 그대로였다. 형태소당 토큰은 o200k 1.04로 같았다. **진 이유는 형태가 비싸서가 아니라 단어 수가 많아서다.**
-- 영어 토크나이저는 영어 단어 대부분을 이미 1토큰으로 갖고 있다. 새 언어가 쓸 수 있는 1토큰 형태는 그 틈에 남은 조각뿐이다. 그래서 영어가 이미 압축해 둔 것보다 더 압축할 여지가 거의 없다.
+- **The advantage on the design-set messages was overfitting.** KODEX's stock phrases cut tokens by 10% on the design set, but by only 2% on held-out messages.
+- LEAN needed more words on held-out messages (morphemes 313 → 418). Because each word had one fixed part of speech, expressions such as "unit test" and "the fix" had to be worked around.
+- Per-token efficiency did not change. Tokens per morpheme stayed at 1.04 on o200k. **It lost not because its forms were expensive, but because it used more words.**
+- English tokenizers already hold most English words as single tokens. The only single-token forms a new language can use are the fragments left in the gaps. So there is almost no room to compress beyond what English has already compressed.
 
-### 3.4 Claude가 실제로 읽는가 — `verify/readability/`
+### 3.4 Does Claude actually read it?
 
-새 Claude 피험자에게 사양과 인코딩된 메시지 20개만 주고 영어로 되돌리게 했다. 판정자 2명이 원문과 비교해 블라인드로 채점했다(메시지당 2점 만점).
+Materials: `verify/readability/`.
 
-| 설계 | 기본 모델 | Haiku 저노력 |
+We gave fresh Claude subjects only the spec and 20 encoded messages, and asked them to turn the messages back into English. Two judges compared the output with the originals and graded it blind (maximum 2 points per message).
+
+| Design | Default model | Haiku, low effort |
 |---|---|---|
-| LEAN | **98%** (20개 중 19개 완전 보존) | **86%** |
-| KODEX-1 | 시간 초과로 결과 없음 | **5%** |
+| LEAN | **98%** (19 of 20 fully preserved) | **86%** |
+| KODEX-1 | No result (timed out) | **5%** |
 
-- KODEX를 읽은 Haiku는 사전을 찾지 않고 영어 생김새로 추측했다. `persu`(study)를 "persuade"로, `refriger`를 "refrigerated"로 읽었다. 대소문자 구분, 상투구, 개수로 범위를 정하는 인용 같은 장치가 부담을 키운 것으로 보인다.
-- LEAN의 오류는 순서 표현("먼저 / 그다음") 누락, 질문 형태 변화처럼 문법 쪽이었다.
-- 조건마다 한 번씩만 돌렸으므로 원인은 가설이다.
+- When Haiku read KODEX, it did not look words up in the dictionary. It guessed from what they look like in English: it read `persu` (study) as "persuade" and `refriger` as "refrigerated". Devices such as case distinctions, stock phrases and quotes whose span is set by a count appear to have added to the load.
+- LEAN's errors were on the grammar side, such as dropped sequence expressions ("first / then") and changed question forms.
+- Each condition was run only once, so the causes are hypotheses.
 
-## 4. 사양 비용과 손익분기
+## 4. Spec cost and break-even
 
-사양을 컨텍스트에 넣는 비용은 대화마다 든다. 캐시하면 싸지만 0은 아니다.
+Putting the spec in context costs tokens in every conversation. Caching makes it cheap, but not free.
 
-> 보내는 쪽 손익분기: 한 번의 API 호출에서 보내는 메시지 수 n ≥ (사양 토큰 S × 캐시 읽기 배율 c) ÷ (메시지당 절약 토큰 s × 출력 가격 배율 p)
+> Sender-side break-even: number of messages sent in one API call n ≥ (spec tokens S × cache-read multiplier c) ÷ (tokens saved per message s × output price multiplier p)
 
-Claude 가격 구조(캐시 읽기 c = 0.1, Opus 5.5는 0.05, 출력 p = 5배)를 넣으면 이렇다.
+Plugging in Claude's pricing structure (cache read c = 0.1, or 0.05 for Opus 5.5; output p = 5x) gives the following.
 
-| 비교 대상 | 메시지당 절약 s | 손익분기 n |
+| Compared with | Savings per message s | Break-even n |
 |---|---|---|
-| 일반 영어, o200k (LEAN, 새 메시지) | 4.7 토큰 | 호출당 약 36개 (읽는 쪽은 약 180개) |
-| 일반 영어, claude_legacy (LEAN, 새 메시지) | 0.2 토큰 | 호출당 약 975개, Opus 5.5는 약 490개 (사실상 불가) |
-| 전보체 영어 | 음수 | 없음 |
+| Plain English, o200k (LEAN, held-out messages) | 4.7 tokens | about 36 per call (about 180 on the reading side) |
+| Plain English, claude_legacy (LEAN, held-out messages) | 0.2 tokens | about 975 per call, about 490 for Opus 5.5 (practically impossible) |
+| Terse English | negative | none |
 
-o200k 행은 Claude 가격 구조를 빌려 쓴 예시다. 다른 회사의 실제 캐시 할인율은 확인하지 않았다.
-또 모델이 이 언어로 쓰기 전에 영어로 먼저 생각하면, 그 사고 토큰(출력)이 절약분을 넘을 수 있다. 이 비용은 아직 재지 않았다.
+The o200k row is an example that borrows Claude's pricing structure. We did not check other companies' actual cache discount rates.
+Also, if the model thinks in English before it writes in this language, those thinking tokens (output) can exceed the savings. This cost has not been measured yet.
 
-## 5. 설계 변경 제안
+## 5. Proposed design changes
 
-| 계층 | 1단계 제안 | 2단계 제안 (근거) |
+| Layer | Stage-1 proposal | Stage-2 proposal (rationale) |
 |---|---|---|
-| L0 | 소문자 a–z, 공백은 실험 변수 | **소문자 a–z + 단어 사이 공백 하나.** 대문자·숫자·구두점 없음 (2.2, 대문자 비용; KODEX에서는 7개 중 6개 토크나이저에서 숫자도 글자 형태가 더 쌌다. Claude 대용은 예외) |
-| L1 | 어근 CVC + 접사 VC, 붙여 쓰기 | **단어 하나 = 형태소 하나.** 모양 규칙 없이 어휘 스캔으로 형태를 고른다 (2.1, 2.2) |
-| L1 형태 선정 규칙 | — | ① 대상 토크나이저에서 앞 공백 포함 1토큰 ② 11개 언어 zipf < 3 ③ 비슷한 뜻 단어의 조각 금지 ④ 철자만 바뀐 쌍·한 글자 차이 쌍·다른 단어의 앞부분처럼 보이는 형태 피하기 (2.3) ⑤ 자주 쓰는 형태소에 싼 형태 |
-| L2 | 교착어 | **분석어(고립어).** 굴절 없음 (3.2, 3.3) |
-| L4 | 술어 먼저 + 격 접사 | **어순으로 역할 표시**(영어와 비슷한 주어-동사-목적어). 격 접사는 토큰이 든다 (3.2) |
-| L5 | 확신도·증거성·화행 필수 | **기본값은 표시하지 않고**, 기본값이 아닐 때만 표시 (3.2) |
-| 사양 형식 | — | 소문자 단일 규칙, 품사별로 묶은 사전, 상투구·특수 인용 장치는 최소화 (3.4, 가설) |
+| L0 | Lowercase a–z; spaces are an experimental variable | **Lowercase a–z + one space between words.** No capitals, digits or punctuation (2.2, cost of capitals; in KODEX, numbers were also cheaper in letter form on 6 of 7 tokenizers, with the Claude proxy as the exception) |
+| L1 | CVC root + VC affix, glued (no spaces) | **One word = one morpheme.** Forms are chosen by a vocabulary scan, with no shape rule (2.1, 2.2) |
+| L1 form selection rules | — | ① single token, leading space included, on the target tokenizer ② zipf < 3 in 11 languages ③ no fragments of words with similar meanings ④ avoid pairs that differ only in letter order, pairs that differ by one letter, and forms that look like the beginning of another word (2.3) ⑤ cheap forms for frequent morphemes |
+| L2 | Agglutinative | **Analytic (isolating).** No inflection (3.2, 3.3) |
+| L4 | Predicate first + case affixes | **Roles marked by word order** (subject-verb-object, similar to English). Case affixes cost tokens (3.2) |
+| L5 | Confidence, evidentiality and speech act mandatory | **Defaults are not marked**; only non-default values are marked (3.2) |
+| Spec format | — | A single all-lowercase rule, a dictionary grouped by part of speech, and as few stock phrases and special quoting devices as possible (3.4, hypothesis) |
 
-단, 분석어로 가도 품사 고정이 지나치면 단어가 늘어난다(3.3). 단어 하나가 명사·동사로 함께 쓰일 수 있게 할지는 다음 단계 질문이다.
+However, even in an analytic language, fixing parts of speech too strictly increases the number of words (3.3). Whether one word may serve as both noun and verb is a question for the next stage.
 
-## 6. 사용자 결정이 필요한 것
+## 6. Decisions needed from the owner
 
-1. **토큰 절약 목표를 어떻게 둘 것인가.** 이번 실험에서는 어떤 설계도 새 메시지에서 전보체 영어를 이기지 못했다. 일반 영어 대비 절약은 읽을 수 있었던 LEAN 기준으로 o200k·cl100k·llama3·llama4·mistral_tekken에서 8~19%, mistral_sp에서 2%, Claude 대용 토크나이저에서 1%였고, 사양 비용 때문에 대량 통신에서만 이득이다.
-   - (가) 토큰 절약은 "일반 영어보다 싸면 충분"으로 낮추고, 실험·명확성 중심으로 계속한다
-   - (나) 토큰 절약을 계속 핵심 목표로 두고 다른 접근을 찾는다 (예: 모델에 새 어휘를 학습시키는 파인튜닝. D-003과 충돌)
-2. **현행 Claude 토크나이저로 잴 것인가.** 가장 나쁜 결과가 Claude 대용(Claude 2 시절) 토크나이저에서 나왔다. Anthropic API 키가 있으면 토큰 계수 API로 현행 Claude에서 바로 잴 수 있다.
-3. **5절 설계 변경 제안을 받아들일 것인가.** 받아들이면 L0·L1을 확정하고, 다음 단계에서 L2·L4(분석어 문법과 품사 체계)를 설계한다.
+1. **How should the token-savings goal be set?** In this experiment, no design beat terse English on held-out messages. Savings over plain English, measured on LEAN (the design Claude could read), were 8–19% on o200k, cl100k, llama3, llama4 and mistral_tekken, 2% on mistral_sp and 1% on the Claude proxy tokenizer. Because of the spec cost, they pay off only in high-volume communication.
+   - (a) Lower the token-savings goal to "being cheaper than plain English is enough", and continue with a focus on experimentation and clarity
+   - (b) Keep token savings as a core goal and look for a different approach (for example, fine-tuning a model on the new vocabulary; this conflicts with D-003)
+2. **Should we measure with the current Claude tokenizer?** The worst results came from the Claude proxy (Claude 2-era) tokenizer. With an Anthropic API key, we can measure on the current Claude directly through the token counting API.
+3. **Should the design changes proposed in section 5 be accepted?** If they are, L0 and L1 are settled, and the next stage designs L2 and L4 (the analytic grammar and the part-of-speech system).
 
-## 7. 한계
+## 7. Limitations
 
-- 말뭉치가 40개로 작고 한 모델이 한 번에 썼다. 전보체 영어는 같은 토크나이저로 재며 다듬었으므로 경쟁자에게 유리하다.
-- 형태소 수와 인코딩은 에이전트가 손으로 만든 것이다. 다른 사람이 만들면 달라질 수 있다.
-- 읽기 실험은 Claude만, 조건마다 한 번씩 했다. 다른 회사 모델이 읽는지는 재지 않았다.
-- 모델이 이 언어로 직접 쓰는 정확도와 그때 드는 사고 토큰은 재지 않았다.
+- The corpus is small (40 messages), and one model wrote it in one pass. Terse English was refined while being measured on the same tokenizers, which favors the competitor.
+- The morpheme counts and encodings were made by hand by agents. Someone else might produce different ones.
+- The reading experiment used only Claude, once per condition. We did not measure whether models from other companies can read the language.
+- We did not measure how accurately a model writes directly in this language, or how many thinking tokens it spends doing so.

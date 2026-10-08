@@ -1,17 +1,18 @@
-"""파일럿: 표기 방식에 따라 LLM이 장난감 언어를 얼마나 정확히 읽고 쓰는가.
+"""Pilot: how accurately an LLM reads and writes a toy language, depending on the spelling.
 
-같은 장난감 언어(어근 CVC 24개, 접사 VC 12개)를 네 가지 표기로 적고,
-LLM 피험자에게 사양만 준 뒤 (1) 문장 분석(형태소 분절 + 뜻풀이)과 (2) 뜻풀이 → 문장 생성을 시킨다.
+The same toy language (24 CVC roots, 12 VC affixes) is written in four spellings.
+LLM subjects get only the spec and are asked to do (1) sentence analysis (morpheme segmentation + gloss)
+and (2) gloss → sentence generation.
 
-표기 방식
-- nospace    : 모든 형태소를 붙여 쓴다          katenmirob
-- spaced     : 형태소마다 띄운다                kat en mir ob
-- wordspaced : 단어(어근+접사)마다 띄운다       katen mirob
-- camel      : 띄어쓰기 없이 형태소 첫 글자를 대문자로   KatEnMirOb
+Spellings
+- nospace    : all morphemes glued (no spaces)            katenmirob
+- spaced     : one space between morphemes                kat en mir ob
+- wordspaced : one space between words (root + affixes)   katen mirob
+- camel      : no spaces, each morpheme capitalized       KatEnMirOb
 
-사용법
-    python3 pilot_segmentation.py materials OUT_DIR   # 피험자용 자료(정답 제외)와 정답을 따로 저장
-    python3 pilot_segmentation.py score OUT_DIR ANSWERS.json   # 채점
+Usage
+    python3 pilot_segmentation.py materials OUT_DIR   # save subject materials (without answers) and the answer key separately
+    python3 pilot_segmentation.py score OUT_DIR ANSWERS.json   # score answers
 """
 
 from __future__ import annotations
@@ -31,6 +32,8 @@ WORD_LANGS = ["en", "es", "de", "fr", "it", "pt", "nl", "tr", "id"]
 NOUNS = ["user", "file", "server", "task", "error", "tool", "result", "agent", "message", "plan"]
 VERBS = ["send", "read", "write", "find", "fix", "run", "check", "delete"]
 ADJS = ["new", "old", "large", "small", "wrong", "ready"]
+# Experiment stimuli: the Korean strings in the AFFIXES descriptions, DESIGN_RULES and spec_text
+# build the spec that was given to the subjects in Korean. They are kept verbatim; do not translate them.
 AFFIXES = {
     "AGT": "행위자 (누가)",
     "PAT": "대상 (무엇을)",
@@ -55,7 +58,7 @@ def max_zipf(form: str) -> float:
 
 
 def build_lexicon(rng: random.Random) -> tuple[dict[str, str], dict[str, str]]:
-    """뜻 → 형태. 여러 언어에서 흔한 단어와 겹치는 형태는 뺀다."""
+    """Meaning → form. Forms that overlap with common words in several languages are dropped."""
     roots = [c1 + v + c2 for c1 in CONSONANTS for v in VOWELS for c2 in CONSONANTS]
     roots = [r for r in roots if max_zipf(r) < 3.0]
     rng.shuffle(roots)
@@ -67,7 +70,7 @@ def build_lexicon(rng: random.Random) -> tuple[dict[str, str], dict[str, str]]:
 
 
 def random_sentence(rng: random.Random) -> list[list[str]]:
-    """단어 목록. 단어는 뜻 이름 목록 (예: ['send', 'PST', 'CERT'])."""
+    """A list of words. Each word is a list of meaning names (e.g. ['send', 'PST', 'CERT'])."""
     pred = [rng.choice(VERBS)]
     if rng.random() < 0.6:
         pred.append(rng.choice(["PST", "FUT"]))
@@ -146,7 +149,7 @@ def make(out_dir: Path) -> None:
     sentences = [random_sentence(rng) for _ in range(N_PARSE + N_GENERATE)]
     materials, gold = {}, {"lexicon": {"roots": root_of, "affixes": affix_of}, "designs": {}}
     for design in DESIGNS:
-        ex_rng = random.Random(SEED + 1)  # 예시 문장은 설계마다 같은 내용
+        ex_rng = random.Random(SEED + 1)  # the example sentences have the same content in every design
         parse_items = [{"id": f"p{i}", "text": render(s, design, root_of, affix_of)}
                        for i, s in enumerate(sentences[:N_PARSE])]
         gen_items = [{"id": f"g{i}", "gloss": gloss(s)} for i, s in enumerate(sentences[N_PARSE:])]

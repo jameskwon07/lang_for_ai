@@ -1,29 +1,30 @@
-"""실험 E1: 형태소 후보 목록(inventory) 조사.
+"""Experiment E1: survey of the morpheme candidate inventory.
 
-글자 배열 모양(CVC, VC …)과 표기(소문자, 앞 공백, 첫 글자 대문자)마다
-후보 형태 가운데 몇 개가 토크나이저 7종에서 토큰 하나로 끝나는지 센다.
-여러 언어의 실제 단어와 겹치는 형태는 LLM에게 원래 뜻을 끌고 오므로(의미 간섭) 단어 빈도로 거른다.
+For each shape (letter pattern: CVC, VC, ...) and each spelling (lowercase, leading space, capitalized first letter),
+count how many candidate forms are a single token on the 7 tokenizers.
+Forms that match real words in several languages bring their original meaning into an LLM (semantic interference),
+so they are filtered by word frequency.
 
-사용법 (이 디렉터리에서)
-    python3 inventory.py      # results/inventory.json, results/inventory.md 생성 (4 프로세스로 약 1분)
+Usage (from this directory)
+    python3 inventory.py      # writes results/inventory.json and results/inventory.md (about 1 minute with 4 processes)
 
-측정 방법
-- 형태 하나를 문맥 뒤에 붙여 토큰화하고, 문맥이 끝나는 위치 뒤의 토큰만 센다.
-  문맥 토큰과 형태가 한 토큰으로 합쳐지면(경계가 없으면) 단일 토큰이 아닌 것으로 친다.
-    앞 공백 표기 (" kat", " Kat") : 문맥 "the"  → "the kat"   문장 중간에서 공백 뒤에 오는 형태
-    붙임 표기   ("kat", "Kat")   : 문맥 "1"    → "1kat"      공백 없이 시작하는 형태 (붙여 쓰기용)
-- 문맥이 필요한 까닭: SentencePiece(mistral_sp)는 입력 맨 앞에 가짜 공백(▁)을 붙이므로
-  "kat"을 홀로 토큰화하면 사실은 "▁kat"(= 앞 공백 표기)을 재고, " kat"을 홀로 토큰화하면 "▁▁kat"을 잰다.
-  다른 토크나이저는 사전 분할(pre-tokenization) 정규식이 숫자와 글자, 단어와 공백을 이미 나누므로
-  문맥이 있어도 결과가 같다. 이를 sanity 항목에서 실제로 확인한다.
-- 붙임 표기의 단일 토큰 여부는 "형태가 글자 덩어리의 맨 앞에 올 때"의 값이다.
-  글자가 계속 이어지는 문자열(katenmirob) 안에서 이웃 글자와 섞여 잘리는 문제는 다른 실험(E2)에서 다룬다.
-- 실제 단어 필터: wordfreq zipf_frequency 를 11개 언어에서 재고 최댓값을 쓴다(소문자 기준).
-  zipf 3.0은 대략 백만 단어에 한 번, 2.0은 천만 단어에 한 번 나오는 빈도다.
-  빈도는 결과에 영향을 주는 형태(어느 표기에서든 단일 토큰이거나 7종 모두 2토큰 이하인 형태)와
-  형태 수 11,025개 이하인 모양의 모든 형태에 대해서만 잰다(시간 절약).
+Method
+- Each form is appended to a context and tokenized; only the tokens after the end of the context are counted.
+  If a context token and the form merge into one token (no boundary), the form counts as not a single token.
+    leading-space spelling (" kat", " Kat") : context "the"  → "the kat"   a form that follows a space mid-sentence
+    glued spelling         ("kat", "Kat")   : context "1"    → "1kat"      a form that starts without a space (for glued text)
+- Why a context is needed: SentencePiece (mistral_sp) adds a dummy space (▁) at the start of the input, so
+  tokenizing "kat" alone actually measures "▁kat" (= the leading-space spelling), and tokenizing " kat" alone measures "▁▁kat".
+  The other tokenizers' pre-tokenization regexes already split digits from letters and words from spaces, so
+  the result is the same even with the context. The sanity section checks this.
+- The single-token value for the glued spelling is the value "when the form comes at the start of a run of letters".
+  Inside a continuous string of letters (katenmirob), a form can be cut together with neighboring letters; another experiment (E2) covers that.
+- Real-word filter: measure wordfreq zipf_frequency in 11 languages and use the maximum (lowercase).
+  zipf 3.0 is roughly once per million words; 2.0 is once per ten million words.
+  Frequencies are measured only for forms that affect the results (a single token in any spelling, or 2 tokens or fewer on all 7)
+  and for every form of shapes with 11,025 forms or fewer (to save time).
 
-난수를 쓰지 않으므로 결과는 실행할 때마다 같다.
+No randomness is used, so results are the same on every run.
 """
 
 from __future__ import annotations
@@ -38,29 +39,30 @@ import time
 from collections import Counter
 from pathlib import Path
 
-os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")  # fork 뒤 HF tokenizers 경고를 끈다
+os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")  # silence the HF tokenizers warning after fork
 
 from wordfreq import get_frequency_dict, zipf_frequency  # noqa: E402
 
 from toklib import load_all  # noqa: E402
 
-SEED = 20261007  # 난수를 쓰지 않지만 저장소 관례에 맞춰 둔다
+SEED = 20261007  # no randomness is used; kept to follow the repository convention
 VOWELS = "aeiou"
-CONSONANTS = "".join(c for c in string.ascii_lowercase if c not in VOWELS)  # 21자, y 포함
+CONSONANTS = "".join(c for c in string.ascii_lowercase if c not in VOWELS)  # 21 letters, including y
 WORD_LANGS = ["en", "es", "de", "fr", "it", "pt", "nl", "tr", "id", "pl", "sv"]
-FILTERS = ["none", "lt3", "lt2"]  # 필터 없음, max zipf < 3.0, < 2.0
+FILTERS = ["none", "lt3", "lt2"]  # no filter, max zipf < 3.0, < 2.0
 FILTER_CUT = {"none": math.inf, "lt3": 3.0, "lt2": 2.0}
-SWEEP = [2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, math.inf]  # zipf 기준을 바꿔 가며 센다 (inf = 필터 없음)
-FULL_ZIPF_MAX_FORMS = 11025  # 이 이하 크기의 모양은 모든 형태의 빈도를 잰다
-WORKERS = min(4, os.cpu_count() or 1)  # 측정 프로세스 수 (결과에는 영향 없음)
+SWEEP = [2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, math.inf]  # count at each zipf threshold (inf = no filter)
+FULL_ZIPF_MAX_FORMS = 11025  # for shapes with at most this many forms, measure the frequency of every form
+WORKERS = min(4, os.cpu_count() or 1)  # number of measuring processes (does not affect the results)
 
-# 자음으로 시작하는 모양 = 어근 후보, 모음으로 시작하는 모양 = 문법 형태소 후보.
-# 붙여 쓰기에서는 '다음 글자가 자음이면 어근, 모음이면 문법 형태'로 끊으므로 역할마다 모양 하나를 고른다.
+# Consonant-initial shapes = root candidates, vowel-initial shapes = grammatical morpheme candidates.
+# Glued text is split by the rule 'if the next letter is a consonant, a root starts; if it is a vowel, a grammatical form starts',
+# so each role uses one shape.
 ROOT_SHAPES = ["CV", "CVV", "CCV", "CVC", "CVCV", "CCVC", "CVCC", "CVCVC"]
 GRAM_SHAPES = ["V", "VV", "VC", "VCV", "VCC", "VCVC"]
 SHAPES = sorted(ROOT_SHAPES + GRAM_SHAPES, key=lambda s: (len(s), s))
 
-# 표기 이름 → (문맥, 형태 → 표기 문자열)
+# spelling name → (context, form → spelled string)
 VARIANTS = {
     "bare": ("1", lambda f: f),
     "space": ("the", lambda f: " " + f),
@@ -69,24 +71,24 @@ VARIANTS = {
 }
 VARIANT_LABEL = {"bare": "kat", "space": "␣kat", "cap": "Kat", "space_cap": "␣Kat"}
 
-# 여러 토크나이저 합의 수준
+# agreement levels across tokenizers
 LEVELS = ["all7", "no_sp", "ge6", "ge5", "claude", "le2_all7"]
 LEVEL_LABEL = {
-    "all7": "7종 모두",
-    "no_sp": "mistral_sp 뺀 6종 모두",
-    "ge6": "7종 중 6종 이상",
-    "ge5": "7종 중 5종 이상",
-    "claude": "claude_legacy 단독",
-    "le2_all7": "7종 모두 2토큰 이하",
+    "all7": "all 7",
+    "no_sp": "all 6 except mistral_sp",
+    "ge6": "6 or more of 7",
+    "ge5": "5 or more of 7",
+    "claude": "claude_legacy alone",
+    "le2_all7": "2 tokens or fewer on all 7",
 }
 MAIN_LEVELS = ["all7", "no_sp", "ge6", "claude"]
 TARGET_ROOTS, TARGET_GRAM = 1000, 100
 
 OUT_DIR = Path(__file__).resolve().parent / "results"
-NAMES: list[str] = []  # main() 에서 토크나이저 순서로 채운다
+NAMES: list[str] = []  # filled in tokenizer order by main()
 
 
-# ---------------------------------------------------------------- 측정
+# ---------------------------------------------------------------- measurement
 
 def expand(shape: str) -> list[str]:
     pools = [VOWELS if ch == "V" else CONSONANTS for ch in shape]
@@ -94,7 +96,7 @@ def expand(shape: str) -> list[str]:
 
 
 def span_count(tok, ctx: str, s: str) -> int:
-    """문맥 ctx 뒤에 붙인 s 가 차지하는 토큰 수. 문맥과 한 토큰으로 합쳐지면 -1."""
+    """Number of tokens that s takes when appended after the context ctx. -1 if it merges with the context into one token."""
     cut, pos, n = len(ctx), 0, 0
     for p in tok.pieces(ctx + s):
         start, pos = pos, pos + len(p)
@@ -106,14 +108,14 @@ def span_count(tok, ctx: str, s: str) -> int:
 
 
 def word_freq(form: str) -> dict:
-    """11개 언어 zipf 의 최댓값, 그 언어, 영어 zipf."""
+    """Maximum zipf over the 11 languages, that language, and the English zipf."""
     zs = [(zipf_frequency(form, lang), lang) for lang in WORD_LANGS]
     z, lang = max(zs, key=lambda x: x[0])
     return {"max": z, "lang": lang if z > 0 else None, "en": zs[0][0]}
 
 
 def level_ok(c: tuple[int, ...], level: str) -> bool:
-    """c = 토크나이저별 토큰 수 튜플 (NAMES 순서, -1 = 문맥과 합쳐짐)."""
+    """c = tuple of token counts per tokenizer (NAMES order, -1 = merged with the context)."""
     s = [x == 1 for x in c]
     if level == "all7":
         return all(s)
@@ -131,15 +133,15 @@ def level_ok(c: tuple[int, ...], level: str) -> bool:
 
 
 def matters(c: tuple[int, ...]) -> bool:
-    """이 형태가 어떤 집계에든 들어가는가 (단일 토큰이 하나라도 있거나 7종 모두 2토큰 이하)."""
+    """Does this form enter any count? (a single token on at least one tokenizer, or 2 tokens or fewer on all 7)"""
     return any(x == 1 for x in c) or level_ok(c, "le2_all7")
 
 
-_TOKS: dict = {}  # 작업 프로세스가 fork 로 물려받는 토크나이저
+_TOKS: dict = {}  # tokenizers that the worker processes inherit through fork
 
 
 def _measure_chunk(args: tuple[str, list[str]]) -> tuple[dict, dict]:
-    """형태 묶음 하나를 잰다. 작업 프로세스에서 돈다."""
+    """Measure one chunk of forms. Runs in a worker process."""
     shape, forms = args
     counts = {var: [tuple(span_count(t, ctx, spell(f)) for t in _TOKS.values()) for f in forms]
               for var, (ctx, spell) in VARIANTS.items()}
@@ -154,12 +156,13 @@ def n_forms(shape: str) -> int:
 
 
 def measure(toks: dict, workers: int = WORKERS, chunk: int = 8000) -> tuple[dict, dict]:
-    """counts[shape][variant][form] = 토크나이저별 토큰 수 튜플, zipf[form] = word_freq(form).
+    """counts[shape][variant][form] = tuple of token counts per tokenizer, zipf[form] = word_freq(form).
 
-    형태를 묶음으로 나눠 여러 프로세스(fork)에서 잰다. 묶음 순서대로 합치므로 결과는 프로세스 수와 무관하다.
+    Splits the forms into chunks and measures them in several (forked) processes. Chunks are merged in order,
+    so the results do not depend on the number of processes.
     """
     _TOKS.update(toks)
-    word_freq("kat")  # 빈도 목록을 미리 읽어 두면 작업 프로세스가 물려받는다
+    word_freq("kat")  # load the frequency lists first so that the worker processes inherit them
     jobs = [(shape, forms[i:i + chunk]) for shape in SHAPES for forms in [expand(shape)] for i in range(0, len(forms), chunk)]
     counts: dict = {shape: {var: {} for var in VARIANTS} for shape in SHAPES}
     zipf: dict = {}
@@ -176,8 +179,9 @@ def measure(toks: dict, workers: int = WORKERS, chunk: int = 8000) -> tuple[dict
 
 
 def sanity(toks: dict, counts: dict) -> dict:
-    """(1) 문맥 측정값과 홀로 토큰화한 값(toklib is_single_token)의 단일 토큰 판정 차이 (CVC, VC 전체)
-    (2) 모든 모양에서 문맥과 합쳐진 형태 수."""
+    """(1) Disagreements in the single-token verdict between the in-context value and standalone tokenization
+    (toklib is_single_token), over all of CVC and VC.
+    (2) Number of forms, over all shapes, that merged with the context."""
     out: dict = {"context_vs_standalone_CVC_VC": {}, "merged_with_context_all_shapes": {}}
     for var, (_, spell) in VARIANTS.items():
         out["context_vs_standalone_CVC_VC"][var] = {}
@@ -194,7 +198,7 @@ def sanity(toks: dict, counts: dict) -> dict:
     return out
 
 
-# ---------------------------------------------------------------- 집계
+# ---------------------------------------------------------------- aggregation
 
 def _mean(xs: list[int]) -> float | None:
     return round(sum(xs) / len(xs), 3) if xs else None
@@ -246,7 +250,7 @@ def aggregate(counts: dict, zipf: dict) -> tuple[dict, dict]:
             full = len(data) <= FULL_ZIPF_MAX_FORMS
             stats[shape][var] = {
                 "n_forms": len(data),
-                # 토큰화와 상관없이 단어 필터를 통과하는 형태 수 (모든 형태의 빈도를 잰 모양만)
+                # number of forms that pass the word filter regardless of tokenization (only shapes where every form's frequency was measured)
                 "n_pass_filter": {flt: (sum(zipf[f]["max"] < FILTER_CUT[flt] for f in data) if full else None)
                                   for flt in FILTERS},
                 "per_tokenizer": per_tok,
@@ -263,7 +267,8 @@ def aggregate(counts: dict, zipf: dict) -> tuple[dict, dict]:
 
 
 def mechanism(counts: dict, zipf: dict) -> dict:
-    """단일 토큰이 되는 토크나이저 수(k)별로 실제 단어(max zipf ≥ 3.0)의 비율. 모든 형태의 빈도를 잰 모양만."""
+    """Share of real words (max zipf ≥ 3.0) by the number of tokenizers (k) on which the form is a single token.
+    Only shapes where every form's frequency was measured."""
     out: dict = {}
     for shape in ["VC", "CV", "VCV", "CVC", "CCV", "CVCV"]:
         out[shape] = {}
@@ -281,9 +286,9 @@ def mechanism(counts: dict, zipf: dict) -> dict:
 
 
 def fragment_sets(max_len: int = 5) -> tuple[set, set, int]:
-    """11개 언어에서 zipf ≥ 3.0 인 단어들의 진부분 접두(prefix) 집합과 진부분 문자열(substring) 집합.
+    """Set of proper prefixes and set of proper substrings of the words with zipf ≥ 3.0 in the 11 languages.
 
-    zipf_frequency 와 같은 wordfreq 목록(best)을 쓴다. zipf ≥ 3.0 ⇔ 빈도 ≥ 1e-6.
+    Uses the same wordfreq list (best) as zipf_frequency. zipf ≥ 3.0 ⇔ frequency ≥ 1e-6.
     """
     words = set()
     for lang in WORD_LANGS:
@@ -299,12 +304,12 @@ def fragment_sets(max_len: int = 5) -> tuple[set, set, int]:
 
 
 def fragments(counts: dict, zipf: dict) -> dict:
-    """단어 필터를 통과한(zipf < 3.0) 형태가 흔한 단어의 조각인 비율.
+    """Share of forms that pass the word filter (zipf < 3.0) and are fragments of common words.
 
-    ␣ 표기: 흔한 단어(zipf ≥ 3.0)의 진부분 접두인가 (예: ' calc' ← calculate)
-    붙임 표기: 흔한 단어 안 어딘가에 들어 있는 진부분 문자열인가 (예: 'ated' ← created)
-    7종 모두 단일 토큰인 형태와, 어느 토크나이저에서도 단일 토큰이 아닌 형태(기준선)를 비교한다.
-    기준선은 모든 형태의 빈도를 잰 모양에서만 낸다.
+    ␣ spelling: is it a proper prefix of a common word (zipf ≥ 3.0)? (e.g. ' calc' ← calculate)
+    Glued spelling: is it a proper substring somewhere inside a common word? (e.g. 'ated' ← created)
+    Compares forms that are single tokens on all 7 with forms that are a single token on no tokenizer (baseline).
+    The baseline is given only for shapes where every form's frequency was measured.
     """
     prefixes, subs, n_words = fragment_sets()
     out: dict = {"n_frequent_words": n_words, "shapes": {}}
@@ -330,7 +335,7 @@ def fragments(counts: dict, zipf: dict) -> dict:
 
 
 def form_table(counts: dict, zipf: dict) -> dict:
-    """형태별 상세: 어떤 표기에서든 한 토크나이저라도 단일 토큰인 형태만 싣는다."""
+    """Per-form detail: includes only forms that are a single token on at least one tokenizer in some spelling."""
     out: dict = {}
     for shape in SHAPES:
         out[shape] = {}
@@ -346,7 +351,7 @@ def form_table(counts: dict, zipf: dict) -> dict:
 
 
 def letter_productivity(counts: dict) -> dict:
-    """글자별 생산성. 모양·표기·위치마다 그 글자를 포함한 형태의 단일 토큰 비율."""
+    """Productivity by letter. For each shape, spelling and position, the single-token share of the forms that contain the letter."""
     out: dict = {}
     for shape in ["CV", "VC", "CVC", "CCV", "CVCV"]:
         out[shape] = {}
@@ -370,10 +375,11 @@ def letter_productivity(counts: dict) -> dict:
 
 
 def reduce_consonants(counts: dict, zipf: dict, var: str, level: str) -> list[dict]:
-    """CVC 어근에서 자음을 하나씩 빼는 탐욕 탐색.
+    """Greedy search that removes consonants from CVC roots one at a time.
 
-    목표 = 해당 합의 수준에서 단일 토큰인 CVC 형태(단어 필터 없이, 토큰화만 본다).
-    빼면 목표 형태를 가장 적게 잃는 자음부터 뺀다. 동률이면 알파벳 순으로 앞선 자음.
+    Target = CVC forms that are single tokens at the given agreement level (no word filter; tokenization only).
+    Remove first the consonant whose removal loses the fewest target forms. On a tie, the consonant that comes first
+    alphabetically.
     """
     single = {f for f, c in counts["CVC"][var].items() if level_ok(c, level)}
     current = set(CONSONANTS)
@@ -397,9 +403,9 @@ def reduce_consonants(counts: dict, zipf: dict, var: str, level: str) -> list[di
 
 
 def best_n(counts: dict, zipf: dict, shapes: list[str], var: str, n: int, flt: str) -> dict:
-    """후보 풀에서 토큰 비용이 가장 낮은 n개를 고른다 (단어 필터 적용).
+    """Pick the n candidates with the lowest token cost from the candidate pool (word filter applied).
 
-    순위: 단일 토큰이 아닌 토크나이저 수 → 7종 토큰 수 합 → 최대 토큰 수 → 알파벳.
+    Rank: number of tokenizers on which the form is not a single token → total tokens over the 7 → max tokens → alphabetical.
     """
     def cost(c):
         cc = [9 if x < 0 else x for x in c]
@@ -427,7 +433,7 @@ def best_n(counts: dict, zipf: dict, shapes: list[str], var: str, n: int, flt: s
 
 
 def designs(stats: dict, counts: dict, zipf: dict) -> dict:
-    """핵심 질문: 어근 1,000개 + 문법 형태 100개를 채우는 모양·표기 조합이 있는가."""
+    """Key question: is there a shape and spelling combination that supplies 1,000 roots + 100 grammatical forms?"""
     best: dict = {}
     for role, shapes in [("root", ROOT_SHAPES), ("gram", GRAM_SHAPES)]:
         best[role] = {}
@@ -473,7 +479,7 @@ def designs(stats: dict, counts: dict, zipf: dict) -> dict:
     return out
 
 
-# ---------------------------------------------------------------- 보고서
+# ---------------------------------------------------------------- report
 
 def pct(x: float) -> str:
     return f"{100 * x:.0f}"
@@ -488,23 +494,23 @@ def md_table(header: list[str], rows: list[list], align: str | None = None) -> l
 
 
 COMBO_LABEL = {
-    "glued": "붙여 쓰기",
-    "glued_camel": "붙여 쓰기 + 형태소 첫 글자 대문자",
-    "spaced": "형태소마다 띄우기",
-    "wordspaced": "어근 앞만 띄우기 (문법 형태는 붙임)",
-    "wordspaced_cap": "어근 앞 띄우기 + 대문자 (문법 형태는 붙임)",
+    "glued": "Glued (no spaces)",
+    "glued_camel": "Glued + capitalized first letter of each morpheme",
+    "spaced": "One space between morphemes",
+    "wordspaced": "Space before roots only (grammatical forms glued)",
+    "wordspaced_cap": "Space before roots + capital letter (grammatical forms glued)",
 }
 
 
 def _examples(lists: dict, cands: list[tuple[str, str, str]]) -> str:
-    """예시 형태가 실제로 7종 단일 & zipf < 3.0 목록에 있을 때만 예로 든다."""
+    """Cite an example form only if it is actually in the list of forms single on all 7 & zipf < 3.0."""
     ok = [f"`{form}`" for shape, var, form in cands
           if form.strip() in {f for f, _ in lists[shape][var]["all7_lt3"]}]
-    return f"({', '.join(ok)} 등)" if ok else ""
+    return f" (e.g. {', '.join(ok)})" if ok else ""
 
 
 def key_answer(stats: dict, des: dict, mech: dict, frag: dict, lists: dict) -> list[str]:
-    """핵심 답을 측정값에서 문장으로 만든다."""
+    """Build the sentences of the key answer from the measured values."""
     L: list[str] = []
     best = des["best_single_shape"]
     pools = des["pools_variable_length"]
@@ -514,94 +520,96 @@ def key_answer(stats: dict, des: dict, mech: dict, frag: dict, lists: dict) -> l
         return max(((best[role][v][lv][flt]["count"], best[role][v][lv][flt]["shape"], v) for v in variants),
                    key=lambda x: (x[0], x[2] == "space", x[1]))
 
-    # 1. 판정
+    # 1. verdict
     met = [(c, lv, flt) for c, d in des["combos"].items() for lv in ["all7", "no_sp", "ge6"] for flt in ["lt3", "lt2"]
            if d["levels"][lv][flt]["meets"]]
     if met:
-        L.append("- **목표를 채우는 조합**: " + ", ".join(f"{COMBO_LABEL[c]} ({LEVEL_LABEL[lv]}, {flt})" for c, lv, flt in met))
+        L.append("- **Combinations that meet the target**: " + ", ".join(f"{COMBO_LABEL[c]} ({LEVEL_LABEL[lv]}, {flt})" for c, lv, flt in met))
     else:
-        L.append(f"- **목표(어근 {TARGET_ROOTS:,} + 문법 {TARGET_GRAM}, 단일 토큰, 단어 필터 zipf < 3.0)를 채우는 모양·표기 조합은 없다.** "
-                 "7종 모두, mistral_sp 뺀 6종, 7종 중 6종 이상 어느 기준에서도 없다. 막히는 쪽은 어근이다.")
-    # 2. 문법 형태만
+        L.append(f"- **No shape and spelling combination meets the target ({TARGET_ROOTS:,} roots + {TARGET_GRAM} grammatical forms, "
+                 "single token, word filter zipf < 3.0).** "
+                 "None does at any level: all 7, the 6 other than mistral_sp, or 6 or more of 7. The roots are what falls short.")
+    # 2. grammatical forms only
     g_ok = [(sh, v, flt, stats[sh][v]["agreement"]["all7"][flt]) for flt in ["lt3", "lt2"] for v in VARIANTS for sh in GRAM_SHAPES
             if stats[sh][v]["agreement"]["all7"][flt] >= TARGET_GRAM]
     if g_ok:
-        L.append(f"- 문법 형태 {TARGET_GRAM}개는 7종 모두 단일 토큰으로 채울 수 있다: "
-                 + ", ".join(f"{sh} {V[v]} {n:,}개 (zipf < {FILTER_CUT[flt]:.1f})" for sh, v, flt, n in g_ok)
-                 + ". 모두 붙임 표기이므로 붙여 쓰기나 '어근 앞만 띄우기' 설계에 해당한다. "
-                 "다만 이 형태들은 거의 모두 흔한 단어 안의 조각" + _examples(lists, [("VCVC", "bare", "ated"), ("VCVC", "bare", "atic"),
-                                                                     ("VCC", "bare", "ity")]) + "이다(2.5절).")
-    # 2-1. 기존 스케치 (docs/01: CVC 어근 + VC 접사, 붙여 쓰기)
+        L.append(f"- {TARGET_GRAM} grammatical forms can be filled with forms that are single tokens on all 7: "
+                 + ", ".join(f"{sh} {V[v]} {n:,} (zipf < {FILTER_CUT[flt]:.1f})" for sh, v, flt, n in g_ok)
+                 + ". All of these are glued spellings, so they fit the glued design or the 'space before roots only' design. "
+                 "But almost all of these forms are fragments inside common words" + _examples(lists, [("VCVC", "bare", "ated"), ("VCVC", "bare", "atic"),
+                                                                     ("VCC", "bare", "ity")]) + " (section 2.5).")
+    # 2-1. earlier sketch (docs/01: CVC roots + VC affixes, glued)
     cb, vb = stats["CVC"]["bare"]["agreement"]["all7"], stats["VC"]["bare"]["agreement"]["all7"]
-    L.append(f"- docs/01의 스케치(붙여 쓴 CVC 어근 + VC 접사)를 그대로 재면: CVC kat 7종 단일 {cb['none']:,} → zipf < 3.0 {cb['lt3']:,} → < 2.0 {cb['lt2']:,}, "
-             f"VC kat 7종 단일 {vb['none']:,} → zipf < 3.0 {vb['lt3']:,} → < 2.0 {vb['lt2']:,}. "
-             f"VC 105개 중 zipf < 3.0인 것은 토큰화와 상관없이 {stats['VC']['bare']['n_pass_filter']['lt3']:,}개뿐이다(두 글자 문자열은 거의 다 어느 언어에선가 단어·약어다).")
-    # 3. 최대치
+    L.append(f"- Measuring the docs/01 sketch (glued CVC roots + VC affixes) as is: CVC kat single on all 7: {cb['none']:,} → zipf < 3.0: {cb['lt3']:,} → < 2.0: {cb['lt2']:,}; "
+             f"VC kat single on all 7: {vb['none']:,} → zipf < 3.0: {vb['lt3']:,} → < 2.0: {vb['lt2']:,}. "
+             f"Regardless of tokenization, only {stats['VC']['bare']['n_pass_filter']['lt3']:,} of the 105 VC forms has zipf < 3.0 (almost every two-letter string is a word or abbreviation in some language).")
+    # 3. maximums
     for lv in ["all7", "no_sp"]:
         r = [top("root", lv, f) for f in FILTERS]
-        L.append(f"- 어근 최대치 ({LEVEL_LABEL[lv]}, 모양 하나): 필터 없음 {r[0][0]:,} ({r[0][1]} {V[r[0][2]]}) → "
-                 f"zipf < 3.0 {r[1][0]:,} ({r[1][1]} {V[r[1][2]]}) → zipf < 2.0 {r[2][0]:,} ({r[2][1]} {V[r[2][2]]}).")
+        L.append(f"- Maximum roots ({LEVEL_LABEL[lv]}, one shape): no filter: {r[0][0]:,} ({r[0][1]} {V[r[0][2]]}) → "
+                 f"zipf < 3.0: {r[1][0]:,} ({r[1][1]} {V[r[1][2]]}) → zipf < 2.0: {r[2][0]:,} ({r[2][1]} {V[r[2][2]]}).")
     p = pools["space"]
-    L.append(f"- 띄어 쓰는 설계에서 자음 시작 모양을 모두 합친 어근 풀(␣kat, 7종 모두 단일 토큰): 필터 없음 {p['root']['all7']['none']:,} → "
-             f"zipf < 3.0 {p['root']['all7']['lt3']:,} → < 2.0 {p['root']['all7']['lt2']:,}. "
-             f"단어 필터가 없으면 1,000을 넘지만 필터를 걸면 크게 모자란다.")
-    # 4. 원인
+    L.append(f"- Root pool that combines all consonant-initial shapes in a spaced design (␣kat, single token on all 7): no filter: {p['root']['all7']['none']:,} → "
+             f"zipf < 3.0: {p['root']['all7']['lt3']:,} → < 2.0: {p['root']['all7']['lt2']:,}. "
+             f"Without the word filter it exceeds 1,000; with the filter it falls far short.")
+    # 4. cause
     parts = []
     for var in ["space", "bare"]:
         m = mech["CVC"][var]
         hi, lo = m.get(str(len(NAMES))), m.get("0")
         if hi and lo:
-            parts.append(f"CVC {V[var]}: 7종 모두 단일 토큰인 {hi['n']:,}개 중 {pct(hi['word_ge3_share'])}%, "
-                         f"어느 토크나이저에서도 단일 토큰이 아닌 {lo['n']:,}개 중 {pct(lo['word_ge3_share'])}%")
-    L.append("- 병목은 단어 필터다. 어느 언어에선가 zipf ≥ 3.0인 형태의 비율 — " + "; ".join(parts) + ". "
-             "토크나이저가 한 토큰으로 만든 글자열은 원래 자주 나오는 글자열이므로, 단일 토큰일수록 실제 단어다(2.4절).")
+            parts.append(f"CVC {V[var]}: {pct(hi['word_ge3_share'])}% of the {hi['n']:,} forms that are single tokens on all 7, "
+                         f"{pct(lo['word_ge3_share'])}% of the {lo['n']:,} forms that are a single token on no tokenizer")
+    L.append("- The bottleneck is the word filter. Share of forms with zipf ≥ 3.0 in some language — " + "; ".join(parts) + ". "
+             "A letter string that a tokenizer made into one token is a string that occurs often in the first place, "
+             "so forms that are single tokens on more tokenizers are more often real words (section 2.4).")
     npf = stats["CVC"]["bare"]["n_pass_filter"]
-    L.append(f"- CVC는 토큰화와 상관없이 2,205개 중 {npf['lt3']:,}개만 zipf < 3.0, {npf['lt2']:,}개만 zipf < 2.0이다. "
-             f"CVC 하나로는 토큰 수를 따지기 전에 이미 1,000개 어근을 채울 수 없다.")
-    # 5. 조각
+    L.append(f"- Regardless of tokenization, only {npf['lt3']:,} of the 2,205 CVC forms have zipf < 3.0, and only {npf['lt2']:,} have zipf < 2.0. "
+             f"CVC alone cannot supply 1,000 roots even before token counts are considered.")
+    # 5. fragments
     fs = frag["shapes"]
     items = []
     for shape, var in [("CVCC", "space"), ("CVCVC", "space"), ("VCVC", "bare"), ("CVC", "space")]:
         d = fs[shape][var]
         if d["all7"]["n"]:
             base = d.get("none_single")
-            items.append(f"{shape} {V[var]} {pct(d['all7']['fragment_share'])}% ({d['all7']['n']:,}개 중)"
-                         + (f", 기준선(단일 토큰 아님) {pct(base['fragment_share'])}%" if base and base["n"] else ""))
+            items.append(f"{shape} {V[var]} {pct(d['all7']['fragment_share'])}% (of {d['all7']['n']:,})"
+                         + (f", baseline (not a single token) {pct(base['fragment_share'])}%" if base and base["n"] else ""))
     non_frag = sorted({f for d in fs.values() for var in ["bare", "space"] for f in d[var]["all7"]["non_fragment_examples"]})
-    L.append("- 필터를 통과한 단일 토큰도 대부분 흔한 단어의 조각이다"
+    L.append("- Even the single tokens that pass the filter are mostly fragments of common words"
              + _examples(lists, [("CVCC", "space", " calc"), ("CVCVC", "space", " gover"), ("VCVC", "bare", "ated")]) + ". "
-             "흔한 단어의 진부분 접두(␣ 표기) 또는 진부분 문자열(붙임 표기)인 비율: " + "; ".join(items) + " (2.5절). "
-             "조각이 아닌 7종 단일 형태는 " + (", ".join(f"`{f}`" for f in non_frag) or "없음") + "뿐이다(코드 식별자가 많다). "
-             "zipf 필터는 '단어 그 자체'만 거르고 이런 조각이 끌고 오는 뜻은 거르지 못한다.")
-    # 6. 타협
+             "Share of forms that are a proper prefix (␣ spelling) or a proper substring (glued spelling) of a common word: " + "; ".join(items) + " (section 2.5). "
+             "The only forms single on all 7 that are not fragments: " + (", ".join(f"`{f}`" for f in non_frag) or "none") + " (many are code identifiers). "
+             "The zipf filter removes only 'the word itself'; it does not remove the meaning that such fragments bring in.")
+    # 6. compromises
     bn = des["best_n"]
     t = []
     for var, key in [("space", "root:pool:lt3"), ("space", "root:CVCV:lt3"), ("bare", "root:CVCC:lt3")]:
         d = bn[var][key]
         if d.get("picked"):
             sh = key.split(":")[1]
-            t.append(f"{'어근 풀(띄어 쓰기 전용)' if sh == 'pool' else sh} {V[var]}: 7종 단일 {d['all7_single']:,}개, 7종 모두 2토큰 이하 {d['le2_all7']:,}개, "
-                     f"평균 토큰 o200k {d['mean_tokens']['o200k']:.2f} / claude_legacy {d['mean_tokens']['claude_legacy']:.2f} / "
+            t.append(f"{'root pool (spaced designs only)' if sh == 'pool' else sh} {V[var]}: {d['all7_single']:,} single on all 7, {d['le2_all7']:,} at 2 tokens or fewer on all 7, "
+                     f"mean tokens o200k {d['mean_tokens']['o200k']:.2f} / claude_legacy {d['mean_tokens']['claude_legacy']:.2f} / "
                      f"mistral_sp {d['mean_tokens']['mistral_sp']:.2f}")
-    L.append(f"- 타협 1 (2토큰 허용): zipf < 3.0을 지키며 토큰 비용이 가장 낮은 어근 {TARGET_ROOTS:,}개를 고르면 — " + "; ".join(t) + " (2.3절).")
+    L.append(f"- Compromise 1 (allow 2 tokens): picking the {TARGET_ROOTS:,} roots with the lowest token cost while keeping zipf < 3.0 — " + "; ".join(t) + " (section 2.3).")
     sw = stats["CVC"]["space"]["zipf_sweep"]
     j3, j4 = SWEEP.index(3.0), SWEEP.index(4.0)
-    L.append(f"- 타협 2 (필터 완화): CVC ␣kat 7종 단일 토큰은 11개 언어 기준 zipf < 3.0에서 {sw['max11']['all7'][j3]:,}, < 4.0에서 "
-             f"{sw['max11']['all7'][j4]:,}; 영어만 보면 < 3.0에서 {sw['en']['all7'][j3]:,}, < 4.0에서 {sw['en']['all7'][j4]:,}개다(2.1절). "
-             "필터를 완화한다는 것은 실제 단어를 어근으로 쓰겠다는 뜻이다.")
+    L.append(f"- Compromise 2 (relax the filter): CVC ␣kat forms that are single tokens on all 7: {sw['max11']['all7'][j3]:,} at zipf < 3.0 and "
+             f"{sw['max11']['all7'][j4]:,} at < 4.0 by the 11-language measure; by English alone, {sw['en']['all7'][j3]:,} at < 3.0 and {sw['en']['all7'][j4]:,} at < 4.0 (section 2.1). "
+             "Relaxing the filter means using real words as roots.")
     ex = stats["CVC"]["space"]["all7_excluded_by_lt3"]
     langs = ", ".join(f"{k} {v}" for k, v in list(ex["by_lang"].items())[:6])
-    L.append(f"- CVC ␣kat 7종 단일 토큰 가운데 zipf ≥ 3.0으로 빠진 형태를 빈도가 가장 높은 언어로 나누면 {langs} … 이고, "
-             f"그중 {ex['en_below_3']:,}개는 영어 zipf가 3.0 미만이다.")
+    L.append(f"- Of the CVC ␣kat forms that are single tokens on all 7, those removed for zipf ≥ 3.0, split by the language with the highest frequency: {langs} …; "
+             f"of these, {ex['en_below_3']:,} have an English zipf below 3.0.")
     # 7. claude
     c_rn, c_r, c_g = top("root", "claude", "none"), top("root", "claude", "lt3"), top("gram", "claude", "lt3")
     pc = pools["space"]["root"]["per_tokenizer"]["claude_legacy"]
     worse = [n for n in NAMES if stats["CVC"]["space"]["per_tokenizer"][n]["none"] < stats["CVC"]["bare"]["per_tokenizer"][n]["none"]]
-    L.append(f"- claude_legacy 단독: 어근(모양 하나) 필터 없음 최대 {c_rn[0]:,} ({c_rn[1]} {V[c_rn[2]]}), zipf < 3.0 최대 {c_r[0]:,} "
-             f"({c_r[1]} {V[c_r[2]]}); ␣kat 어근 풀 zipf < 3.0 {pc['lt3']:,}개; 문법 형태 zipf < 3.0 최대 {c_g[0]:,} ({c_g[1]} {V[c_g[2]]}). "
-             f"CVC에서 ␣kat 단일 토큰이 kat보다 적은 토크나이저: {', '.join(worse) or '없음'} "
+    L.append(f"- claude_legacy alone: roots (one shape) max {c_rn[0]:,} with no filter ({c_rn[1]} {V[c_rn[2]]}), max {c_r[0]:,} at zipf < 3.0 "
+             f"({c_r[1]} {V[c_r[2]]}); ␣kat root pool at zipf < 3.0: {pc['lt3']:,}; grammatical forms max {c_g[0]:,} at zipf < 3.0 ({c_g[1]} {V[c_g[2]]}). "
+             f"Tokenizers with fewer CVC single tokens for ␣kat than for kat: {', '.join(worse) or 'none'} "
              f"(claude_legacy ␣kat {stats['CVC']['space']['per_tokenizer']['claude_legacy']['none']:,} / kat {stats['CVC']['bare']['per_tokenizer']['claude_legacy']['none']:,}). "
-             "나머지 토크나이저는 CVC에서 ␣kat 단일 토큰이 kat 이상이다.")
+             "On the other tokenizers, CVC has at least as many single tokens for ␣kat as for kat.")
     return L
 
 
@@ -609,26 +617,27 @@ def write_md(path: Path, stats: dict, lists: dict, letters: dict, reduced: dict,
              frag: dict, sanity_res: dict) -> None:
     L: list[str] = []
     a = L.append
-    a("# E1. 형태소 후보 목록: 토큰 하나로 끝나는 형태는 몇 개인가")
+    a("# E1. Morpheme candidate inventory: how many forms fit in one token?")
     a("")
-    a("`python3 inventory.py` 로 만든 결과다. 전체 수치와 형태 목록은 [inventory.json](inventory.json)에 있다. "
-      "표기는 `kat`(붙임 소문자), `␣kat`(앞 공백), `Kat`(붙임 대문자 시작), `␣Kat`(앞 공백 + 대문자 시작)으로 적는다. "
-      "'zipf < 3.0'은 11개 언어(" + ", ".join(WORD_LANGS) + ") 가운데 가장 높은 zipf 빈도가 3.0 미만이라는 뜻이다.")
+    a("Output of `python3 inventory.py`. All numbers and form lists are in [inventory.json](inventory.json). "
+      "Spellings are written `kat` (glued, lowercase), `␣kat` (leading space), `Kat` (glued, capitalized), `␣Kat` (leading space + capitalized). "
+      "'zipf < 3.0' means that the highest zipf frequency across the 11 languages (" + ", ".join(WORD_LANGS) + ") is below 3.0.")
     a("")
 
-    # ---- 1. 핵심 답
-    a("## 1. 핵심 질문에 대한 답")
+    # ---- 1. key answer
+    a("## 1. Answer to the key question")
     a("")
-    a(f"질문: 어근 약 {TARGET_ROOTS:,}개와 문법 형태 약 {TARGET_GRAM}개를, 토크나이저 7종 모두(또는 mistral_sp만 빼고)에서 "
-      "토큰 하나이면서 흔한 단어가 아닌 형태로 채울 수 있는 모양·표기가 있는가.")
+    a(f"Question: is there a shape and spelling that can supply about {TARGET_ROOTS:,} roots and about {TARGET_GRAM} grammatical forms "
+      "with forms that are a single token on all 7 tokenizers (or on all but mistral_sp) and are not common words?")
     a("")
     L.extend(key_answer(stats, des, mech, frag, lists))
     a("")
-    a("### 1.1 설계별 최대치 (모양 하나씩)")
+    a("### 1.1 Maximum per design (one shape each)")
     a("")
-    a("어근은 자음 시작 모양(" + ", ".join(ROOT_SHAPES) + "), 문법 형태는 모음 시작 모양(" + ", ".join(GRAM_SHAPES) + ")에서 "
-      "가장 많이 나오는 모양 하나를 고른다. 붙여 써도 '다음 글자가 자음이면 어근, 모음이면 문법 형태'로 끊을 수 있는 조건이다. "
-      "칸 값은 `모양 개수`이고, 셋은 각각 `필터 없음 / zipf < 3.0 / zipf < 2.0`이다(필터마다 가장 많은 모양이 다를 수 있다).")
+    a("For roots, pick the one consonant-initial shape (" + ", ".join(ROOT_SHAPES) + ") that yields the most forms; for grammatical forms, "
+      "the one vowel-initial shape (" + ", ".join(GRAM_SHAPES) + ") that yields the most. "
+      "This is the condition under which even glued text can be split by the rule 'if the next letter is a consonant, a root starts; if it is a vowel, a grammatical form starts'. "
+      "Each cell is `shape count`, and the three values are `no filter / zipf < 3.0 / zipf < 2.0` (the shape with the most forms can differ by filter).")
     a("")
     rows = []
     for cname, c in des["combos"].items():
@@ -638,11 +647,11 @@ def write_md(path: Path, stats: dict, lists: dict, letters: dict, reduced: dict,
             cell_g = " / ".join(f"{d[f]['gram_shape']} {d[f]['gram']:,}" for f in FILTERS)
             rows.append([f"{COMBO_LABEL[cname]} ({VARIANT_LABEL[c['root_variant']]} + {VARIANT_LABEL[c['gram_variant']]})" if lv == "all7" else "",
                          LEVEL_LABEL[lv], cell_r, cell_g])
-    L += md_table(["설계 (어근 표기 + 문법 표기)", "합의 수준", "어근", "문법 형태"], rows, "llll")
+    L += md_table(["Design (root spelling + grammatical spelling)", "Agreement level", "Roots", "Grammatical forms"], rows, "llll")
     a("")
-    a("### 1.2 띄어 쓰는 설계: 길이가 다른 모양을 합친 풀")
+    a("### 1.2 Spaced designs: pools that combine shapes of different lengths")
     a("")
-    a("공백이 경계를 알려 주므로 길이가 다른 모양을 섞어도 된다. 칸 값은 `필터 없음 / zipf < 3.0 / zipf < 2.0`이다.")
+    a("The space marks the boundary, so shapes of different lengths can be mixed. Each cell is `no filter / zipf < 3.0 / zipf < 2.0`.")
     a("")
     rows = []
     for var in ["space", "space_cap"]:
@@ -651,16 +660,17 @@ def write_md(path: Path, stats: dict, lists: dict, letters: dict, reduced: dict,
             rows.append([VARIANT_LABEL[var] if lv == "all7" else "", LEVEL_LABEL[lv],
                          " / ".join(f"{p['root'][lv][f]:,}" for f in FILTERS),
                          " / ".join(f"{p['gram'][lv][f]:,}" for f in FILTERS)])
-    L += md_table(["표기", "합의 수준", "어근 풀", "문법 풀"], rows, "llrr")
+    L += md_table(["Spelling", "Agreement level", "Root pool", "Grammatical pool"], rows, "llrr")
     a("")
 
-    a("### 1.3 토크나이저별 (zipf < 3.0, 단일 토큰)")
+    a("### 1.3 Per tokenizer (zipf < 3.0, single token)")
     a("")
-    a("토크나이저 하나만 볼 때 단어 필터(zipf < 3.0)를 통과하는 단일 토큰 형태 수다. claude_legacy 행이 Claude 대용 지표다.")
+    a("Number of single-token forms that pass the word filter (zipf < 3.0), looking at one tokenizer at a time. "
+      "The claude_legacy row is the Claude proxy.")
     a("")
-    cols = [("root", "space", None, "어근 풀 ␣kat"), ("root", "bare", "CVC", "CVC kat"), ("root", "space", "CVC", "CVC ␣kat"),
+    cols = [("root", "space", None, "Root pool ␣kat"), ("root", "bare", "CVC", "CVC kat"), ("root", "space", "CVC", "CVC ␣kat"),
             ("root", "space", "CVCC", "CVCC ␣kat"), ("gram", "bare", "VCC", "VCC kat"), ("gram", "bare", "VCVC", "VCVC kat"),
-            ("gram", "space", None, "문법 풀 ␣kat")]
+            ("gram", "space", None, "Grammatical pool ␣kat")]
     rows = []
     for n in NAMES:
         r = [n]
@@ -670,42 +680,45 @@ def write_md(path: Path, stats: dict, lists: dict, letters: dict, reduced: dict,
             else:
                 r.append(f"{stats[shape][var]['per_tokenizer'][n]['lt3']:,}")
         rows.append(r)
-    L += md_table(["토크나이저"] + [c[3] for c in cols], rows)
+    L += md_table(["Tokenizer"] + [c[3] for c in cols], rows)
     a("")
 
-    # ---- 2. 타협
-    a("## 2. 타협의 크기")
+    # ---- 2. compromises
+    a("## 2. Size of the compromises")
     a("")
-    a("### 2.1 단어 필터 기준을 바꾸면")
+    a("### 2.1 Changing the word-filter threshold")
     a("")
-    a("7종 모두 단일 토큰인 형태 수. 위 줄은 11개 언어 최댓값 기준, 아래 줄(en)은 영어 zipf만 본 기준이다.")
+    a("Number of forms that are single tokens on all 7. The upper row uses the maximum over the 11 languages; "
+      "the lower row (en) uses the English zipf only.")
     a("")
-    cuts = ["< " + (f"{c:.1f}") if c != math.inf else "필터 없음" for c in SWEEP]
+    cuts = ["< " + (f"{c:.1f}") if c != math.inf else "no filter" for c in SWEEP]
     rows = []
     for shape, var in [("VC", "bare"), ("VCV", "bare"), ("VCC", "bare"), ("VC", "space"), ("VCC", "space"),
                        ("CVC", "bare"), ("CVC", "space"), ("CCV", "space"), ("CVCV", "space"),
                        ("CCVC", "bare"), ("CVCC", "space"), ("CVCVC", "space")]:
         sw = stats[shape][var]["zipf_sweep"]
-        rows.append([f"{shape} {VARIANT_LABEL[var]}", "11개 언어"] + [f"{x:,}" for x in sw["max11"]["all7"]])
+        rows.append([f"{shape} {VARIANT_LABEL[var]}", "11 languages"] + [f"{x:,}" for x in sw["max11"]["all7"]])
         rows.append(["", "en"] + [f"{x:,}" for x in sw["en"]["all7"]])
-    L += md_table(["모양 표기", "필터 언어"] + cuts, rows, "ll" + "r" * len(cuts))
+    L += md_table(["Shape, spelling", "Filter languages"] + cuts, rows, "ll" + "r" * len(cuts))
     a("")
-    a("### 2.2 단일 토큰 대신 '2토큰 이하'를 허용하면")
+    a("### 2.2 Allowing '2 tokens or fewer' instead of a single token")
     a("")
-    a("7종 모두에서 2토큰 이하인 형태 수 (`필터 없음 / zipf < 3.0 / zipf < 2.0`).")
+    a("Number of forms that take 2 tokens or fewer on all 7 (`no filter / zipf < 3.0 / zipf < 2.0`).")
     a("")
     rows = []
     for shape in ["VC", "VCV", "VCC", "CVC", "CCV", "CVCV", "CCVC", "CVCC"]:
         rows.append([shape] + [" / ".join(f"{stats[shape][v]['agreement']['le2_all7'][f]:,}" for f in FILTERS) for v in VARIANTS])
-    L += md_table(["모양"] + [VARIANT_LABEL[v] for v in VARIANTS], rows, "lrrrr")
+    L += md_table(["Shape"] + [VARIANT_LABEL[v] for v in VARIANTS], rows, "lrrrr")
     a("")
-    a(f"### 2.3 필터를 지키고 가장 싼 {TARGET_ROOTS:,}개 어근 / {TARGET_GRAM}개 문법 형태를 고르면")
+    a(f"### 2.3 Picking the cheapest {TARGET_ROOTS:,} roots / {TARGET_GRAM} grammatical forms that pass the filter")
     a("")
-    a("단어 필터(zipf < 3.0)를 통과한 후보를 토큰 비용 순(단일 토큰이 아닌 토크나이저 수 → 7종 토큰 수 합)으로 정렬해 "
-      f"어근 {TARGET_ROOTS:,}개, 문법 형태 {TARGET_GRAM}개를 고른 뒤 형태 하나당 평균 토큰 수를 쟀다. "
-      "`풀`은 역할의 모든 모양을 합친 것으로 띄어 쓰는 설계에서만 쓸 수 있다. `후보`는 필터를 통과한 형태 수다"
-      "(CCVC, CVCC, CVCVC는 빈도를 잰 형태, 즉 어디선가 단일 토큰이거나 7종 모두 2토큰 이하인 형태만 센다). "
-      "오른쪽 일곱 칸은 고른 형태의 평균 토큰 수다.")
+    a("Candidates that pass the word filter (zipf < 3.0) were sorted by token cost (number of tokenizers on which the form "
+      "is not a single token → total tokens over the 7). "
+      f"Then {TARGET_ROOTS:,} roots and {TARGET_GRAM} grammatical forms were picked, and the mean number of tokens per form was measured. "
+      "`pool` combines all shapes of a role and can be used only in spaced designs. `Candidates` is the number of forms that pass the filter "
+      "(for CCVC, CVCC and CVCVC, only forms whose frequency was measured are counted, that is, forms that are a single token somewhere "
+      "or take 2 tokens or fewer on all 7). "
+      "The seven columns on the right are the mean number of tokens of the picked forms.")
     a("")
     rows = []
     for var in ["bare", "space", "space_cap"]:
@@ -714,15 +727,17 @@ def write_md(path: Path, stats: dict, lists: dict, letters: dict, reduced: dict,
             d = des["best_n"][var][key]
             role, sh, _ = key.split(":")
             if not d.get("picked") or (sh == "pool" and not var.startswith("space")):
-                continue  # 붙임 표기에서는 길이가 다른 모양을 섞으면 끊을 수 없다
-            rows.append([VARIANT_LABEL[var], ("어근 " if role == "root" else "문법 ") + ("풀" if sh == "pool" else sh),
+                continue  # with a glued spelling, mixing shapes of different lengths makes the text impossible to split
+            rows.append([VARIANT_LABEL[var], ("root " if role == "root" else "grammatical ") + ("pool" if sh == "pool" else sh),
                          f"{d['available']:,}", f"{d['picked']:,}", f"{d['all7_single']:,}", f"{d['le2_all7']:,}"]
                         + [f"{d['mean_tokens'][n]:.2f}" for n in NAMES])
-    L += md_table(["표기", "후보 풀", "후보", "고른 수", "7종 단일", "7종 ≤2"] + NAMES, rows, "ll" + "r" * (4 + len(NAMES)))
+    L += md_table(["Spelling", "Candidate pool", "Candidates", "Picked", "Single on all 7", "≤2 on all 7"] + NAMES, rows,
+                  "ll" + "r" * (4 + len(NAMES)))
     a("")
-    a("### 2.4 단일 토큰일수록 실제 단어다")
+    a("### 2.4 Single-token forms are more often real words")
     a("")
-    a("단일 토큰이 되는 토크나이저 수(k)별로 형태 수와 zipf ≥ 3.0인 비율(%)이다(`형태 수 (비율)`).")
+    a("Number of forms and the share (%) with zipf ≥ 3.0, by the number of tokenizers (k) on which the form is a single token "
+      "(`forms (share)`).")
     a("")
     rows = []
     for shape in ["VC", "VCV", "CVC", "CCV", "CVCV"]:
@@ -730,15 +745,17 @@ def write_md(path: Path, stats: dict, lists: dict, letters: dict, reduced: dict,
             m = mech[shape][var]
             rows.append([f"{shape} {VARIANT_LABEL[var]}"] + [f"{m[str(k)]['n']:,} ({pct(m[str(k)]['word_ge3_share'])})" if str(k) in m else "-"
                                                            for k in range(len(NAMES) + 1)])
-    L += md_table(["모양 표기"] + [f"k={k}" for k in range(len(NAMES) + 1)], rows)
+    L += md_table(["Shape, spelling"] + [f"k={k}" for k in range(len(NAMES) + 1)], rows)
     a("")
 
-    a("### 2.5 필터를 통과한 단일 토큰은 대개 단어 조각이다")
+    a("### 2.5 Single tokens that pass the filter are mostly word fragments")
     a("")
-    a(f"11개 언어에서 zipf ≥ 3.0인 단어 {frag['n_frequent_words']:,}개(언어 간 중복 제거)를 모아, zipf < 3.0인 형태가 "
-      "그 단어들의 진부분 접두(␣ 표기: 단어 첫머리 조각, 예 ` calc` ← calculate)이거나 "
-      "진부분 문자열(붙임 표기: 단어 안 조각, 예 `ated` ← created)인 비율(%)을 쟀다. "
-      "기준선은 같은 모양에서 어느 토크나이저에서도 단일 토큰이 아닌 형태다(모든 형태의 빈도를 잰 모양만).")
+    a(f"We collected the {frag['n_frequent_words']:,} words with zipf ≥ 3.0 in the 11 languages (duplicates across languages removed) "
+      "and measured the share (%) of zipf < 3.0 forms that are a proper prefix of those words "
+      "(␣ spelling: a fragment from the start of a word, e.g. ` calc` ← calculate) or "
+      "a proper substring (glued spelling: a fragment inside a word, e.g. `ated` ← created). "
+      "The baseline is the set of forms of the same shape that are a single token on no tokenizer "
+      "(only shapes where every form's frequency was measured).")
     a("")
     rows = []
     for shape, d in frag["shapes"].items():
@@ -749,40 +766,43 @@ def write_md(path: Path, stats: dict, lists: dict, letters: dict, reduced: dict,
                          f"{x['all7']['n']:,}", pct(x["all7"]["fragment_share"]) if x["all7"]["n"] else "-",
                          f"{base['n']:,}" if base else "-", pct(base["fragment_share"]) if base and base["n"] else "-",
                          " ".join(x["all7"]["non_fragment_examples"][:10]) or "-"])
-    L += md_table(["모양 표기", "7종 단일 & < 3.0", "조각 %", "단일 아님 & < 3.0", "조각 %", "조각이 아닌 7종 단일 형태 (최대 10개)"],
+    L += md_table(["Shape, spelling", "Single on all 7 & < 3.0", "Fragment %", "Not single & < 3.0", "Fragment %",
+                   "Non-fragment forms single on all 7 (up to 10)"],
                   rows, "lrrrrl")
     a("")
 
-    # ---- 3. 측정 방법
-    a("## 3. 측정 방법과 점검")
+    # ---- 3. method
+    a("## 3. Method and checks")
     a("")
-    a("- 모음 V = aeiou, 자음 C = 나머지 21자(y 포함). 모양마다 가능한 형태를 모두 만들었다.")
-    a("- 앞 공백 표기는 `the` 뒤에, 붙임 표기는 `1` 뒤에 붙여 토큰화하고, 문맥 뒤의 토큰 수를 셌다. "
-      "문맥과 형태가 한 토큰으로 합쳐지면 단일 토큰이 아닌 것으로 쳤다.")
-    a("  - 이유: mistral_sp(SentencePiece)는 입력 맨 앞에 가짜 공백을 붙인다. 그래서 `kat`을 홀로 재면 사실상 `␣kat`을, "
-      "`␣kat`을 홀로 재면 공백 두 개짜리를 재게 된다. 문맥을 두면 문장 중간의 실제 모습을 잰다.")
-    a("  - 붙임 표기 값은 '형태가 글자 덩어리의 맨 앞에 올 때'의 값이다. `katenmirob`처럼 글자가 이어질 때 "
-      "이웃 글자와 섞여 잘리는 문제는 이 실험에서 재지 않았다(E2의 몫).")
-    a("  - o200k, llama4, mistral_tekken은 사전 분할 정규식이 대문자 앞에서 끊으므로 `KatEnMirOb`의 각 형태소가 `Kat` 표기 값과 같은 조건에서 토큰화된다. "
-      "cl100k, llama3, claude_legacy는 대소문자 경계에서 끊지 않는다.")
-    a("- 단어 필터: wordfreq `zipf_frequency`를 11개 언어에서 재어 최댓값을 썼다. 대문자 표기도 소문자 형태의 빈도로 거른다.")
-    a("- 합의 수준: " + ", ".join(f"`{LEVEL_LABEL[lv]}`" for lv in LEVELS) + ". `7종 중 6종 이상`은 어느 토크나이저가 빠져도 된다.")
-    a("- claude_legacy는 Claude 2 시절 토크나이저다. 현행 Claude 토크나이저는 공개되지 않아 대용으로만 쓴다.")
+    a("- Vowels V = aeiou, consonants C = the other 21 letters (including y). Every possible form of each shape was generated.")
+    a("- Leading-space spellings were appended after `the` and glued spellings after `1`, then tokenized, and the tokens after the context were counted. "
+      "If the context and the form merged into one token, the form counted as not a single token.")
+    a("  - Reason: mistral_sp (SentencePiece) adds a dummy space at the start of the input. So measuring `kat` alone in effect measures `␣kat`, "
+      "and measuring `␣kat` alone measures a form with two spaces. With a context, the measurement reflects the form as it actually appears mid-sentence.")
+    a("  - Glued-spelling values are for 'the form at the start of a run of letters'. When letters run on, as in `katenmirob`, "
+      "a form can be cut together with neighboring letters; this experiment did not measure that (E2 does).")
+    a("  - The pre-tokenization regexes of o200k, llama4 and mistral_tekken split before a capital letter, so each morpheme in `KatEnMirOb` "
+      "is tokenized under the same condition as the `Kat` spelling value. "
+      "cl100k, llama3 and claude_legacy do not split at case boundaries.")
+    a("- Word filter: wordfreq `zipf_frequency` was measured in the 11 languages and the maximum was used. "
+      "Capitalized spellings are also filtered by the frequency of the lowercase form.")
+    a("- Agreement levels: " + ", ".join(f"`{LEVEL_LABEL[lv]}`" for lv in LEVELS) + ". `6 or more of 7` allows any one tokenizer to miss.")
+    a("- claude_legacy is the tokenizer from the Claude 2 era. The current Claude tokenizer is not public, so claude_legacy serves only as a proxy.")
     a("")
-    a("**점검 1: CVC + VC 전체에서 문맥 측정과 홀로 측정의 단일 토큰 판정이 다른 형태 수**")
+    a("**Check 1: number of forms, over all of CVC + VC, where the single-token verdict differs between the in-context and standalone measurements**")
     a("")
     rows = [[VARIANT_LABEL[v]] + [f"{sanity_res['context_vs_standalone_CVC_VC'][v][n]['single_token_disagree']:,}" for n in NAMES]
             for v in VARIANTS]
-    L += md_table(["표기"] + NAMES, rows)
+    L += md_table(["Spelling"] + NAMES, rows)
     a("")
-    a("**점검 2: 모든 모양에서 문맥 토큰과 합쳐진 형태 수** (0이면 문맥이 형태를 건드리지 않았다)")
+    a("**Check 2: number of forms, over all shapes, that merged with the context token** (0 means the context did not affect the form)")
     a("")
     rows = [[VARIANT_LABEL[v]] + [f"{sanity_res['merged_with_context_all_shapes'][v][n]:,}" for n in NAMES] for v in VARIANTS]
-    L += md_table(["표기"] + NAMES, rows)
+    L += md_table(["Spelling"] + NAMES, rows)
     a("")
 
-    # ---- 4. 토크나이저별
-    a("## 4. 모양·표기별 단일 토큰 수 (토크나이저별, 필터 없음)")
+    # ---- 4. per tokenizer
+    a("## 4. Single-token counts by shape and spelling (per tokenizer, no filter)")
     a("")
     rows = []
     for shape in SHAPES:
@@ -790,13 +810,13 @@ def write_md(path: Path, stats: dict, lists: dict, letters: dict, reduced: dict,
             st = stats[shape][var]
             rows.append([shape if var == "bare" else "", VARIANT_LABEL[var], f"{st['n_forms']:,}"]
                         + [f"{st['per_tokenizer'][n]['none']:,}" for n in NAMES])
-    L += md_table(["모양", "표기", "전체"] + NAMES, rows, "ll" + "r" * (1 + len(NAMES)))
+    L += md_table(["Shape", "Spelling", "Total"] + NAMES, rows, "ll" + "r" * (1 + len(NAMES)))
     a("")
 
-    a("## 5. 합의 수준 × 단어 필터")
+    a("## 5. Agreement level × word filter")
     a("")
-    a("칸 값은 `필터 없음 / zipf < 3.0 / zipf < 2.0` 순서다. `필터 통과`는 토큰화와 상관없이 단어 필터를 통과하는 형태 수다"
-      "(빈도를 일부 형태만 잰 큰 모양은 `-`).")
+    a("Cells are in the order `no filter / zipf < 3.0 / zipf < 2.0`. `Pass filter` is the number of forms that pass the word filter "
+      "regardless of tokenization (`-` for large shapes where frequency was measured for only some forms).")
     a("")
     rows = []
     for shape in SHAPES:
@@ -807,25 +827,26 @@ def write_md(path: Path, stats: dict, lists: dict, letters: dict, reduced: dict,
             rows.append([shape if var == "bare" else "", VARIANT_LABEL[var], f"{stats[shape][var]['n_forms']:,}",
                          passed if var == "bare" else ""]
                         + [f"{ag[lv]['none']:,} / {ag[lv]['lt3']:,} / {ag[lv]['lt2']:,}" for lv in LEVELS])
-    L += md_table(["모양", "표기", "전체", "필터 통과 (< 3.0 / < 2.0)"] + [LEVEL_LABEL[lv] for lv in LEVELS], rows,
+    L += md_table(["Shape", "Spelling", "Total", "Pass filter (< 3.0 / < 2.0)"] + [LEVEL_LABEL[lv] for lv in LEVELS], rows,
                   "ll" + "r" * (2 + len(LEVELS)))
     a("")
-    a("**7종 중 정확히 6종에서 단일 토큰인 형태에서 홀로 실패한 토크나이저** (필터 없음)")
+    a("**For forms that are single tokens on exactly 6 of 7, the one tokenizer that failed** (no filter)")
     a("")
     rows = []
     for shape in ["CV", "VC", "VCV", "VCC", "CCV", "CVC", "CVCV", "CVCC"]:
         for var in VARIANTS:
             o = stats[shape][var]["odd_one_out_in_6of7"]
             rows.append([shape if var == "bare" else "", VARIANT_LABEL[var]] + [f"{o[n]:,}" for n in NAMES])
-    L += md_table(["모양", "표기"] + NAMES, rows, "ll" + "r" * len(NAMES))
+    L += md_table(["Shape", "Spelling"] + NAMES, rows, "ll" + "r" * len(NAMES))
     a("")
 
-    # ---- 6. 글자별 생산성
-    a("## 6. 글자별 생산성")
+    # ---- 6. productivity by letter
+    a("## 6. Productivity by letter")
     a("")
-    a("CVC에서 그 자음이 첫 자리(C1) 또는 끝 자리(C2)에 올 때의 단일 토큰 비율(%)이다. "
-      "`평균`은 7종의 단일 토큰 비율 평균, `6+`는 7종 중 6종 이상에서 단일 토큰인 비율, `claude`는 claude_legacy의 비율이다. "
-      "C1 6+와 C2 6+의 합이 큰 순서로 정렬했다. 단어 필터는 걸지 않았다.")
+    a("Single-token share (%) in CVC when the consonant is in the first position (C1) or the last position (C2). "
+      "`mean` is the mean single-token share over the 7, `6+` is the share that is a single token on 6 or more of 7, "
+      "and `claude` is the claude_legacy share. "
+      "Rows are sorted by the sum of C1 6+ and C2 6+, largest first. No word filter is applied.")
     a("")
     for var in ["space", "bare"]:
         cv = letters["CVC"][var]
@@ -836,17 +857,17 @@ def write_md(path: Path, stats: dict, lists: dict, letters: dict, reduced: dict,
                  pct(cv["0C"][c]["per_tokenizer_rate"]["claude_legacy"]),
                  pct(cv["2C"][c]["mean_rate"]), pct(cv["2C"][c]["ge6_rate"]),
                  pct(cv["2C"][c]["per_tokenizer_rate"]["claude_legacy"])] for c in order]
-        L += md_table(["자음", "C1 평균", "C1 6+", "C1 claude", "C2 평균", "C2 6+", "C2 claude"], rows)
+        L += md_table(["Consonant", "C1 mean", "C1 6+", "C1 claude", "C2 mean", "C2 6+", "C2 claude"], rows)
         a("")
-    a("**모음** (CVC는 가운데 모음, VC·CV는 그 모음을 포함한 형태의 7종 중 6종 이상 단일 토큰 비율 %)")
+    a("**Vowels** (CVC by its middle vowel, VC and CV by the vowel they contain; share (%) of those forms that are single tokens on 6 or more of 7)")
     a("")
     cs, cb = letters["CVC"]["space"], letters["CVC"]["bare"]
     rows = [[v, pct(cs["1V"][v]["mean_rate"]), pct(cs["1V"][v]["ge6_rate"]), pct(cb["1V"][v]["mean_rate"]), pct(cb["1V"][v]["ge6_rate"]),
              pct(letters["VC"]["bare"]["0V"][v]["ge6_rate"]), pct(letters["VC"]["space"]["0V"][v]["ge6_rate"]),
              pct(letters["CV"]["bare"]["1V"][v]["ge6_rate"]), pct(letters["CV"]["space"]["1V"][v]["ge6_rate"])] for v in VOWELS]
-    L += md_table(["모음", "CVC␣ 평균", "CVC␣ 6+", "CVC 평균", "CVC 6+", "VC 6+", "VC␣ 6+", "CV 6+", "CV␣ 6+"], rows)
+    L += md_table(["Vowel", "CVC␣ mean", "CVC␣ 6+", "CVC mean", "CVC 6+", "VC 6+", "VC␣ 6+", "CV 6+", "CV␣ 6+"], rows)
     a("")
-    a("**VC / CV 의 자음** (7종 중 6종 이상 단일 토큰 비율 %, 100이 아닌 자음만)")
+    a("**Consonants in VC / CV** (share (%) that are single tokens on 6 or more of 7; only consonants not at 100)")
     a("")
     rows = []
     for c in CONSONANTS:
@@ -854,7 +875,7 @@ def write_md(path: Path, stats: dict, lists: dict, letters: dict, reduced: dict,
                 letters["CV"]["bare"]["0C"][c]["ge6_rate"], letters["CV"]["space"]["0C"][c]["ge6_rate"]]
         if any(v < 1 for v in vals):
             rows.append([c] + [pct(v) for v in vals])
-    L += md_table(["자음", "VC", "VC␣", "CV", "CV␣"], rows)
+    L += md_table(["Consonant", "VC", "VC␣", "CV", "CV␣"], rows)
     a("")
     cs_ = letters["CVC"]["space"]
     score = {c: (cs_["0C"][c]["ge6_rate"] + cs_["2C"][c]["ge6_rate"]) / 2 for c in CONSONANTS}
@@ -862,61 +883,67 @@ def write_md(path: Path, stats: dict, lists: dict, letters: dict, reduced: dict,
     v_rate = {v: cs_["1V"][v]["ge6_rate"] for v in VOWELS}
     vr = sorted(VOWELS, key=lambda v: (-v_rate[v], v))
     drop = [c for c in CONSONANTS if cs_["0C"][c]["ge6_rate"] - cs_["2C"][c]["ge6_rate"] >= 0.2]
-    a(f"CVC ␣kat에서 6+ 비율(C1, C2 평균)이 높은 자음은 {', '.join(f'{c} {pct(score[c])}%' for c in ranked[:6])}, "
-      f"낮은 자음은 {', '.join(f'{c} {pct(score[c])}%' for c in ranked[-6:])}이다. "
-      f"모음은 {', '.join(f'{v} {pct(v_rate[v])}%' for v in vr)} 순이다. "
-      f"끝 자리(C2)의 6+ 비율이 첫 자리(C1)보다 20%p 이상 낮은 자음: {', '.join(drop) or '없음'}.")
+    a(f"In CVC ␣kat, the consonants with the highest 6+ share (mean of C1 and C2) are {', '.join(f'{c} {pct(score[c])}%' for c in ranked[:6])}, "
+      f"and the lowest are {', '.join(f'{c} {pct(score[c])}%' for c in ranked[-6:])}. "
+      f"Vowels rank {', '.join(f'{v} {pct(v_rate[v])}%' for v in vr)}. "
+      f"Consonants whose 6+ share in the last position (C2) is at least 20 percentage points lower than in the first position (C1): {', '.join(drop) or 'none'}.")
     a("")
-    a("토크나이저별 글자 비율은 inventory.json 의 `letters`에 있다.")
+    a("Per-tokenizer letter shares are in `letters` in inventory.json.")
     a("")
 
-    # ---- 7. 축소 자음 집합
-    a("## 7. 자음 집합 줄이기")
+    # ---- 7. reduced consonant set
+    a("## 7. Shrinking the consonant set")
     a("")
-    a("CVC에서 해당 합의 수준의 단일 토큰 형태(단어 필터 없이)를 가장 적게 잃는 자음부터 하나씩 뺐다. "
-      "`수율`은 남은 자음으로 만들 수 있는 CVC 전체 가운데 단일 토큰 형태의 비율, `그중 < 3.0`은 단어 필터를 통과하는 수다.")
+    a("Consonants were removed one at a time, starting with the one whose removal loses the fewest CVC forms that are single tokens "
+      "at the given agreement level (no word filter). "
+      "`Yield` is the share of single-token forms among all CVC forms that the remaining consonants can make; "
+      "`Of which < 3.0` is the number that pass the word filter.")
     a("")
     for key, steps in reduced.items():
         a(f"**{key}**")
         a("")
         rows = [[s["k"], s["removed"] or "-", f"{s['single']:,}", f"{s['total']:,}", pct(s["yield"]), f"{s['single_lt3']:,}"]
                 for s in steps if s["k"] >= 10]
-        L += md_table(["자음 수", "뺀 자음", "단일 토큰", "CVC 전체", "수율 %", "그중 < 3.0"], rows)
+        L += md_table(["Consonants", "Removed", "Single token", "All CVC", "Yield %", "Of which < 3.0"], rows)
         a("")
-    a("**제안 (기준: 단일 토큰 형태를 95% 이상 남기는 가장 작은 집합)**")
+    a("**Proposal (criterion: the smallest set that keeps at least 95% of the single-token forms)**")
     a("")
     for key, steps in reduced.items():
         full = steps[0]
         s = [x for x in steps if x["single"] >= 0.95 * full["single"]][-1]
         gone = "".join(sorted(set(CONSONANTS) - set(s["set"])))
-        a(f"- {key}: 자음 {s['k']}개 `{s['set']}` (뺀 자음 `{gone or '-'}`) → 단일 토큰 {s['single']:,}/{full['single']:,}, "
-          f"수율 {pct(full['yield'])}% → {pct(s['yield'])}%, 단어 필터 통과 {full['single_lt3']:,} → {s['single_lt3']:,}")
+        a(f"- {key}: {s['k']} consonants `{s['set']}` (removed `{gone or '-'}`) → single tokens {s['single']:,}/{full['single']:,}, "
+          f"yield {pct(full['yield'])}% → {pct(s['yield'])}%, pass word filter {full['single_lt3']:,} → {s['single_lt3']:,}")
     a("")
-    a("자음을 줄여도 단일 토큰 형태의 절대 개수는 늘지 않는다. 형태를 목록에서 고른다면 축소는 개수 면에서 이득이 없고, "
-      "이득은 사양을 짧게 쓰는 것과 붙여 쓴 문자열에서 경계가 덜 흔들릴 가능성(E2에서 확인할 것)뿐이다.")
+    a("Shrinking the consonant set does not increase the absolute number of single-token forms. If forms are picked from a list, "
+      "shrinking gains nothing in count; the only gains are a shorter spec and possibly less boundary instability in glued strings "
+      "(to be checked in E2).")
     a("")
 
-    # ---- 8. 목록 미리 보기
-    a("## 8. 형태 목록 미리 보기")
+    # ---- 8. list preview
+    a("## 8. Form list preview")
     a("")
-    a("전체 목록은 inventory.json 의 `lists`(모양 → 표기 → `all7_lt3`, `no_sp_lt3`, `ge6_lt3`, 항목은 [형태, max zipf])에 있다. "
-      "아래는 알파벳 순 앞의 40개다.")
+    a("The full lists are in `lists` in inventory.json (shape → spelling → `all7_lt3`, `no_sp_lt3`, `ge6_lt3`; each entry is [form, max zipf]). "
+      "Below are the first 40 in alphabetical order.")
     a("")
     for shape, var, lv in [("VC", "bare", "all7"), ("VCV", "bare", "all7"), ("VCC", "bare", "all7"), ("VCVC", "bare", "all7"),
                            ("CVC", "bare", "all7"), ("CVC", "space", "all7"), ("CVC", "space", "no_sp"),
                            ("CVCC", "space", "all7"), ("CCVC", "bare", "all7"), ("CVCVC", "space", "all7")]:
         items = [f for f, _ in lists[shape][var][f"{lv}_lt3"]]
-        a(f"- {shape} {VARIANT_LABEL[var]}, {LEVEL_LABEL[lv]}, zipf < 3.0 ({len(items)}개): " + (" ".join(items[:40]) or "없음"))
+        a(f"- {shape} {VARIANT_LABEL[var]}, {LEVEL_LABEL[lv]}, zipf < 3.0 ({len(items)} forms): " + (" ".join(items[:40]) or "none"))
     a("")
 
-    a("## 9. 한계")
+    a("## 9. Limitations")
     a("")
-    a("- 현행 Claude 토크나이저는 공개되지 않았다. claude_legacy 결과가 현행 Claude에 그대로 적용된다는 보장은 없다.")
-    a("- 단일 토큰 여부만 쟀다. 붙여 쓴 문자열 안에서 형태소 경계와 토큰 경계가 맞는지는 재지 않았다(E2).")
-    a("- 단어 필터는 11개 언어의 빈도만 본다. 한국어·일본어·중국어 로마자 표기, 약어, 상표, 프로그래밍 식별자와의 겹침은 걸러지지 않는다.")
-    a("- wordfreq는 짧은 글자열에 약어·이름·다른 언어 조각의 빈도까지 잡는다. 그래서 짧은 모양일수록 필터에서 많이 빠지고, "
-      "zipf ≥ 3.0이라고 해서 그 형태가 모두 LLM에게 강한 뜻을 가진다는 보장도 없다. 실제 의미 간섭의 크기는 모델 API 없이 잴 수 없다.")
-    a("- 단일 토큰이라도 그 토큰이 학습 데이터에서 특정 의미(이름, 약어, 코드 조각)에 묶여 있을 수 있다. 이 역시 이 실험으로는 잴 수 없다.")
+    a("- The current Claude tokenizer is not public. There is no guarantee that claude_legacy results apply as is to current Claude.")
+    a("- Only single-token status was measured. Whether morpheme boundaries match token boundaries inside glued strings was not measured (E2).")
+    a("- The word filter looks only at frequencies in 11 languages. Overlaps with romanized Korean, Japanese or Chinese, abbreviations, "
+      "trademarks and programming identifiers are not filtered out.")
+    a("- For short letter strings, wordfreq also counts the frequency of abbreviations, names and fragments of other languages. "
+      "So the shorter the shape, the more forms the filter removes, and zipf ≥ 3.0 does not guarantee that every such form carries "
+      "a strong meaning for an LLM. The actual size of semantic interference cannot be measured without a model API.")
+    a("- Even a single token can be tied to a specific meaning in the training data (a name, an abbreviation, a code fragment). "
+      "This experiment cannot measure that either.")
     path.write_text("\n".join(L) + "\n")
 
 
@@ -949,17 +976,17 @@ def main() -> None:
         "variants": {v: {"example": VARIANT_LABEL[v], "context": ctx} for v, (ctx, _) in VARIANTS.items()},
         "tokenizers": {n: {"description": t.description, "vocab_size": t.vocab_size} for n, t in toks.items()},
         "word_langs": WORD_LANGS,
-        "filters": {"none": "필터 없음", "lt3": "max zipf < 3.0", "lt2": "max zipf < 2.0"},
+        "filters": {"none": "no filter", "lt3": "max zipf < 3.0", "lt2": "max zipf < 2.0"},
         "levels": LEVEL_LABEL,
         "targets": {"roots": TARGET_ROOTS, "gram": TARGET_GRAM},
         "n_forms_with_zipf": len(zipf),
         "notes": [
-            "토큰 수는 문맥 뒤에 붙여 잰 값이다. 앞 공백 표기는 'the' 뒤, 붙임 표기는 '1' 뒤.",
-            "forms 의 tokens 문자열은 meta.tokenizers 순서대로 토크나이저별 토큰 수다 (9 이상은 9, x = 문맥과 합쳐짐).",
-            "forms 에는 어떤 표기에서든 한 토크나이저라도 단일 토큰인 형태만 싣는다. 나머지는 모든 토크나이저·표기에서 2토큰 이상이다.",
-            "lists 의 항목은 [형태(소문자), max zipf] 이고 max zipf < 3.0 인 것만 싣는다. 표기는 meta.variants 로 만든다.",
-            "zipf 는 단일 토큰이 하나라도 있거나 7종 모두 2토큰 이하인 형태, 그리고 형태 수 11,025개 이하 모양의 모든 형태에 대해서만 쟀다.",
-            "designs.best_n 의 키는 '역할:모양:필터' 이고 모양 'pool' 은 그 역할의 모든 모양을 합친 것이다.",
+            "Token counts are measured with the form appended after a context: 'the' for leading-space spellings, '1' for glued spellings.",
+            "The tokens strings in forms give the token count per tokenizer in meta.tokenizers order (9 or more is shown as 9, x = merged with the context).",
+            "forms includes only forms that are a single token on at least one tokenizer in some spelling. All other forms take 2 or more tokens on every tokenizer and spelling.",
+            "Entries in lists are [form (lowercase), max zipf], and only forms with max zipf < 3.0 are included. Build the spellings with meta.variants.",
+            "zipf was measured only for forms that are a single token on at least one tokenizer or take 2 tokens or fewer on all 7, and for every form of shapes with 11,025 forms or fewer.",
+            "Keys of designs.best_n are 'role:shape:filter'; the shape 'pool' combines all shapes of that role.",
         ],
     }
     result = {"meta": meta, "sanity": sanity_res, "stats": stats, "designs": des, "mechanism": mech, "fragments": frag,

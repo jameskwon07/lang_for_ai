@@ -1,42 +1,43 @@
-"""E2 경계 정렬: 표기 방식에 따라 토큰 경계가 형태소 경계와 얼마나 맞는가.
+"""E2 boundary alignment: how well token boundaries match morpheme boundaries under each spelling scheme.
 
-같은 합성 메시지(형태소 20~40개, 300개)를 여러 표기 방식과 형태 목록(인벤토리)으로 적은 뒤,
-7개 토크나이저로 메시지 전체를 토큰화해서 형태소 경계와 토큰 경계를 비교한다.
+The same synthetic messages (300 messages of 20-40 morphemes) are written in several spelling schemes and with
+several form lists (inventories). Each whole message is then tokenized with 7 tokenizers, and morpheme boundaries
+are compared with token boundaries.
 
-인벤토리 (어근 CVC, 접사 VC. 자음 21자, 모음 aeiou)
-- naive        : 단어 필터만 통과한 무작위 형태
-- token_picked : 앞 공백 형태(" kat")가 7개 중 6개 이상 토크나이저에서 토큰 1개인 형태만
-- bare_picked  : (보조) 공백 없는 형태("kat")가 바이트 BPE 6개 중 5개 이상에서 토큰 1개인 형태만.
-                 붙여 쓰기(W1)에 유리한 형태를 골랐을 때의 최선값을 보려고 추가했다.
+Inventories (roots CVC, affixes VC. 21 consonants, vowels aeiou)
+- naive        : random forms that only pass the word filter
+- token_picked : only forms whose leading-space form (" kat") is a single token in at least 6 of the 7 tokenizers
+- bare_picked  : (auxiliary) only forms whose no-space form ("kat") is a single token in at least 5 of the 6 byte BPEs.
+                 Added to see the best case when forms are chosen to suit glued writing (W1).
 
-단어 필터: 11개 언어(wordfreq) 최대 zipf < 3. 단, VC 접사는 이 기준을 통과하는 형태가 1개뿐이어서
-접사에는 zipf < 4.5 를 쓴다 (두 기준의 풀 크기를 모두 결과에 기록한다).
+Word filter: max zipf < 3 across 11 languages (wordfreq). But only 1 VC affix form passes this cut, so
+affixes use zipf < 4.5 (the results record the pool sizes under both cuts).
 
-SentencePiece(mistral_sp)는 입력 앞에 가짜 공백(▁)을 스스로 붙이므로 " kat"을 넣으면 "▁" + "▁kat" 두 조각이 된다.
-그래서 mistral_sp의 "앞 공백 형태"는 "kat"을 넣어 잰다 (문장 안의 "▁kat"과 같은 조각).
-같은 이유로 mistral_sp의 "공백 없는 형태"는 toklib 으로 따로 잴 수 없어 bare_picked 기준에서 뺀다.
+SentencePiece (mistral_sp) adds a dummy space (▁) to the start of the input by itself, so feeding " kat" gives two pieces, "▁" + "▁kat".
+So the "leading-space form" for mistral_sp is measured by feeding "kat" (the same piece as "▁kat" inside a sentence).
+For the same reason, the "no-space form" for mistral_sp cannot be measured separately with toklib, so it is left out of the bare_picked criterion.
 
-표기 방식 (예: kat-en mir-ob, 단어 2개)
-- W1 nospace     : katenmirob      모두 붙여 쓴다
-- W2 spaced      : kat en mir ob   형태소마다 띄운다
-- W3 wordspaced  : katen mirob     단어마다 띄운다
-- W4 camel       : KatEnMirOb      띄우지 않고 형태소마다 첫 글자 대문자
-- W5 wordcamel   : KatEn MirOb     단어마다 띄우고, 형태소마다 첫 글자 대문자
-- W6 lowercamel  : katEn mirOb     (추가) 단어마다 띄우고, 단어의 첫 형태소는 소문자, 나머지는 첫 글자 대문자
-- W7 rootcamel   : KatenMirob      (추가) 띄우지 않고 어근만 첫 글자 대문자 (대문자로 공백을 대신할 수 있는가)
+Spelling schemes (example: kat-en mir-ob, 2 words)
+- W1 nospace     : katenmirob      everything glued
+- W2 spaced      : kat en mir ob   one space between morphemes
+- W3 wordspaced  : katen mirob     one space between words
+- W4 camel       : KatEnMirOb      no spaces, each morpheme capitalized
+- W5 wordcamel   : KatEn MirOb     one space between words, each morpheme capitalized
+- W6 lowercamel  : katEn mirOb     (added) one space between words; the first morpheme of a word is lowercase, the rest capitalized
+- W7 rootcamel   : KatenMirob      (added) no spaces, only roots capitalized (can capitals replace spaces?)
 
-경계 규칙: 공백은 뒤 형태소에 속한다 (" en"). 모든 토크나이저가 공백을 뒤 단어에 붙이기 때문이다.
-따라서 공백 앞 위치가 형태소 경계이고, 공백이 따로 토큰이 되면 정밀도가 떨어진다.
+Boundary rule: a space belongs to the following morpheme (" en"), because every tokenizer attaches a space to the following word.
+So the position before the space is the morpheme boundary, and if the space becomes a token on its own, precision drops.
 
-지표 (토크나이저 × 표기 × 인벤토리, 모든 메시지를 합쳐 계산)
-- tokens_per_morpheme : 토큰 수 / 형태소 수
-- chars_per_token     : 글자 수(공백 포함) / 토큰 수
-- recall              : 형태소 경계 중 토큰 경계이기도 한 비율 (메시지 양 끝 제외)
-- precision           : 토큰 경계 중 형태소 경계이기도 한 비율 (메시지 양 끝 제외)
-- one_token_share     : 메시지 안에서 정확히 토큰 1개인 형태소의 비율 (앞 공백 포함)
+Metrics (tokenizer × spelling × inventory, computed over all messages pooled)
+- tokens_per_morpheme : tokens / morphemes
+- chars_per_token     : characters (including spaces) / tokens
+- recall              : share of morpheme boundaries that are also token boundaries (both ends of the message excluded)
+- precision           : share of token boundaries that are also morpheme boundaries (both ends of the message excluded)
+- one_token_share     : share of morphemes that are exactly one token inside the message (leading space included)
 
-사용법
-    python3 alignment.py      # results/alignment.json, results/alignment.md 생성
+Usage
+    python3 alignment.py      # writes results/alignment.json and results/alignment.md
 """
 
 from __future__ import annotations
@@ -53,67 +54,67 @@ from toklib import load_all
 
 SEED = 20261007
 VOWELS = "aeiou"
-CONSONANTS = "bcdfghjklmnpqrstvwxyz"  # 21자 (y 포함)
+CONSONANTS = "bcdfghjklmnpqrstvwxyz"  # 21 letters (y included)
 WORD_LANGS = ["en", "es", "de", "fr", "it", "pt", "nl", "tr", "id", "pl", "sv"]
 ROOT_MAX_ZIPF = 3.0
-AFFIX_MAX_ZIPF = 4.5  # 3.0 이면 VC 접사가 1개만 남는다
+AFFIX_MAX_ZIPF = 4.5  # at 3.0 only 1 VC affix remains
 ZIPF_REPORT_THRESHOLDS = [3.0, 3.5, 4.0, 4.5, 5.0]
-PICK_MIN = 6  # token_picked: 7개 중
-BARE_MIN = 5  # bare_picked: 바이트 BPE 6개 중
+PICK_MIN = 6  # token_picked: out of 7
+BARE_MIN = 5  # bare_picked: out of the 6 byte BPEs
 SP_NAME = "mistral_sp"
 
 N_MESSAGES = 300
 MIN_MORPH, MAX_MORPH = 20, 40
-N_DRAWS = 5  # 인벤토리마다 어휘(형태 배정)를 몇 번 새로 뽑는가
-ZIPF_S = 1.0  # 어근·접사 사용 빈도 = 순위^-s
+N_DRAWS = 5  # how many times the lexicon (form assignment) is redrawn for each inventory
+ZIPF_S = 1.0  # usage frequency of roots and affixes = rank^-s
 
-# 메시지 골격: 술어 단어 + 논항 단어 1~3개 (+ 수식어 단어)
-PRED_AFFIX_P = [0.10, 0.25, 0.35, 0.20, 0.10]  # 접사 0~4개
-ARG_AFFIX_P = [0.35, 0.50, 0.15]  # 접사 0~2개
-MOD_AFFIX_P = [0.70, 0.30]  # 접사 0~1개
-COMPOUND_P = {"pred": 0.10, "arg": 0.15, "mod": 0.0}  # 어근 2개(합성어)일 확률
-N_ARGS_P = [0.30, 0.45, 0.25]  # 논항 1~3개
-MOD_P = 0.30  # 논항 뒤에 수식어 단어가 붙을 확률
+# Message skeleton: predicate word + 1-3 argument words (+ modifier words)
+PRED_AFFIX_P = [0.10, 0.25, 0.35, 0.20, 0.10]  # 0-4 affixes
+ARG_AFFIX_P = [0.35, 0.50, 0.15]  # 0-2 affixes
+MOD_AFFIX_P = [0.70, 0.30]  # 0-1 affixes
+COMPOUND_P = {"pred": 0.10, "arg": 0.15, "mod": 0.0}  # probability of 2 roots (compound word)
+N_ARGS_P = [0.30, 0.45, 0.25]  # 1-3 arguments
+MOD_P = 0.30  # probability that a modifier word follows an argument
 
 INVENTORIES = ["naive", "token_picked", "bare_picked"]
-INV_LABEL = {"naive": "naive (무작위)", "token_picked": "token-picked (앞 공백 1토큰)",
-             "bare_picked": "bare-picked (보조, 붙여 쓴 형태 1토큰)"}
+INV_LABEL = {"naive": "naive (random)", "token_picked": "token-picked (leading-space single token)",
+             "bare_picked": "bare-picked (auxiliary, glued form single token)"}
 DESIGNS = {
-    "W1_nospace": "모두 붙여 쓴다",
-    "W2_spaced": "형태소마다 띄운다",
-    "W3_wordspaced": "단어마다 띄우고 단어 안은 붙인다",
-    "W4_camel": "띄우지 않고 형태소마다 첫 글자 대문자",
-    "W5_wordcamel": "단어마다 띄우고 형태소마다 첫 글자 대문자",
-    "W6_lowercamel": "(추가) 단어마다 띄우고 단어의 첫 형태소만 소문자, 나머지는 첫 글자 대문자",
-    "W7_rootcamel": "(추가) 띄우지 않고 어근만 첫 글자 대문자",
+    "W1_nospace": "everything glued",
+    "W2_spaced": "one space between morphemes",
+    "W3_wordspaced": "one space between words, glued inside words",
+    "W4_camel": "no spaces, each morpheme capitalized",
+    "W5_wordcamel": "one space between words, each morpheme capitalized",
+    "W6_lowercamel": "(added) one space between words; only the first morpheme of a word is lowercase, the rest capitalized",
+    "W7_rootcamel": "(added) no spaces, only roots capitalized",
 }
 WORD_SPACED = {"W3_wordspaced", "W5_wordcamel", "W6_lowercamel"}
 
-# 통과 기준: 형태소 = 토큰
+# Pass criteria: morpheme = token
 STRICT = {"recall": 0.95, "precision": 0.95, "tpm": 1.05}
 LOOSE = {"recall": 0.90, "precision": 0.90, "tpm": 1.10}
 
 OUT_DIR = Path(__file__).resolve().parent / "results"
 
 
-# ---------------------------------------------------------------- 형태 풀
+# ---------------------------------------------------------------- form pools
 
 def max_zipf(form: str) -> float:
     return max(zipf_frequency(form, lang) for lang in WORD_LANGS)
 
 
 def lead_space_single(tok, form: str) -> bool:
-    """문장 안에서 앞에 공백이 붙은 형태(" kat")가 토큰 1개인가."""
+    """Is the form with a leading space (" kat") a single token inside a sentence?"""
     return tok.count(form if tok.name == SP_NAME else " " + form) == 1
 
 
 def bare_single(tok, form: str) -> bool | None:
-    """공백 없는 형태("kat")가 토큰 1개인가. mistral_sp 는 잴 수 없어 None."""
+    """Is the form without a space ("kat") a single token? None for mistral_sp, which cannot be measured."""
     return None if tok.name == SP_NAME else tok.count(form) == 1
 
 
 def build_pools(toks: dict) -> tuple[dict, dict]:
-    """인벤토리별 (어근 풀, 접사 풀)과 풀 크기 보고용 표를 만든다."""
+    """Build (root pool, affix pool) for each inventory, plus a table for reporting pool sizes."""
     cvc = [a + v + b for a in CONSONANTS for v in VOWELS for b in CONSONANTS]
     vc = [v + c for v in VOWELS for c in CONSONANTS]
     mz = {f: max_zipf(f) for f in cvc + vc}
@@ -130,7 +131,7 @@ def build_pools(toks: dict) -> tuple[dict, dict]:
     by_threshold = {inv: {str(th): {"roots_cvc": len(pick(cvc, th, r)), "affixes_vc": len(pick(vc, th, r))}
                           for th in ZIPF_REPORT_THRESHOLDS}
                     for inv, r in rules.items()}
-    # 단어 필터를 통과한 형태를, 앞 공백 형태가 1토큰인 토크나이저 수(0~7)별로 센다
+    # Count the forms that pass the word filter by the number of tokenizers (0-7) on which the leading-space form is a single token
     lead_hist = {
         "roots_cvc": {n: sum(1 for f in cvc if mz[f] < ROOT_MAX_ZIPF and n_lead[f] == n) for n in range(8)},
         "affixes_vc": {n: sum(1 for f in vc if mz[f] < AFFIX_MAX_ZIPF and n_lead[f] == n) for n in range(8)},
@@ -148,7 +149,7 @@ def build_pools(toks: dict) -> tuple[dict, dict]:
 
 
 def isolated_rates(toks: dict, pools: dict) -> dict:
-    """풀 안 형태를 하나씩 따로 넣었을 때 토큰 1개인 비율 (문맥 없는 참고값)."""
+    """Share of pool forms that are a single token when each is fed on its own (reference value without context)."""
     out = {}
     for inv, p in pools.items():
         forms = p["roots"] + p["affixes"]
@@ -170,7 +171,7 @@ def _share(bools) -> float:
     return round(sum(bools) / len(bools), 4) if bools else 0.0
 
 
-# ---------------------------------------------------------------- 메시지 골격
+# ---------------------------------------------------------------- message skeletons
 
 def zipf_cum(n: int) -> list[float]:
     acc, out = 0.0, []
@@ -181,15 +182,15 @@ def zipf_cum(n: int) -> list[float]:
 
 
 def make_word(rng: random.Random, kind: str, root_cum, affix_cum) -> list[tuple[str, int]]:
-    """단어 = 어근 1~2개 + 접사 0~4개. 형태소는 (종류 'R'/'A', 순위)."""
+    """Word = 1-2 roots + 0-4 affixes. A morpheme is (kind 'R'/'A', rank)."""
     n_roots = 2 if rng.random() < COMPOUND_P[kind] else 1
     p = {"pred": PRED_AFFIX_P, "arg": ARG_AFFIX_P, "mod": MOD_AFFIX_P}[kind]
     n_aff = rng.choices(range(len(p)), weights=p)[0]
     roots = rng.choices(range(len(root_cum)), cum_weights=root_cum, k=n_roots)
     affixes: set[int] = set()
-    while len(affixes) < n_aff:  # 한 단어 안에서 접사는 겹치지 않는다
+    while len(affixes) < n_aff:  # affixes do not repeat within a word
         affixes.add(rng.choices(range(len(affix_cum)), cum_weights=affix_cum)[0])
-    # 접사 순서는 고정 슬롯 순서(순위 순)로 둔다
+    # affixes go in a fixed slot order (by rank)
     return [("R", r) for r in roots] + [("A", a) for a in sorted(affixes)]
 
 
@@ -203,7 +204,7 @@ def make_sentence(rng: random.Random, root_cum, affix_cum) -> list[list[tuple[st
 
 
 def make_skeletons(rng: random.Random, n_roots: int, n_affixes: int) -> list[list[list[tuple[str, int]]]]:
-    """형태소 MIN_MORPH~MAX_MORPH 개인 메시지 골격 N_MESSAGES 개. 모든 인벤토리·표기가 같은 골격을 쓴다."""
+    """N_MESSAGES message skeletons of MIN_MORPH to MAX_MORPH morphemes. Every inventory and spelling uses the same skeletons."""
     root_cum, affix_cum = zipf_cum(n_roots), zipf_cum(n_affixes)
     out = []
     while len(out) < N_MESSAGES:
@@ -216,11 +217,11 @@ def make_skeletons(rng: random.Random, n_roots: int, n_affixes: int) -> list[lis
     return out
 
 
-# ---------------------------------------------------------------- 표기
+# ---------------------------------------------------------------- spelling
 
 def render(words: list[list[tuple[str, str]]], design: str) -> tuple[str, list[tuple[int, int, str, bool]]]:
-    """(종류, 형태) 단어 목록 → (문자열, 형태소 구간 목록). 구간 = (시작, 끝, 종류, 단어 첫 형태소인가).
-    앞 공백은 뒤 형태소 구간에 포함한다."""
+    """List of words of (kind, form) -> (string, list of morpheme spans). Span = (start, end, kind, is first morpheme of its word).
+    A leading space is included in the span of the following morpheme."""
     parts, spans, pos = [], [], 0
     for word in words:
         for mi, (kind, form) in enumerate(word):
@@ -240,7 +241,7 @@ def render(words: list[list[tuple[str, str]]], design: str) -> tuple[str, list[t
     return "".join(parts), spans
 
 
-# ---------------------------------------------------------------- 측정
+# ---------------------------------------------------------------- measurement
 
 COUNTERS = ["tokens", "chars", "morphs", "mb", "tb", "hit", "mb_word", "hit_word", "mb_inner", "hit_inner",
             "one", "one_R", "one_A", "n_R", "n_A", "lead", "one_lead", "space_only"]
@@ -304,7 +305,7 @@ def passes(m: dict, crit: dict) -> bool:
             and m["tokens_per_morpheme"] <= crit["tpm"])
 
 
-# ---------------------------------------------------------------- 실행
+# ---------------------------------------------------------------- run
 
 def run() -> tuple[dict, dict]:
     t_start = time.time()
@@ -313,7 +314,7 @@ def run() -> tuple[dict, dict]:
     n_roots = min(len(p["roots"]) for p in pools.values())
     n_affixes = min(len(p["affixes"]) for p in pools.values())
     pool_report["lexicon_size_used"] = {"roots": n_roots, "affixes": n_affixes,
-                                        "note": "모든 인벤토리가 같은 크기의 어휘를 쓴다 (가장 작은 풀에 맞춤)"}
+                                        "note": "every inventory uses a lexicon of the same size (matched to the smallest pool)"}
     pool_report["isolated_single_token_rates"] = isolated_rates(toks, pools)
 
     skeletons = make_skeletons(random.Random(SEED), n_roots, n_affixes)
@@ -358,7 +359,7 @@ def run() -> tuple[dict, dict]:
                  pass_strict=passes(m, STRICT), pass_loose=passes(m, LOOSE))
         rows.append(m)
 
-    # W2 와 W1 의 메시지당 토큰 차이 (공백이 공짜인가)
+    # Tokens per message, W2 vs W1 (is the space free?)
     idx = {(r["inventory"], r["design"], r["tokenizer"]): r for r in rows}
     space_cost = {inv: {name: {
         "w2_tokens_per_message": round(idx[(inv, "W2_spaced", name)]["tokens_total"] / (N_MESSAGES * N_DRAWS), 2),
@@ -367,7 +368,7 @@ def run() -> tuple[dict, dict]:
         "w2_space_only_tokens_per_space": idx[(inv, "W2_spaced", name)]["space_only_tokens_per_space"],
     } for name in toks} for inv in INVENTORIES}
 
-    # 예시 (draw 0, 첫 메시지의 앞 3단어)
+    # Examples (draw 0, first 3 words of the first message)
     ex_out = {}
     for inv, words in examples.items():
         ex_out[inv] = {}
@@ -391,7 +392,7 @@ def run() -> tuple[dict, dict]:
     return result, toks
 
 
-# ---------------------------------------------------------------- 요약 문서
+# ---------------------------------------------------------------- summary document
 
 def _f(x, nd=2):
     return "-" if x is None else f"{x:.{nd}f}"
@@ -422,7 +423,7 @@ def write_markdown(res: dict, tok_names: list[str], path: Path) -> None:
         return statistics.mean(idx[(inv, d, n)]["tokens_total"] for n in names) / (N_MESSAGES * N_DRAWS)
 
     def draw_range(inv, d):
-        """추첨별 토큰/형태소(토크나이저 평균)의 최솟값, 최댓값."""
+        """Min and max over draws of tokens/morpheme (mean over tokenizers)."""
         per = [statistics.mean(idx[(inv, d, t)]["tokens_per_morpheme_by_draw"][k] for t in tok_names)
                for k in range(N_DRAWS)]
         return min(per), max(per)
@@ -435,13 +436,13 @@ def write_markdown(res: dict, tok_names: list[str], path: Path) -> None:
     chars_w1 = idx[("naive", "W1_nospace", tok_names[0])]["chars_total"] / (N_MESSAGES * N_DRAWS)
     chars_w2 = idx[("naive", "W2_spaced", tok_names[0])]["chars_total"] / (N_MESSAGES * N_DRAWS)
 
-    w("# E2 경계 정렬: 표기 방식별 형태소·토큰 경계 일치")
+    w("# E2 boundary alignment: agreement of morpheme and token boundaries by spelling scheme")
     w("")
-    w("`alignment.py` 가 만든 요약이다. 숫자는 모두 이 스크립트로 잰 값이며, 원자료는 `alignment.json` 에 있다.")
+    w("This summary was generated by `alignment.py`. Every number was measured by this script, and the raw data is in `alignment.json`.")
     w("")
 
-    # 0. 요약 (숫자는 모두 계산값에서 가져온다)
-    w("## 0. 요약")
+    # 0. Summary (every number comes from computed values)
+    w("## 0. Summary")
     w("")
     best = max(((inv, d) for inv in INVENTORIES for d in designs),
                key=lambda k: (n_pass(*k, "strict"), n_pass(*k, "loose"), -mean_over_toks(*k, "tokens_per_morpheme")))
@@ -452,140 +453,140 @@ def write_markdown(res: dict, tok_names: list[str], path: Path) -> None:
     naive_max = max(n_pass("naive", d, "loose") for d in designs)
     lo_ok = _f(min(idx[(b_inv, b_d, t)]["tokens_per_morpheme"] for t in ok))
     hi_ok = _f(max(idx[(b_inv, b_d, t)]["tokens_per_morpheme"] for t in ok))
-    w(f"1. **형태소 = 토큰에 가장 가까운 조합은 `{b_d}` + {b_inv}** 이다. 엄격 기준을 {len(ok)}/{len(tok_names)}개 토크나이저"
-      f"({', '.join(ok)})에서 통과했다 (토큰/형태소 {lo_ok if lo_ok == hi_ok else lo_ok + '~' + hi_ok}). "
-      f"통과하지 못한 토크나이저: " + "; ".join(f"{t} ({tpr(b_inv, b_d, t)})" for t in bad) + ".")
-    naive_txt = ("naive 인벤토리는 어떤 표기에서도 느슨한 기준조차 통과한 토크나이저가 없다." if naive_max == 0 else
-                 f"naive 인벤토리는 어떤 표기에서도 느슨한 기준을 통과한 토크나이저가 최대 {naive_max}개다.")
-    w(f"   - 7개 모두를 통과한 조합은 {'없다' if not all7 else ', '.join(f'{d}+{inv}' for inv, d in all7)}. " + naive_txt)
-    w("   - 즉 표기만으로는 형태소 = 토큰이 되지 않는다. 앞 공백 형태가 1토큰인 형태를 골라야 하고, "
-      "형태소마다 띄어 써야(W2) 고른 형태가 문맥 안에서도 그대로 1토큰으로 남는다.")
+    w(f"1. **The combination closest to morpheme = token is `{b_d}` + {b_inv}.** It passed the strict criterion on {len(ok)}/{len(tok_names)} tokenizers"
+      f" ({', '.join(ok)}), with tokens/morpheme {lo_ok if lo_ok == hi_ok else lo_ok + '–' + hi_ok}. "
+      f"Tokenizers that did not pass: " + "; ".join(f"{t} ({tpr(b_inv, b_d, t)})" for t in bad) + ".")
+    naive_txt = ("With the naive inventory, no tokenizer passed even the loose criterion under any spelling." if naive_max == 0 else
+                 f"With the naive inventory, at most {naive_max} tokenizers passed the loose criterion under any spelling.")
+    w(f"   - Combinations that passed on all 7: {'none' if not all7 else ', '.join(f'{d}+{inv}' for inv, d in all7)}. " + naive_txt)
+    w("   - So spelling alone does not make morpheme = token. The forms must be chosen so that their leading-space form is a single token, "
+      "and morphemes must be separated by spaces (W2) so that the chosen forms stay single tokens in context.")
     tp_free = [t for t in tok_names if sc["token_picked"][t]["w2_lead_space_morpheme_one_token"] >= 0.95]
     tp_diff = [sc["token_picked"][t]["w2_tokens_per_message"] - sc["token_picked"][t]["w1_tokens_per_message"]
                for t in tp_free]
     nv_share = [sc["naive"][t]["w2_lead_space_morpheme_one_token"] for t in tok_names]
     space_only_all = max(sc[inv][t]["w2_space_only_tokens_per_space"] for inv in INVENTORIES for t in tok_names)
-    space_txt = ("공백만으로 된 토큰은 어느 토크나이저·인벤토리에서도 하나도 생기지 않았다. " if space_only_all == 0 else
-                 f"공백만으로 된 토큰이 공백 1개당 최대 {space_only_all:.3f}개 생겼다. ")
-    w("2. **W2 의 공백**: " + space_txt +
-      f"token-picked 형태에서는 \" kat\" 이 문맥 안에서 1토큰인 비율이 95% 이상인 토크나이저가 "
-      f"{len(tp_free)}개({', '.join(tp_free)})이고, 이들에서 W2 는 W1 보다 메시지당 "
-      f"{-max(tp_diff):.1f}~{-min(tp_diff):.1f} 토큰 **적다**. 공백이 공짜인 정도를 넘어 오히려 토큰을 줄인다.")
+    space_txt = ("No space-only token appeared in any tokenizer or inventory. " if space_only_all == 0 else
+                 f"Space-only tokens appeared, up to {space_only_all:.3f} per space. ")
+    w("2. **Spaces in W2**: " + space_txt +
+      f"With token-picked forms, \" kat\" is a single token in context at least 95% of the time on "
+      f"{len(tp_free)} tokenizers ({', '.join(tp_free)}), and on these W2 uses "
+      f"{-max(tp_diff):.1f}–{-min(tp_diff):.1f} **fewer** tokens per message than W1. The space is more than free: it reduces tokens.")
     for t in [t for t in tok_names if t not in tp_free]:
         c = sc["token_picked"][t]
-        w(f"   - {t}: 1토큰 비율 {_pct(c['w2_lead_space_morpheme_one_token'])}, "
-          f"W2 − W1 = {c['w2_tokens_per_message'] - c['w1_tokens_per_message']:+.1f} 토큰/메시지 → 공짜가 아니다.")
-    w(f"   - naive 형태에서는 1토큰 비율이 {_pct(min(nv_share))}~{_pct(max(nv_share))} 로 공짜가 아니다.")
+        w(f"   - {t}: single-token share {_pct(c['w2_lead_space_morpheme_one_token'])}, "
+          f"W2 − W1 = {c['w2_tokens_per_message'] - c['w1_tokens_per_message']:+.1f} tokens/message → not free.")
+    w(f"   - With naive forms the single-token share is {_pct(min(nv_share))}–{_pct(max(nv_share))}, so the space is not free.")
     w1 = {inv: (mean_over_toks(inv, "W1_nospace", "recall"), mean_over_toks(inv, "W1_nospace", "precision"),
                 mean_over_toks(inv, "W1_nospace", "one_token_share"),
                 mean_over_toks(inv, "W1_nospace", "one_token_share_root"),
                 mean_over_toks(inv, "W1_nospace", "one_token_share_affix")) for inv in INVENTORIES}
-    w("3. **붙여 쓰기(W1)의 비용**: 토큰 수는 인벤토리에 따라 W2 보다 많기도 적기도 하지만, "
-      "경계 어긋남은 어느 인벤토리에서나 비슷하게 크다. (토크나이저 평균)")
+    w("3. **Cost of glued writing (W1)**: depending on the inventory, W1 uses more or fewer tokens than W2, "
+      "but the boundary mismatch is similarly large in every inventory. (Mean over tokenizers)")
     for inv in INVENTORIES:
         rr, pp, one, one_r, one_a = w1[inv]
         others = {d: tok_per_msg(inv, d) for d in designs}
         cheapest = min(others, key=others.get)
         rel = 100 * (others["W1_nospace"] / others["W2_spaced"] - 1)
-        w(f"   - {inv}: recall {_f(rr)}, precision {_f(pp)}, 1토큰 형태소 {_pct(one)} (어근 {_pct(one_r)}, 접사 {_pct(one_a)}). "
-          f"메시지당 토큰 W1 {others['W1_nospace']:.1f} / W2 {others['W2_spaced']:.1f} (W1 이 W2 보다 {rel:+.0f}%), "
-          f"가장 적은 표기는 {cheapest} ({others[cheapest]:.1f}).")
-    w("   - 붙여 쓰면 BPE 가 어근 첫 자음을 떼어 내거나(`mab`+`ef` → `m|ab|ef`) 어근 끝 자음을 뒤 접사와 묶는다"
-      "(`mul`+`ox` → `mu|lox`, claude_legacy). 그래서 어근이 특히 많이 쪼개진다. 붙여 쓴 형태 기준으로 골라도(bare-picked) "
-      f"recall 은 {_f(w1['bare_picked'][0])} 에 머문다.")
-    w(f"   - 글자 수는 W1 {chars_w1:.1f}, W2 {chars_w2:.1f} 글자/메시지로 공백이 글자를 {100 * (chars_w2 / chars_w1 - 1):.0f}% 늘리지만, "
-      "토큰 수와는 별개다.")
+        w(f"   - {inv}: recall {_f(rr)}, precision {_f(pp)}, single-token morphemes {_pct(one)} (roots {_pct(one_r)}, affixes {_pct(one_a)}). "
+          f"Tokens per message W1 {others['W1_nospace']:.1f} / W2 {others['W2_spaced']:.1f} (W1 is {rel:+.0f}% vs W2), "
+          f"cheapest spelling {cheapest} ({others[cheapest]:.1f}).")
+    w("   - In glued writing, BPE splits off the first consonant of a root (`mab`+`ef` → `m|ab|ef`) or groups the last consonant "
+      "of a root with the following affix (`mul`+`ox` → `mu|lox`, claude_legacy). So roots in particular are often split. Even when forms "
+      f"are chosen by their glued form (bare-picked), recall stays at {_f(w1['bare_picked'][0])}.")
+    w(f"   - Character counts are W1 {chars_w1:.1f} and W2 {chars_w2:.1f} characters/message, so spaces add {100 * (chars_w2 / chars_w1 - 1):.0f}% "
+      "characters, but this is separate from the token count.")
     cam = [idx[(inv, d, t)] for inv in INVENTORIES for d in ("W4_camel", "W5_wordcamel") for t in tok_names]
-    w(f"4. **대문자 표기(W4, W5)**: 대문자가 토큰 경계를 만들어 recall 은 {_f(min(r['recall'] for r in cam))}~"
-      f"{_f(max(r['recall'] for r in cam))} 로 높지만, 대문자로 시작하는 형태는 1토큰이 아닌 경우가 많아"
-      f"(`G|id`) 토큰/형태소 {_f(min(r['tokens_per_morpheme'] for r in cam))}~{_f(max(r['tokens_per_morpheme'] for r in cam))}, "
-      f"precision {_f(min(r['precision'] for r in cam))}~{_f(max(r['precision'] for r in cam))} 이다. "
-      "추가한 W6(lowercamel, token-picked)은 느슨한 기준만 "
+    w(f"4. **Capitalized spellings (W4, W5)**: capitals create token boundaries, so recall is high at {_f(min(r['recall'] for r in cam))}–"
+      f"{_f(max(r['recall'] for r in cam))}, but forms that start with a capital are often not a single token"
+      f" (`G|id`), so tokens/morpheme is {_f(min(r['tokens_per_morpheme'] for r in cam))}–{_f(max(r['tokens_per_morpheme'] for r in cam))} "
+      f"and precision {_f(min(r['precision'] for r in cam))}–{_f(max(r['precision'] for r in cam))}. "
+      "The added W6 (lowercamel, token-picked) passed only the loose criterion, on "
       + ", ".join(f"{t} ({tpr('token_picked', 'W6_lowercamel', t)})" for t in tok_names
                   if idx[("token_picked", "W6_lowercamel", t)]["pass_loose"])
-      + " 에서 통과했다.")
+      + ".")
     ps = pools["pool_sizes"]["token_picked"]
     hist = pools["word_filtered_forms_by_n_lead_space_single"]
-    w(f"5. **형태 풀이 병목이다.** 단어 필터(zipf < {ROOT_MAX_ZIPF})를 통과한 CVC 중 token-picked 어근은 {ps['roots']}개"
-      f"(7개 모두에서 1토큰은 {hist['roots_cvc'][7]}개)로, 문서의 목표 어근 수 500~1,000개에 크게 못 미친다. "
-      f"필터를 zipf < 4.0 으로 풀면 {pools['pool_sizes_by_zipf_threshold']['token_picked']['4.0']['roots_cvc']}개다. "
-      "VC 접사는 zipf < 3 을 통과하는 형태가 1개뿐이라 접사 필터를 완화했다.")
+    w(f"5. **The form pool is the bottleneck.** Among CVC forms that pass the word filter (zipf < {ROOT_MAX_ZIPF}), there are {ps['roots']} token-picked roots"
+      f" ({hist['roots_cvc'][7]} of them are single tokens on all 7), far short of the documented target of 500–1,000 roots. "
+      f"Relaxing the filter to zipf < 4.0 gives {pools['pool_sizes_by_zipf_threshold']['token_picked']['4.0']['roots_cvc']}. "
+      "Only 1 VC affix form passes zipf < 3, so the affix filter was relaxed.")
     w("")
-    w("## 1. 설정")
+    w("## 1. Setup")
     w("")
-    w(f"- 합성 메시지 {st['messages']}개, 형태소 {st['morphemes_per_message']['min']}~{st['morphemes_per_message']['max']}개 "
-      f"(평균 {st['morphemes_per_message']['mean']}), 단어 평균 {st['words_per_message_mean']}개, "
-      f"접사 비율 {_pct(st['affix_share'])}, 합성어(어근 2개) 비율 {_pct(st['compound_word_share'])}.")
-    w("- 메시지 = 문장(술어 단어 + 논항 단어 1~3개 + 가끔 수식어 단어)의 연속. 어근·접사 사용 빈도는 순위^-1 (Zipf).")
-    w(f"- 모든 인벤토리와 표기가 **같은 골격**을 쓰고 형태만 바꾼다. 인벤토리마다 어휘(형태 배정)를 {meta['n_draws']}번 새로 뽑아 합산했다.")
+    w(f"- {st['messages']} synthetic messages of {st['morphemes_per_message']['min']}–{st['morphemes_per_message']['max']} morphemes "
+      f"(mean {st['morphemes_per_message']['mean']}), {st['words_per_message_mean']} words on average, "
+      f"affix share {_pct(st['affix_share'])}, compound word (2 roots) share {_pct(st['compound_word_share'])}.")
+    w("- A message is a sequence of sentences (predicate word + 1–3 argument words + an occasional modifier word). Root and affix usage frequency is rank^-1 (Zipf).")
+    w(f"- All inventories and spellings use **the same skeletons**; only the forms change. For each inventory the lexicon (form assignment) was drawn {meta['n_draws']} times and the results pooled.")
     lex = pools["lexicon_size_used"]
-    w(f"- 어휘 크기: 어근 {lex['roots']}개, 접사 {lex['affixes']}개 (세 인벤토리 공통, 가장 작은 풀에 맞춤).")
-    w("- 경계 규칙: 공백은 뒤 형태소에 속한다. 공백이 따로 토큰이 되면 정밀도가 떨어진다.")
-    w("- mistral_sp 의 \"앞 공백 형태\"는 `kat` 을 넣어 잰다 (SentencePiece 가 스스로 `▁` 를 붙이므로 `▁kat` 과 같다).")
+    w(f"- Lexicon size: {lex['roots']} roots, {lex['affixes']} affixes (shared by the three inventories, matched to the smallest pool).")
+    w("- Boundary rule: a space belongs to the following morpheme. If a space becomes a separate token, precision drops.")
+    w("- The \"leading-space form\" for mistral_sp is measured by feeding `kat` (SentencePiece adds `▁` by itself, so this is the same as `▁kat`).")
     w("")
-    w("### 형태 풀 크기")
+    w("### Form pool sizes")
     w("")
-    w("| 인벤토리 | 어근 CVC | 접사 VC | 선정 기준 |")
+    w("| Inventory | Roots CVC | Affixes VC | Selection criterion |")
     w("|---|---:|---:|---|")
-    crit = {"naive": "단어 필터만",
-            "token_picked": f"앞 공백 형태가 7개 중 {PICK_MIN}개 이상에서 1토큰",
-            "bare_picked": f"붙여 쓴 형태가 바이트 BPE 6개 중 {BARE_MIN}개 이상에서 1토큰 (mistral_sp 제외)"}
+    crit = {"naive": "word filter only",
+            "token_picked": f"leading-space form is a single token on at least {PICK_MIN} of 7",
+            "bare_picked": f"glued form is a single token on at least {BARE_MIN} of the 6 byte BPEs (mistral_sp excluded)"}
     for inv in INVENTORIES:
         ps = pools["pool_sizes"][inv]
         w(f"| {INV_LABEL[inv]} | {ps['roots']} | {ps['affixes']} | {crit[inv]} |")
     w("")
-    w(f"후보: CVC {pools['candidates']['cvc']}개, VC {pools['candidates']['vc']}개. "
-      f"단어 필터 = 11개 언어 최대 zipf < {ROOT_MAX_ZIPF} (어근), < {AFFIX_MAX_ZIPF} (접사).")
+    w(f"Candidates: {pools['candidates']['cvc']} CVC, {pools['candidates']['vc']} VC. "
+      f"Word filter = max zipf across 11 languages < {ROOT_MAX_ZIPF} (roots), < {AFFIX_MAX_ZIPF} (affixes).")
     w("")
-    w("**접사 필터를 완화한 이유**: zipf < 3 을 VC 에 그대로 쓰면 남는 접사가 거의 없다. 기준별 풀 크기(어근 / 접사):")
+    w("**Why the affix filter was relaxed**: applying zipf < 3 to VC as is leaves almost no affixes. Pool sizes by threshold (roots / affixes):")
     w("")
     ths = [str(t) for t in ZIPF_REPORT_THRESHOLDS]
-    w("| 인벤토리 | " + " | ".join(f"zipf < {t}" for t in ths) + " |")
+    w("| Inventory | " + " | ".join(f"zipf < {t}" for t in ths) + " |")
     w("|---|" + "---:|" * len(ths))
     for inv in INVENTORIES:
         bt = pools["pool_sizes_by_zipf_threshold"][inv]
         w(f"| {inv} | " + " | ".join(f"{bt[t]['roots_cvc']} / {bt[t]['affixes_vc']}" for t in ths) + " |")
     w("")
-    w("token-picked 어근은 엄격한 필터(zipf < 3)에서 "
-      f"{pools['pool_sizes']['token_picked']['roots']}개뿐이다. 문서의 목표 어근 수(500~1,000개)에 크게 못 미친다.")
+    w("Under the strict filter (zipf < 3) there are only "
+      f"{pools['pool_sizes']['token_picked']['roots']} token-picked roots. That is far short of the documented target of 500–1,000 roots.")
     w("")
 
-    # 2. 핵심 답
-    w("## 2. 핵심 결과: 형태소 = 토큰을 가장 많은 토크나이저에서 만족하는 표기")
+    # 2. Main answer
+    w("## 2. Main result: the spelling that achieves morpheme = token on the most tokenizers")
     w("")
-    w(f"통과 기준(엄격): recall ≥ {STRICT['recall']}, precision ≥ {STRICT['precision']}, 토큰/형태소 ≤ {STRICT['tpm']}. "
-      f"느슨: {LOOSE['recall']} / {LOOSE['precision']} / {LOOSE['tpm']}. 셀 = 통과한 토크나이저 수 (엄격 / 느슨, 7개 중).")
+    w(f"Pass criteria (strict): recall ≥ {STRICT['recall']}, precision ≥ {STRICT['precision']}, tokens/morpheme ≤ {STRICT['tpm']}. "
+      f"Loose: {LOOSE['recall']} / {LOOSE['precision']} / {LOOSE['tpm']}. Cell = number of tokenizers that pass (strict / loose, out of 7).")
     w("")
-    w("| 표기 | " + " | ".join(INVENTORIES) + " |")
+    w("| Spelling | " + " | ".join(INVENTORIES) + " |")
     w("|---|" + "---:|" * len(INVENTORIES))
     for d in designs:
         w(f"| {d} | " + " | ".join(f"{n_pass(inv, d, 'strict')} / {n_pass(inv, d, 'loose')}" for inv in INVENTORIES) + " |")
     w("")
-    w("### 토크나이저 평균 (7개 단순 평균)")
+    w("### Mean over tokenizers (simple mean of 7)")
     w("")
     for inv in INVENTORIES:
         w(f"**{INV_LABEL[inv]}**")
         w("")
-        w("| 표기 | 토큰/형태소 | 추첨 간 범위 | 글자/토큰 | recall | precision | 1토큰 형태소 | 메시지당 글자 | 메시지당 토큰 |")
+        w("| Spelling | Tokens/morpheme | Range across draws | Chars/token | recall | precision | Single-token morphemes | Chars per message | Tokens per message |")
         w("|---|---:|---:|---:|---:|---:|---:|---:|---:|")
         for d in designs:
             chars = idx[(inv, d, tok_names[0])]["chars_total"] / (N_MESSAGES * N_DRAWS)
             toks_msg = statistics.mean(idx[(inv, d, t)]["tokens_total"] for t in tok_names) / (N_MESSAGES * N_DRAWS)
             lo, hi = draw_range(inv, d)
-            w(f"| {d} | {_f(mean_over_toks(inv, d, 'tokens_per_morpheme'))} | {_f(lo)}~{_f(hi)} | {_f(mean_over_toks(inv, d, 'chars_per_token'))} | "
+            w(f"| {d} | {_f(mean_over_toks(inv, d, 'tokens_per_morpheme'))} | {_f(lo)}–{_f(hi)} | {_f(mean_over_toks(inv, d, 'chars_per_token'))} | "
               f"{_f(mean_over_toks(inv, d, 'recall'))} | {_f(mean_over_toks(inv, d, 'precision'))} | "
               f"{_pct(mean_over_toks(inv, d, 'one_token_share'))} | {chars:.1f} | {toks_msg:.1f} |")
         w("")
 
-    # 3. 토크나이저별 표
-    w("## 3. 토크나이저별 결과")
+    # 3. Per-tokenizer tables
+    w("## 3. Results by tokenizer")
     w("")
-    header = "| 표기 | " + " | ".join(tok_names) + " |"
+    header = "| Spelling | " + " | ".join(tok_names) + " |"
     sep = "|---|" + "---:|" * len(tok_names)
     for inv in INVENTORIES:
         w(f"### {INV_LABEL[inv]}")
         w("")
-        w("토큰/형태소 (어휘 5회 추첨 사이 최솟값~최댓값은 json 의 `tokens_per_morpheme_by_draw`)")
+        w("Tokens/morpheme (the min–max across the 5 lexicon draws is in `tokens_per_morpheme_by_draw` in the json)")
         w("")
         w(header)
         w(sep)
@@ -600,7 +601,7 @@ def write_markdown(res: dict, tok_names: list[str], path: Path) -> None:
             w(f"| {d} | " + " | ".join(f"{_f(idx[(inv, d, t)]['recall'])} / {_f(idx[(inv, d, t)]['precision'])}"
                                      for t in tok_names) + " |")
         w("")
-        w("정확히 1토큰인 형태소 비율")
+        w("Share of morphemes that are exactly one token")
         w("")
         w(header)
         w(sep)
@@ -608,13 +609,13 @@ def write_markdown(res: dict, tok_names: list[str], path: Path) -> None:
             w(f"| {d} | " + " | ".join(_pct(idx[(inv, d, t)]["one_token_share"]) for t in tok_names) + " |")
         w("")
 
-    # 4. 공백은 공짜인가
-    w("## 4. W2 의 공백은 공짜인가")
+    # 4. Is the space free?
+    w("## 4. Is the space in W2 free?")
     w("")
-    w("셀 = 앞 공백이 붙은 형태소(\" kat\")가 문맥 안에서 정확히 1토큰인 비율 / 공백만으로 된 토큰 수(공백 1개당) / "
-      "메시지당 토큰 W2 − W1 / 판정. 판정은 1토큰 비율 95% 이상이고 공백 토큰이 없으면 \"공짜\".")
+    w("Cell = share of morphemes with a leading space (\" kat\") that are exactly one token in context / space-only tokens (per space) / "
+      "tokens per message W2 − W1 / verdict. The verdict is \"free\" if the single-token share is at least 95% and there are no space tokens.")
     w("")
-    w("| 토크나이저 | " + " | ".join(INVENTORIES) + " |")
+    w("| Tokenizer | " + " | ".join(INVENTORIES) + " |")
     w("|---|" + "---|" * len(INVENTORIES))
     for t in tok_names:
         cells = []
@@ -623,12 +624,12 @@ def write_markdown(res: dict, tok_names: list[str], path: Path) -> None:
             diff = c["w2_tokens_per_message"] - c["w1_tokens_per_message"]
             free = c["w2_lead_space_morpheme_one_token"] >= 0.95 and c["w2_space_only_tokens_per_space"] == 0
             cells.append(f"{_pct(c['w2_lead_space_morpheme_one_token'])} / {_f(c['w2_space_only_tokens_per_space'], 3)} / "
-                         f"{diff:+.1f} / {'공짜' if free else '아님'}")
+                         f"{diff:+.1f} / {'free' if free else 'not free'}")
         w(f"| {t} | " + " | ".join(cells) + " |")
     w("")
-    w("문맥 없이 형태 하나씩 잰 1토큰 비율 (풀 전체, 앞 공백 소문자 / 앞 공백 대문자 시작 / 붙여 쓴 소문자 / 붙여 쓴 대문자 시작):")
+    w("Single-token share measured one form at a time without context (whole pool; leading-space lowercase / leading-space capitalized / glued lowercase / glued capitalized):")
     w("")
-    w("| 토크나이저 | " + " | ".join(INVENTORIES) + " |")
+    w("| Tokenizer | " + " | ".join(INVENTORIES) + " |")
     w("|---|" + "---|" * len(INVENTORIES))
     iso = pools["isolated_single_token_rates"]
     for t in tok_names:
@@ -636,33 +637,33 @@ def write_markdown(res: dict, tok_names: list[str], path: Path) -> None:
             f"{_pct(iso[inv][t]['lead_space'])} / {_pct(iso[inv][t]['lead_space_cap'])} / "
             f"{_pct(iso[inv][t]['bare'])} / {_pct(iso[inv][t]['bare_cap'])}" for inv in INVENTORIES) + " |")
     w("")
-    w("mistral_sp 의 붙여 쓴 형태는 toklib 으로 따로 잴 수 없어 `-` 로 둔다.")
+    w("The glued form cannot be measured separately for mistral_sp with toklib, so it is shown as `-`.")
     w("")
 
-    # 5. 붙여 쓰기 비용
-    w("## 5. 붙여 쓰기(W1)의 실제 비용")
+    # 5. Cost of glued writing
+    w("## 5. Actual cost of glued writing (W1)")
     w("")
-    w("경계 종류별 recall (토크나이저 평균): 단어 경계 / 단어 안 형태소 경계.")
+    w("Recall by boundary type (mean over tokenizers): word boundaries / morpheme boundaries inside words.")
     w("")
-    w("| 표기 | " + " | ".join(INVENTORIES) + " |")
+    w("| Spelling | " + " | ".join(INVENTORIES) + " |")
     w("|---|" + "---|" * len(INVENTORIES))
     for d in designs:
         w(f"| {d} | " + " | ".join(
             f"{_f(mean_over_toks(inv, d, 'recall_word_boundary'))} / {_f(mean_over_toks(inv, d, 'recall_inner_boundary'))}"
             for inv in INVENTORIES) + " |")
     w("")
-    w("정확히 1토큰인 형태소 비율 (토크나이저 평균): 어근 / 접사.")
+    w("Share of morphemes that are exactly one token (mean over tokenizers): roots / affixes.")
     w("")
-    w("| 표기 | " + " | ".join(INVENTORIES) + " |")
+    w("| Spelling | " + " | ".join(INVENTORIES) + " |")
     w("|---|" + "---|" * len(INVENTORIES))
     for d in designs:
         w(f"| {d} | " + " | ".join(
             f"{_pct(mean_over_toks(inv, d, 'one_token_share_root'))} / {_pct(mean_over_toks(inv, d, 'one_token_share_affix'))}"
             for inv in INVENTORIES) + " |")
     w("")
-    w("W1 대비 메시지당 토큰 비율 (토크나이저 평균, 1 미만이면 W1 보다 적다):")
+    w("Tokens per message relative to W1 (mean over tokenizers; below 1 means fewer than W1):")
     w("")
-    w("| 표기 | " + " | ".join(INVENTORIES) + " |")
+    w("| Spelling | " + " | ".join(INVENTORIES) + " |")
     w("|---|" + "---:|" * len(INVENTORIES))
     for d in designs:
         cells = []
@@ -672,13 +673,13 @@ def write_markdown(res: dict, tok_names: list[str], path: Path) -> None:
         w(f"| {d} | " + " | ".join(cells) + " |")
     w("")
 
-    # 6. 예시
-    w("## 6. 예시 (어휘 추첨 0, 첫 메시지의 앞 3단어)")
+    # 6. Examples
+    w("## 6. Examples (lexicon draw 0, first 3 words of the first message)")
     w("")
     for inv in ["naive", "token_picked"]:
         w(f"**{INV_LABEL[inv]}**")
         w("")
-        w("| 표기 | o200k | cl100k | claude_legacy | mistral_sp |")
+        w("| Spelling | o200k | cl100k | claude_legacy | mistral_sp |")
         w("|---|---|---|---|---|")
         for d in designs:
             ex = res["examples"][inv][d]
@@ -686,23 +687,23 @@ def write_markdown(res: dict, tok_names: list[str], path: Path) -> None:
                      for t in ["o200k", "cl100k", "claude_legacy", "mistral_sp"]]
             w(f"| {d} | " + " | ".join(cells) + " |")
         w("")
-    w("(`␣` = 공백, `|` = 토큰 경계)")
+    w("(`␣` = space, `|` = token boundary)")
     w("")
-    w("## 7. 한계")
+    w("## 7. Limitations")
     w("")
-    w("- 토큰 경계가 형태소와 맞는지만 쟀다. 어긋남이 LLM 의 읽기·쓰기 정확도를 실제로 떨어뜨리는지는 이 실험으로 알 수 없다 "
-      "(`pilot_segmentation.py` 같은 모델 실험이 필요하다).")
-    w("- 현행 Claude 토크나이저는 공개되지 않아 잴 수 없다. claude_legacy 는 Claude 2 시절 토크나이저로 대용 지표일 뿐이다.")
-    w(f"- token-picked + W2 가 {len(ok)}개 토크나이저에서 통과한 것은 선정 기준(앞 공백 형태 1토큰)과 거의 같은 조건이라 예상된 결과다. "
-      "이 실험이 새로 보여 주는 것은 (1) 문맥 안에서도 그 성질이 유지된다는 점, (2) 선정 때 자주 빠진 토크나이저"
-      "(claude_legacy, mistral_sp)가 그대로 약점으로 남는다는 점이다.")
-    w(f"- 어휘가 작다 (어근 {lex['roots']}개, 접사 {lex['affixes']}개, 가장 작은 풀에 맞춤). 추첨 간 범위를 2절 표에 적었다.")
-    w(f"- 접사 단어 필터는 zipf < {AFFIX_MAX_ZIPF} 로 완화했다. W2 에서는 접사가 단독 토큰으로 보이므로 "
-      "다른 언어의 짧은 단어처럼 보일 수 있다.")
-    w("- token-picked 풀에는 vec, req, xor 처럼 영어 약어나 코드 조각으로 읽힐 수 있는 형태가 섞여 있다 (목록은 json 의 "
-      "`token_picked_roots`). 단어 필터(wordfreq)가 이런 조각을 거르지 못하므로 사람 판독 저항성(G2)은 따로 따져야 한다.")
-    w("- mistral_sp 의 붙여 쓴 형태 단독 토큰화는 toklib 으로 잴 수 없어 bare-picked 선정과 단독 측정에서 뺐다. "
-      "메시지 전체 측정에는 포함했다.")
+    w("- This experiment only measured whether token boundaries match morphemes. It cannot tell whether a mismatch actually lowers "
+      "an LLM's reading and writing accuracy (that needs a model experiment such as `pilot_segmentation.py`).")
+    w("- The current Claude tokenizer is not public, so it cannot be measured. claude_legacy is the Claude 2-era tokenizer and only a proxy.")
+    w(f"- token-picked + W2 passing on {len(ok)} tokenizers is an expected result, because the condition is almost the same as the selection criterion (leading-space form is a single token). "
+      "What this experiment adds is (1) that the property holds in context too, and (2) that the tokenizers often left out during selection "
+      "(claude_legacy, mistral_sp) remain weak points.")
+    w(f"- The lexicon is small ({lex['roots']} roots, {lex['affixes']} affixes, matched to the smallest pool). The range across draws is given in the section 2 tables.")
+    w(f"- The word filter for affixes was relaxed to zipf < {AFFIX_MAX_ZIPF}. In W2, affixes appear as standalone tokens, "
+      "so they may look like short words of other languages.")
+    w("- The token-picked pool contains forms such as vec, req and xor that can be read as English abbreviations or code fragments (the list is "
+      "`token_picked_roots` in the json). The word filter (wordfreq) does not catch such fragments, so resistance to human reading (G2) must be assessed separately.")
+    w("- Standalone tokenization of glued forms cannot be measured for mistral_sp with toklib, so mistral_sp was left out of the bare-picked selection and the standalone measurements. "
+      "It is included in the whole-message measurements.")
     w("")
     path.write_text("\n".join(L) + "\n")
 

@@ -1,66 +1,66 @@
-# 00. 기초: 무엇을 만들려는가
+# 00. Foundations
 
-## 1. 전제 점검: "사람은 못 읽고 AI만 읽는다"는 가능한가?
+## 1. Checking the premise: is "humans cannot read it, only AI can" possible?
 
-엄밀한 의미로는 불가능하다. AI가 읽으려면 규칙(사양)이 어딘가에 있어야 하고, 사양이 있으면 사람도 시간을 들여 해독할 수 있다.
-그래서 이 프로젝트에서 "사람이 못 읽는다"는 **비밀성**이 아니라 **인지 부하의 비대칭**을 뜻한다.
+Strictly speaking, no. For an AI to read it, the rules (the spec) must exist somewhere, and if a spec exists, a human can also decode it given time.
+So in this project, "humans cannot read it" does not mean **secrecy**. It means an **asymmetry in cognitive load**.
 
-> **작업 정의**: 사양 없이는 사람이 의미를 추측할 수 없고, 사양이 있어도 사람이 실시간으로 읽고 쓰기는 매우 어렵지만,
-> LLM은 사양을 컨텍스트로 받으면 곧바로 정확하게 읽고 쓸 수 있는 언어.
+> **Working definition**: a language whose meaning a human cannot guess without the spec, and that a human finds very hard to read and write in real time even with the spec,
+> but that an LLM can read and write accurately right away once it has the spec in its context.
 
-진짜 기밀이 필요하다면 답은 암호화다. 이 언어는 난독화(obfuscation)에 해당하므로 보안 수단으로 쓰면 안 된다.
+If you need real confidentiality, the answer is encryption. This language is a form of obfuscation, so do not use it as a security measure.
 
-## 2. 근본 갈림길: 경로 A와 경로 B
+## 2. The basic fork: path A and path B
 
-| | 경로 A: 기존 언어의 부호화 | 경로 B: 새 언어 |
+| | Path A: encoding an existing language | Path B: a new language |
 |---|---|---|
-| 예 | Base64, ROT13, 축약 영어 | 독자적인 어휘와 문법 |
-| AI가 이해하는 방법 | 사전 학습 데이터로 이미 알고 있음 | 사양을 컨텍스트로 제공(in-context learning), 장기적으로는 파인튜닝 |
-| 사양 필요 여부 | 없음 | 있음 |
-| 설계할 것 | 거의 없음 | 전부 |
+| Examples | Base64, ROT13, abbreviated English | Its own vocabulary and grammar |
+| How the AI understands it | Already knows it from pretraining data | Spec given in context (in-context learning); fine-tuning in the long run |
+| Spec needed | No | Yes |
+| What to design | Almost nothing | Everything |
 
-최신 LLM은 학습 데이터 덕분에 Base64나 ROT13 같은 부호를 어느 정도 직접 해독한다(길어질수록 오류가 늘어난다).
-즉 "사람은 못 읽고 AI는 읽는 문자열"의 가장 값싼 해법은 이미 있다.
-이 프로젝트는 언어를 **새로 만드는 것**이 목적이므로 경로 B를 택하고, 경로 A는 평가할 때 비교 기준선(baseline)으로 쓴다.
+Thanks to their training data, current LLMs can decode encodings such as Base64 or ROT13 directly, up to a point (errors increase with length).
+So the cheapest solution to "a string that AI can read but humans cannot" already exists.
+This project aims to **build a new language**, so it takes path B. Path A serves as a baseline for comparison during evaluation.
 
-## 3. 활용할 비대칭: 사람과 LLM은 무엇이 다른가
+## 3. The asymmetry to exploit: how humans and LLMs differ
 
-| 차원 | 사람 | LLM | 설계에 주는 함의 |
+| Dimension | Human | LLM | Design implication |
 |---|---|---|---|
-| 작업 기억 | 한 번에 4개 안팎의 덩어리 | 수십만 토큰의 컨텍스트 | 큰 사전과 긴 규칙표를 부담 없이 쓸 수 있다 |
-| 새 어휘 습득 | 수천 어근에 수개월 | 사양을 컨텍스트에 넣는 즉시 | 어휘를 무작위(a priori)로 배정해도 된다 |
-| 띄어쓰기 없는 문자열 | 매우 어렵다 | 상대적으로 쉽다 (검증 필요) | 경계는 공백 대신 문법으로 표시한다 |
-| 깊은 중첩 | 3단계를 넘으면 어렵다 | 코드처럼 처리한다 | 중첩 구조를 적극 허용한다 |
-| 글자 단위 연산 (글자 세기, 위치 계산, 뒤집기) | 쉽다 | **약하다** (토큰화 때문) | 글자 단위 계산에 기대는 규칙은 금지한다 |
-| 시각적 단서 (대소문자, 글자 모양) | 크게 의존한다 | 거의 무관하다 | 시각적 단서를 없애도 AI는 손해가 없다 |
+| Working memory | About 4 chunks at a time | A context of hundreds of thousands of tokens | A large dictionary and long rule tables are no burden |
+| Learning new vocabulary | Months for thousands of roots | Immediately, once the spec is in context | Vocabulary can be assigned at random (a priori) |
+| Strings without spaces | Very hard | Relatively easy (needs verification) | Mark boundaries with grammar instead of spaces |
+| Deep nesting | Hard beyond 3 levels | Handles it like code | Allow nested structures freely |
+| Character-level operations (counting letters, computing positions, reversing) | Easy | **Weak** (because of tokenization) | Forbid rules that rely on character-level computation |
+| Visual cues (letter case, letter shapes) | Relies on them heavily | Nearly irrelevant | Removing visual cues costs the AI nothing |
 
-가장 중요한 함정은 LLM이 글자가 아니라 **토큰**(여러 글자의 덩어리)을 본다는 점이다.
-"세 번째 글자마다 의미가 바뀐다", "글자를 n칸 민다" 같은 규칙은 사람보다 LLM에게 더 어려울 수 있다.
-사람을 괴롭히려다 AI까지 괴롭히는 설계를 피해야 한다.
+The most important trap: an LLM sees **tokens** (chunks of several characters), not characters.
+Rules such as "the meaning changes every third letter" or "shift each letter by n places" can be harder for an LLM than for a human.
+Avoid designs that try to make the language hard for humans and end up making it hard for the AI too.
 
-## 4. 설계 목표 (우선순위 순)
+## 4. Design goals (in priority order)
 
-1. **G1 AI 해독성**: 사양(목표 2만 토큰 이하)을 컨텍스트로 받은 LLM이 양방향 번역을 높은 정확도로 해낸다.
-2. **G2 사람 판독 저항성**: 영어나 한국어 화자가 사양 없이 의미를 추측할 수 없다. 영어 단어와 닮은 어근을 쓰지 않고, 눈에 보이는 구조를 줄인다.
-3. **G3 비모호성**: 하나의 문자열은 정확히 하나의 구문 분석 결과를 가지며, 기계(파서)로 검증할 수 있다.
-4. **G4 토큰 효율**: 같은 의미를 영어와 비슷하거나 더 적은 토큰으로 표현한다.
-5. **G5 표현력**: 일상과 기술 내용을 표현할 수 있고, 어휘를 확장할 수 있다.
+1. **G1 AI decodability**: an LLM given the spec (target: 20,000 tokens or fewer) in its context translates in both directions with high accuracy.
+2. **G2 Human read resistance**: an English or Korean speaker cannot guess the meaning without the spec. Do not use roots that resemble English words, and reduce visible structure.
+3. **G3 Unambiguity**: each string has exactly one parse, and a machine (a parser) can verify it.
+4. **G4 Token efficiency**: express the same meaning in about as many tokens as English, or fewer.
+5. **G5 Expressiveness**: it can express everyday and technical content, and its vocabulary can be extended.
 
-### 목표 사이의 충돌
+### Conflicts between goals
 
-- **G2 ↔ G4**: 사람에게 낯선 글자열(qzxv…)은 토크나이저에게도 낯설어서 토큰이 잘게 쪼개진다.
-  → 낯섦은 "글자 모양"이 아니라 "의미 배정"에서 만든다.
-- **G1 ↔ G2**: 규칙적일수록 AI가 배우기 쉽지만 사람도 배우기 쉽다.
-  → 사람 저항성은 규칙의 복잡함이 아니라 어휘량, 정보 밀도, 경계 표시의 부재에서 얻는다.
+- **G2 ↔ G4**: letter strings that are unfamiliar to humans (qzxv…) are also unfamiliar to the tokenizer, so they split into many small tokens.
+  → Create unfamiliarity in "meaning assignment", not in "letter shapes".
+- **G1 ↔ G2**: the more regular the language, the easier it is for the AI to learn, but also the easier it is for humans to learn.
+  → Get human resistance from vocabulary size, information density and the absence of boundary marks, not from complex rules.
 
-## 5. 평가 방법 (설계보다 먼저 정한다)
+## 5. Evaluation method (set before the design)
 
-| 지표 | 측정 방법 |
+| Metric | How to measure |
 |---|---|
-| AI 이해도 | 사양을 받은 LLM에게 이 언어↔한국어 번역을 시켜 기준 번역과 비교하고, 왕복 번역(한국어 → 이 언어 → 한국어)의 의미 보존율을 잰다 |
-| 모델 일반성 | 같은 시험을 여러 모델(Claude, GPT, 오픈 모델)에 돌린다 |
-| 사람 저항성 | 사양 없이 의미를 추측한 정답률, 사양을 준 뒤 문장 하나를 해독하는 데 걸린 시간 |
-| 토큰 효율 | 같은 문장의 토큰 수를 영어, 한국어, 이 언어로 비교한다 |
-| 문법 적합성 | 레퍼런스 파서로 AI가 만든 문장이 문법에 맞는지 자동 검사한다 |
+| AI comprehension | Have an LLM given the spec translate between this language and Korean, compare the output with reference translations, and measure the meaning-preservation rate of a round-trip translation (Korean → this language → Korean) |
+| Model generality | Run the same tests on several models (Claude, GPT, open models) |
+| Human resistance | Accuracy of guessing the meaning without the spec; time to decode one sentence after receiving the spec |
+| Token efficiency | Compare the token counts of the same sentence in English, Korean and this language |
+| Grammaticality | Use a reference parser to check automatically whether sentences the AI produces are grammatical |
 
-레퍼런스 파서(코드)는 G3를 보장하고 AI 출력을 자동으로 채점할 수 있게 해 주므로 초기에 만든다.
+Build the reference parser (code) early. It guarantees G3 and makes it possible to grade AI output automatically.

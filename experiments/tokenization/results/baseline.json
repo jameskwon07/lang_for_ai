@@ -16,15 +16,15 @@
   "p90_method": "statistics.quantiles(n=10, method='inclusive')[-1]",
   "counting": "message by message, no chat template or wrapper tokens",
   "tokenizers": {
-   "o200k": "OpenAI GPT-4o / o-series / GPT-5 계열 (200K)",
+   "o200k": "OpenAI GPT-4o / o-series / GPT-5 family (200K)",
    "cl100k": "OpenAI GPT-4 / GPT-3.5 (100K)",
-   "claude_legacy": "Anthropic Claude 2 시절 토크나이저 (65K, 현행 Claude의 대용)",
+   "claude_legacy": "Anthropic Claude 2-era tokenizer (65K, proxy for the current Claude)",
    "llama3": "Meta Llama 3 (128K)",
    "llama4": "Meta Llama 4 (200K)",
-   "mistral_tekken": "Mistral Tekken (Nemo 이후, 131K)",
-   "mistral_sp": "Mistral SentencePiece v3 (7B 계열, 32K)"
+   "mistral_tekken": "Mistral Tekken (Nemo and later, 131K)",
+   "mistral_sp": "Mistral SentencePiece v3 (7B family, 32K)"
   },
-  "runtime_sec": 2.2
+  "runtime_sec": 1.0
  },
  "corpus_stats": {
   "categories": {

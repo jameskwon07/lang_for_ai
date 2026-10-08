@@ -1,14 +1,14 @@
-# 별도 언어의 득실 분석
+# Trade-off analysis of a separate language
 
-결론은 [docs/03-tradeoffs.md](../../docs/03-tradeoffs.md)에 있다.
+The conclusions are in [docs/03-tradeoffs.md](../../docs/03-tradeoffs.md).
 
-| 파일 | 내용 |
+| File | Contents |
 |---|---|
-| `analysts.json` | 관점별 분석가 5명(비용, 정확성, 운영, 안전·감독, 표현력)의 원본 분류 |
-| `critique.json` | 비평가가 중복을 합치고 과장을 바로잡은 통합본, 빠진 관점, 합친 항목 목록 |
-| `roundtrip/write_task.md` | 작성자에게 준 과제 (설계에 쓰지 않은 홀수 메시지 20개) |
-| `roundtrip/results.json` | 작성 결과, 독자의 되번역, 블라인드 채점 (Z1 Haiku 저노력, Z2 신중한 인코더, Z3 기본 모델) |
-| `roundtrip/validity.json` | 작성 결과의 사전 밖 단어 비율과 토크나이저별 토큰 비율 |
-| `roundtrip/first_run_invalid.json` | 무효 처리한 첫 실행. Haiku 작성자가 과제 대신 함께 전달된 질문에 답했다 |
+| `analysts.json` | Raw classifications by 5 analysts, one per perspective (cost, accuracy, operations, safety and oversight, expressiveness) |
+| `critique.json` | The critic's consolidated version, which merges duplicates and corrects overstatements, plus missing perspectives and the list of merged items |
+| `roundtrip/write_task.md` | The task given to the writers (20 odd-numbered messages not used in the design) |
+| `roundtrip/results.json` | Written messages, the readers' back-translations, and blind grading (Z1 Haiku low effort, Z2 careful (tool-assisted) encoder, Z3 default model) |
+| `roundtrip/validity.json` | Share of out-of-dictionary words in the written messages, and token ratios per tokenizer |
+| `roundtrip/first_run_invalid.json` | The first run, marked invalid. The Haiku writer answered a question that was passed along with the task instead of doing the task |
 
-작성자에게 준 사양은 `../tokenization/verify/a2_spec_A_conservative.txt`다.
+The spec given to the writers is `../tokenization/verify/a2_spec_A_conservative.txt`.

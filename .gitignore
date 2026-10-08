@@ -2,9 +2,9 @@ __pycache__/
 *.pyc
 .venv/
 experiments/tokenization/.cache/
-# inventory.py가 68초 만에 다시 만드는 4.4MB 데이터
+# 4.4MB of data that inventory.py rebuilds in 68 seconds
 experiments/tokenization/results/inventory.json
-# 검증 스크립트가 다시 만드는 큰 캐시 (토크나이저 어휘 스캔 결과)
+# Large caches that the verification scripts rebuild (tokenizer vocabulary scan results)
 experiments/tokenization/verify/*cache*.json
 experiments/tokenization/verify/a2_pool.json
 experiments/tokenization/verify/a2_forms.json

@@ -1,31 +1,31 @@
-# 결정 기록
+# Decision log
 
-확정된 결정만 기록한다. 제안 상태의 선택지는 각 설계 문서에 있다.
+Only final decisions are recorded here. Options still at the proposal stage are in each design document.
 
-| ID | 날짜 | 결정 | 근거·결과 |
+| ID | Date | Decision | Rationale / outcome |
 |---|---|---|---|
-| D-001 | 2026-10-07 | 라이선스는 MIT | 문서와 코드 모두에 쓰기 쉬운 가장 단순한 허용형 라이선스 |
-| D-002 | 2026-10-07 | 목적은 **AI 간 통신, 토큰 절약, 순수 실험** | 토큰 효율(G4)의 우선순위가 올라간다. 사양 비용을 넘어서는 절약이 나와야 의미가 있다 |
-| D-003 | 2026-10-07 | AI는 **사양을 컨텍스트로 받아** 읽고 쓴다 (in-context learning) | 사양 크기 자체가 비용이므로 작게 유지해야 한다. 파인튜닝은 나중의 선택지로 남긴다 |
-| D-004 | 2026-10-07 | 사람 판독 저항은 **사양 없이 의미를 추측할 수 없는 정도**면 충분하다 | L6 난독화 계층은 만들지 않는다. 공백처럼 사람에게 경계가 보이는 표기도 허용된다 |
-| D-005 | 2026-10-08 | 토큰 절약 목표는 **일반 영어보다 싸면 충분**하다. 실험과 명확성을 중심으로 계속한다 | 2단계에서 어떤 설계도 처음 보는 메시지에서 전보체 영어를 이기지 못했다 ([02 §3.3](02-tokens-and-forms.md#33-반박-시도-전보체-영어를-이길-수-있는가)) |
-| D-006 | 2026-10-08 | 현행 Claude 토크나이저로 따로 재지 않는다 | Claude 관련 토큰 수치는 계속 claude_legacy(Claude 2 시절) 대용 값이며, 한계로 명시한다 |
-| D-007 | 2026-10-08 | 2단계 설계 변경을 채택한다 | L0 소문자 a–z + 단어 사이 공백 하나. L1 단어 하나 = 형태소 하나, 형태는 토크나이저 어휘 스캔과 선정 규칙으로 고른다. L2 분석어. L4 어순으로 역할 표시. L5 기본값 생략 ([02 §5](02-tokens-and-forms.md#5-설계-변경-제안)) |
-| D-008 | 2026-10-08 | **실험을 여기서 마친다** | 결과는 [README](../README.md)와 [03. 별도 언어의 득실](03-tradeoffs.md)에 정리했다 |
+| D-001 | 2026-10-07 | The license is MIT | The simplest permissive license, easy to use for both documents and code |
+| D-002 | 2026-10-07 | The purpose is **AI-to-AI communication, token savings, and a pure experiment** | Token efficiency (G4) moves up in priority. Savings only matter if they exceed the spec cost |
+| D-003 | 2026-10-07 | AIs read and write the language **by receiving the spec in context** (in-context learning) | The spec size is itself a cost, so the spec must stay small. Fine-tuning remains a later option |
+| D-004 | 2026-10-07 | Human read resistance is sufficient if **the meaning cannot be guessed without the spec** | We do not build the L6 obfuscation layer. Spellings that show boundaries to humans, such as spaces, are also allowed |
+| D-005 | 2026-10-08 | For token savings, **being cheaper than plain English is enough**. Continue with a focus on experimentation and clarity | In stage 2, no design beat terse English on held-out messages ([02 §3.3](02-tokens-and-forms.md#33-rebuttal-attempts-can-anything-beat-terse-english)) |
+| D-006 | 2026-10-08 | Do not measure separately with the current Claude tokenizer | Claude-related token figures remain claude_legacy (Claude 2-era) proxy values, and this is stated as a limitation |
+| D-007 | 2026-10-08 | Adopt the stage-2 design changes | L0: lowercase a–z + one space between words. L1: one word = one morpheme; forms are chosen by a tokenizer vocabulary scan and selection rules. L2: analytic. L4: roles marked by word order. L5: defaults omitted ([02 §5](02-tokens-and-forms.md#5-proposed-design-changes)) |
+| D-008 | 2026-10-08 | **End the experiment here** | The results are summarized in the [README](../README.md) and [03. What a separate language changes](03-tradeoffs.md) |
 
-## D-002 ~ D-004에 따른 목표 우선순위 조정
+## Goal priorities adjusted after D-002 to D-004
 
-| 순위 | 이전 | 조정 후 |
+| Rank | Before | After |
 |---|---|---|
-| 1 | G1 AI 해독성 | G1 AI 해독성 |
-| 2 | G2 사람 판독 저항성 | **G4 토큰 효율** |
-| 3 | G3 비모호성 | G3 비모호성 |
-| 4 | G4 토큰 효율 | G5 표현력 |
-| 5 | G5 표현력 | G2 사람 판독 저항성 (사양 없이 못 읽으면 충족) |
+| 1 | G1 AI decodability | G1 AI decodability |
+| 2 | G2 Human read resistance | **G4 Token efficiency** |
+| 3 | G3 Unambiguity | G3 Unambiguity |
+| 4 | G4 Token efficiency | G5 Expressiveness |
+| 5 | G5 Expressiveness | G2 Human read resistance (met if the language cannot be read without the spec) |
 
-토큰 절약을 평가할 때는 자연 영어뿐 아니라 **전보체 영어**(관사·조동사를 뺀 압축 영어로, 사양 없이도 LLM이 읽는다)와 **JSON**도 비교 기준선으로 쓴다.
-사양 없이 쓸 수 있는 가장 강한 경쟁자를 이겨야 이 언어를 쓸 이유가 생기기 때문이다. (이 기준은 D-005에서 "일반 영어보다 싸면 충분"으로 완화했다.)
+When we evaluate token savings, we use not only natural English but also **terse English** (compressed English without articles and auxiliary verbs, which LLMs read without a spec) and **JSON** as comparison baselines.
+The reason is that this language is only worth using if it beats the strongest competitor that works without a spec. (D-005 relaxed this criterion to "being cheaper than plain English is enough".)
 
-## D-005에 따른 토큰 효율 목표
+## Token efficiency target after D-005
 
-G4(토큰 효율)의 합격선은 **같은 내용의 일반 영어보다 적은 토큰**이다. 전보체 영어는 계속 비교 기준선으로 재지만, 이기는 것을 목표로 두지 않는다.
+The pass mark for G4 (token efficiency) is **fewer tokens than plain English with the same content**. We still measure terse English as a comparison baseline, but beating it is not a goal.

@@ -1,35 +1,35 @@
-"""E3 기준선: AI끼리 주고받는 메시지를 기존 표기로 적으면 토큰이 몇 개인가.
+"""E3 baseline: how many tokens AI-to-AI messages take when written in existing notations.
 
-`corpus/ai_messages.json` 의 메시지 40개를 네 가지 표기로 적은 것을 7개 토크나이저로 센다.
-이 언어가 이겨야 할 상대(기준선)의 토큰 비용을 정하는 실험이다.
+The 40 messages in `corpus/ai_messages.json`, each written in four variants, are counted with 7 tokenizers.
+This experiment sets the token cost of the opponents (baselines) that this language has to beat.
 
-표기 (같은 정보를 담는다)
-- en       : 유능한 에이전트가 쓸 법한 간결한 영어. 비율의 기준(분모)이다.
-- en_terse : 사양 없이도 다른 LLM이 알아듣는 전보체 영어 (관사·계사 생략, 약어, 기호).
-             사양이 필요 없는 가장 강한 경쟁자다. 약어는 토큰을 실제로 줄일 때만 썼다.
-- ko       : 자연스러운 한국어
-- json     : 개발자가 에이전트 사이에 넘길 법한 압축 JSON (짧은 키, 공백 없음)
-- oracle_min (파생) : 메시지마다 en, en_terse, json 가운데 가장 적은 토큰 수. 사양 없는 표기의 사후 최선값이다.
+Variants (each carries the same information)
+- en       : concise English that a capable agent would write. The reference (denominator) for ratios.
+- en_terse : terse English that another LLM understands without a spec (articles and copulas dropped, abbreviations, symbols).
+             The strongest competitor that needs no spec. Abbreviations were used only where they actually cut tokens.
+- ko       : natural Korean
+- json     : compact JSON that a developer might pass between agents (short keys, no whitespace)
+- oracle_min (derived) : for each message, the lowest token count among en, en_terse and json. The after-the-fact best of the notations that need no spec.
 
-메시지는 따로따로 보낸다고 보고 메시지마다 세어 더한다. 채팅 템플릿이나 메시지 머리말 같은 부가 토큰은 세지 않는다.
+Each message is treated as sent on its own: tokens are counted per message and summed. Extra tokens such as chat templates or message headers are not counted.
 
-탈출 대상 판정 (en 기준 휴리스틱, 이 언어가 원문 철자 그대로 인용해야 할 것)
-- url        : http(s):// 로 시작하는 문자열
-- number     : 숫자가 있는 단어
-- identifier : 글자가 섞인 단어 안에 / _ . 가 있거나, 괄호 () 로 끝나거나, camelCase 인 것 (파일명, 경로, 코드 식별자).
-               숫자뿐인 버전(3.11)은 number 로만 센다.
-- proper     : 문장 첫머리가 아닌 곳의 대문자 시작 단어 (I 제외). 전부 대문자인 약어(SQL, API, HTTP, GPU, ID)는
-               이 언어의 일반 어휘로 보고 세지 않는다.
+Escape detection (heuristic on en: things this language would have to quote verbatim in their original spelling)
+- url        : strings that start with http(s)://
+- number     : words that contain a digit
+- identifier : words with letters that contain / _ . inside, end in parentheses (), or are camelCase (file names, paths, code identifiers).
+               A version made only of digits (3.11) counts only as number.
+- proper     : words that start with a capital letter and are not at the start of a sentence (except I). All-caps abbreviations
+               (SQL, API, HTTP, GPU, ID) are treated as ordinary vocabulary of this language and are not counted.
 
-통계
-- median, p90 : 메시지 40개의 분포. p90 은 statistics.quantiles(n=10, method="inclusive") 의 9번째 값이다.
-- ratio_total : 표기 합계 / en 합계
-- ratio_msg   : 메시지마다 (표기 / en) 을 구한 뒤의 분포 (median, p90)
+Statistics
+- median, p90 : distribution over the 40 messages. p90 is the 9th value of statistics.quantiles(n=10, method="inclusive").
+- ratio_total : variant total / en total
+- ratio_msg   : distribution (median, p90) of (variant / en) computed for each message
 
-무작위 요소가 없으므로 결과는 항상 같다.
+There is no randomness, so the results are always the same.
 
-사용법
-    python3 baseline.py      # results/baseline.json, results/baseline.md 생성
+Usage
+    python3 baseline.py      # writes results/baseline.json and results/baseline.md
 """
 
 from __future__ import annotations
@@ -46,7 +46,7 @@ HERE = Path(__file__).resolve().parent
 CORPUS = HERE / "corpus" / "ai_messages.json"
 OUT_JSON = HERE / "results" / "baseline.json"
 OUT_MD = HERE / "results" / "baseline.md"
-ALIGNMENT_JSON = HERE / "results" / "alignment.json"  # E2 결과 (있으면 형태소 예산 계산에 쓴다)
+ALIGNMENT_JSON = HERE / "results" / "alignment.json"  # E2 result (used for the morpheme budget if present)
 
 VARIANTS = ["en", "en_terse", "ko", "json"]
 DERIVED = ["oracle_min"]
@@ -63,25 +63,25 @@ _WORD = re.compile(r"\S+")
 _SENT_END = re.compile(r"[.?!](?=\s|$)")
 
 
-# ---------------------------------------------------------------- 코퍼스
+# ---------------------------------------------------------------- corpus
 
 def load_corpus() -> list[dict]:
-    """코퍼스를 읽고 형식을 검사한다."""
+    """Read the corpus and check its format."""
     msgs = json.loads(CORPUS.read_text(encoding="utf-8"))
-    assert isinstance(msgs, list) and len(msgs) == N_EXPECTED, f"메시지 {N_EXPECTED}개가 필요하다: {len(msgs)}"
+    assert isinstance(msgs, list) and len(msgs) == N_EXPECTED, f"need {N_EXPECTED} messages: {len(msgs)}"
     ids = set()
     for m in msgs:
-        assert list(m.keys()) == FIELDS, f"{m.get('id')}: 필드가 {FIELDS} 가 아니다"
-        assert m["id"] not in ids, f"id 중복: {m['id']}"
+        assert list(m.keys()) == FIELDS, f"{m.get('id')}: fields are not {FIELDS}"
+        assert m["id"] not in ids, f"duplicate id: {m['id']}"
         ids.add(m["id"])
-        assert m["category"] in CATEGORIES, f"{m['id']}: 모르는 범주 {m['category']}"
+        assert m["category"] in CATEGORIES, f"{m['id']}: unknown category {m['category']}"
         compact = json.dumps(json.loads(m["json"]), separators=(",", ":"), ensure_ascii=False)
-        assert compact == m["json"], f"{m['id']}: json 필드가 압축 JSON 이 아니다"
+        assert compact == m["json"], f"{m['id']}: json field is not compact JSON"
     return msgs
 
 
 def escape_kinds(text: str) -> list[str]:
-    """en 문장에서 탈출(원문 인용)이 필요한 요소의 종류를 찾는다. 모듈 설명의 휴리스틱."""
+    """Find the kinds of elements in an en sentence that need escaping (verbatim quoting). Uses the heuristic in the module docstring."""
     kinds = set()
     if _URL.search(text):
         kinds.add("url")
@@ -106,7 +106,7 @@ def n_sentences(text: str) -> int:
     return max(1, len(_SENT_END.findall(text)))
 
 
-# ---------------------------------------------------------------- 통계
+# ---------------------------------------------------------------- statistics
 
 def p90(xs: list[float]) -> float:
     return statistics.quantiles(xs, n=10, method="inclusive")[-1]
@@ -118,7 +118,7 @@ def dist(xs: list[float]) -> dict:
 
 
 def summarize(counts: dict[str, dict[str, int]], ids: list[str], chars: dict[str, dict[str, int]]) -> dict:
-    """한 토크나이저의 표기별 요약. counts[variant][id] = 토큰 수."""
+    """Per-variant summary for one tokenizer. counts[variant][id] = token count."""
     out = {}
     ref_total = sum(counts[REF][i] for i in ids)
     for v in ALL_VARIANTS:
@@ -144,7 +144,7 @@ def subset_totals(counts: dict[str, dict[str, int]], ids: list[str]) -> dict:
 
 
 def alignment_tpm() -> dict[str, float] | None:
-    """E2 의 W2_spaced + token_picked 토큰/형태소 값을 읽는다. 없으면 None."""
+    """Read the E2 tokens/morpheme values for W2_spaced + token_picked. None if they are not available."""
     if not ALIGNMENT_JSON.exists():
         return None
     try:
@@ -155,7 +155,7 @@ def alignment_tpm() -> dict[str, float] | None:
         return None
 
 
-# ---------------------------------------------------------------- 측정
+# ---------------------------------------------------------------- measurement
 
 def measure() -> dict:
     t0 = time.time()
@@ -229,7 +229,7 @@ def measure() -> dict:
     }
 
 
-# ---------------------------------------------------------------- 보고서
+# ---------------------------------------------------------------- report
 
 def _f(x: float, d: int = 2) -> str:
     return f"{x:.{d}f}"
@@ -245,120 +245,120 @@ def write_md(res: dict, msgs: list[dict]) -> str:
     L: list[str] = []
     w = L.append
 
-    w("# E3 기준선: AI 메시지 코퍼스의 토큰 비용")
+    w("# E3 baseline: token cost of the AI message corpus")
     w("")
-    w("`baseline.py` 가 만든 요약이다. 숫자는 모두 이 스크립트로 잰 값이며, 원자료는 `baseline.json` 에 있다. "
-      f"코퍼스는 `{res['meta']['corpus']}` (메시지 {res['meta']['n_messages']}개)다.")
+    w("This summary was generated by `baseline.py`. Every number was measured by this script, and the raw data is in `baseline.json`. "
+      f"The corpus is `{res['meta']['corpus']}` ({res['meta']['n_messages']} messages).")
     w("")
 
-    # 0. 요약
-    w("## 0. 요약")
+    # 0. Summary
+    w("## 0. Summary")
     w("")
     items: list[str] = []
     en_tot = {n: pt[n]["en"]["total"] for n in names}
     lo_n, hi_n = min(en_tot, key=en_tot.get), max(en_tot, key=en_tot.get)
-    items.append(f"**en 기준선**: 메시지 40개 합계 {en_tot[lo_n]} ({lo_n}) ~ {en_tot[hi_n]} ({hi_n}) 토큰, "
-                 f"o200k 기준 메시지당 평균 {_f(pt['o200k']['en']['mean'], 1)}, median {_f(pt['o200k']['en']['median'], 1)}, "
-                 f"p90 {_f(pt['o200k']['en']['p90'], 1)} 토큰.")
-    for v, label in [("en_terse", "en_terse (전보체, 사양 없는 최강 경쟁자)"), ("ko", "ko (한국어)"), ("json", "json (압축 JSON)")]:
+    items.append(f"**en baseline**: the 40 messages total {en_tot[lo_n]} ({lo_n}) to {en_tot[hi_n]} ({hi_n}) tokens; "
+                 f"on o200k, mean {_f(pt['o200k']['en']['mean'], 1)}, median {_f(pt['o200k']['en']['median'], 1)}, "
+                 f"p90 {_f(pt['o200k']['en']['p90'], 1)} tokens per message.")
+    for v, label in [("en_terse", "en_terse (terse English, the strongest competitor without a spec)"), ("ko", "ko (Korean)"), ("json", "json (compact JSON)")]:
         c = cross[v]
-        items.append(f"**{label}**: en 대비 합계 비율 {_f(c['ratio_total_min'])} ({c['argmin']}) ~ {_f(c['ratio_total_max'])} "
-                     f"({c['argmax']}), 7개 평균 {_f(c['ratio_total_mean'])}. o200k {_f(pt['o200k'][v]['ratio_total'])}, "
+        items.append(f"**{label}**: total ratio vs en {_f(c['ratio_total_min'])} ({c['argmin']}) to {_f(c['ratio_total_max'])} "
+                     f"({c['argmax']}), 7-tokenizer mean {_f(c['ratio_total_mean'])}. o200k {_f(pt['o200k'][v]['ratio_total'])}, "
                      f"claude_legacy {_f(pt['claude_legacy'][v]['ratio_total'])}. "
-                     f"en 보다 적은 메시지 비율 (o200k) {pt['o200k'][v]['share_below_en'] * 100:.0f}%.")
+                     f"Share of messages with fewer tokens than en (o200k) {pt['o200k'][v]['share_below_en'] * 100:.0f}%.")
     c = cross["oracle_min"]
-    items.append(f"**oracle_min** (메시지마다 en / en_terse / json 중 최소): en 대비 {_f(c['ratio_total_min'])} ~ "
-                 f"{_f(c['ratio_total_max'])}, 평균 {_f(c['ratio_total_mean'])}. "
-                 "최소값을 낸 표기 횟수 (메시지 × 토크나이저 280칸, 동률은 모두 셈): "
+    items.append(f"**oracle_min** (per message, the minimum of en / en_terse / json): ratio vs en {_f(c['ratio_total_min'])}–"
+                 f"{_f(c['ratio_total_max'])}, mean {_f(c['ratio_total_mean'])}. "
+                 "Number of times each variant gave the minimum (280 cells of message × tokenizer; ties all counted): "
                  + ", ".join(f"{v} {k}" for v, k in res["oracle_pick_counts"].items()) + ".")
     e_with = statistics.mean(res["by_escape"][n]["with_escape"]["ratio_total"]["en_terse"] for n in names)
     e_wo = statistics.mean(res["by_escape"][n]["without_escape"]["ratio_total"]["en_terse"] for n in names)
     j_with = statistics.mean(res["by_escape"][n]["with_escape"]["ratio_total"]["json"] for n in names)
     j_wo = statistics.mean(res["by_escape"][n]["without_escape"]["ratio_total"]["json"] for n in names)
     n_esc = len(cs["escape_ids"])
-    items.append(f"**탈출 대상(숫자, 경로, 식별자, URL, 고유명사)이 있는 메시지 {n_esc}개 vs 없는 메시지 {40 - n_esc}개** "
-                 f"(7개 평균 en 대비 비율): en_terse {_f(e_with)} vs {_f(e_wo)}, json {_f(j_with)} vs {_f(j_wo)}. "
-                 f"o200k 메시지당 평균 en 토큰 {_f(res['by_escape']['o200k']['with_escape']['mean']['en'], 1)} vs "
+    items.append(f"**{n_esc} messages with escape targets (numbers, paths, identifiers, URLs, proper nouns) vs {40 - n_esc} without** "
+                 f"(ratio vs en, 7-tokenizer mean): en_terse {_f(e_with)} vs {_f(e_wo)}, json {_f(j_with)} vs {_f(j_wo)}. "
+                 f"Mean en tokens per message on o200k {_f(res['by_escape']['o200k']['with_escape']['mean']['en'], 1)} vs "
                  f"{_f(res['by_escape']['o200k']['without_escape']['mean']['en'], 1)}.")
-    goal = (f"**이 언어의 목표선**: 사양 없이 읽히는 en_terse 를 이기려면 메시지당 평균 토큰이 "
+    goal = (f"**Target line for this language**: to beat en_terse, which is readable without a spec, the mean tokens per message must be below "
             f"o200k {_f(pt['o200k']['en_terse']['mean'], 1)}, claude_legacy {_f(pt['claude_legacy']['en_terse']['mean'], 1)} "
-            f"보다 적어야 한다 (en 은 {_f(pt['o200k']['en']['mean'], 1)} / {_f(pt['claude_legacy']['en']['mean'], 1)}).")
+            f"(en is {_f(pt['o200k']['en']['mean'], 1)} / {_f(pt['claude_legacy']['en']['mean'], 1)}).")
     budget = res["morpheme_budget"]
     if budget and "o200k" in budget and "claude_legacy" in budget:
-        goal += (f" E2 의 W2_spaced + token_picked 토큰/형태소로 환산하면 메시지당 형태소 "
-                 f"o200k {_f(budget['o200k']['morphemes_per_msg_to_match_en_terse'], 1)}개, "
-                 f"claude_legacy {_f(budget['claude_legacy']['morphemes_per_msg_to_match_en_terse'], 1)}개 미만이다 (7절).")
-    goal += " 사양(수천 토큰)을 컨텍스트에 넣는 비용은 이 비교에 들어 있지 않다."
+        goal += (f" Converted with the E2 tokens/morpheme for W2_spaced + token_picked, that means fewer than "
+                 f"o200k {_f(budget['o200k']['morphemes_per_msg_to_match_en_terse'], 1)}, "
+                 f"claude_legacy {_f(budget['claude_legacy']['morphemes_per_msg_to_match_en_terse'], 1)} morphemes per message (section 7).")
+    goal += " The cost of putting the spec (thousands of tokens) in the context is not included in this comparison."
     items.append(goal)
     for k, it in enumerate(items, 1):
         w(f"{k}. {it}")
     w("")
 
-    # 1. 코퍼스
-    w("## 1. 코퍼스")
+    # 1. Corpus
+    w("## 1. Corpus")
     w("")
-    w("범주별 메시지 수: " + ", ".join(f"{c} {k}" for c, k in cs["categories"].items()) + ".")
+    w("Messages per category: " + ", ".join(f"{c} {k}" for c, k in cs["categories"].items()) + ".")
     w("")
     hist = cs["sentences_en"]["histogram"]
-    w("en 문장 수 분포: " + ", ".join(f"{k}문장 {v}개" for k, v in hist.items())
-      + f" (median {_f(cs['sentences_en']['median'], 1)}, 평균 {_f(cs['sentences_en']['mean'], 2)}). "
-      "문장은 공백이나 끝 앞의 . ? ! 로 센다.")
+    w("Sentences per en message (sentences: messages): " + ", ".join(f"{k}: {v}" for k, v in hist.items())
+      + f" (median {_f(cs['sentences_en']['median'], 1)}, mean {_f(cs['sentences_en']['mean'], 2)}). "
+      "Sentences are counted as . ? ! followed by a space or the end of the text.")
     w("")
-    w("| 표기 | 글자 합계 | 메시지당 median | p90 | 최소 | 최대 |")
+    w("| Variant | Total chars | Median per message | p90 | Min | Max |")
     w("|---|---:|---:|---:|---:|---:|")
     for v in VARIANTS:
         d = cs["chars"][v]
         w(f"| {v} | {d['total']} | {_f(d['median'], 1)} | {_f(d['p90'], 1)} | {d['min']} | {d['max']} |")
     w("")
-    w("작성 방침")
+    w("Writing guidelines")
     w("")
-    w("- 네 표기는 같은 정보를 담는다. 작은 수는 en 에서 낱말(five)로, en_terse 와 json 에서는 숫자로 적었다.")
-    w("- en_terse 는 관사·계사를 빼고 `->`, `=`, `+`, `~`, `;` 같은 기호를 쓴다. 약어는 토크나이저로 재 보고 토큰을 늘리지 않을 때만 남겼다 "
-      "(예: `w/`, `Ctx`, `2nd`, `O(n^2)` 는 `with`, `Context`, `second`, `quadratic` 보다 토큰이 많아 쓰지 않았다).")
-    w("- json 은 짧은 키, 공백 없는 직렬화(`separators=(',', ':')`), 값은 대부분 snake_case 다. 고유명사와 URL 은 원문 그대로 둔다.")
-    w("- ko 는 자연스러운 한국어다. 외국 인명·지명은 한글로 옮겼고, 경로·식별자·URL 은 원문 그대로 둔다.")
-    w("- 실존 서비스 URL 은 Python 문서 하나뿐이고, 나머지 이름(인물, 저장소 example-org/tilemap)은 가상이다.")
+    w("- The four variants carry the same information. Small numbers are written as words (five) in en and as digits in en_terse and json.")
+    w("- en_terse drops articles and copulas and uses symbols such as `->`, `=`, `+`, `~`, `;`. Abbreviations were kept only when measuring them with the tokenizers showed they did not add tokens "
+      "(for example, `w/`, `Ctx`, `2nd`, `O(n^2)` take more tokens than `with`, `Context`, `second`, `quadratic`, so they were not used).")
+    w("- json uses short keys and serialization without whitespace (`separators=(',', ':')`), and most values are snake_case. Proper nouns and URLs are kept as in the original.")
+    w("- ko is natural Korean. Foreign names of people and places are transliterated into Hangul; paths, identifiers and URLs are kept as in the original.")
+    w("- The only real service URL is the Python documentation. The other names (people, the repository example-org/tilemap) are fictional.")
     w("")
-    w(f"탈출 대상이 있는 메시지 ({n_esc}/40, en 기준 휴리스틱, 종류별 메시지 수: "
+    w(f"Messages with escape targets ({n_esc}/40, heuristic on en; messages per kind: "
       + ", ".join(f"{k} {v}" for k, v in cs["escape_kind_counts"].items()) + ")")
     w("")
-    w("| id | 범주 | 종류 |")
+    w("| id | Category | Kinds |")
     w("|---|---|---|")
     cat_of = {m["id"]: m["category"] for m in msgs}
     for i, k in cs["escape_kinds"].items():
         w(f"| {i} | {cat_of[i]} | {', '.join(k)} |")
     w("")
 
-    # 2. 합계와 비율
-    w("## 2. 토크나이저별 합계와 en 대비 비율")
+    # 2. Totals and ratios
+    w("## 2. Totals by tokenizer and ratio vs en")
     w("")
-    w("셀 = 메시지 40개 토큰 합계 (en 합계 대비 비율). chars/token 은 en 기준이다.")
+    w("Cell = total tokens over the 40 messages (ratio vs the en total). chars/token is for en.")
     w("")
-    w("| 토크나이저 | en | en_terse | ko | json | oracle_min | en chars/token |")
+    w("| Tokenizer | en | en_terse | ko | json | oracle_min | en chars/token |")
     w("|---|---:|---:|---:|---:|---:|---:|")
     for n in names:
         cells = [str(pt[n]["en"]["total"])] + [f"{pt[n][v]['total']} ({_f(pt[n][v]['ratio_total'])})" for v in ALL_VARIANTS[1:]]
         w(f"| {n} | " + " | ".join(cells) + f" | {_f(pt[n]['en']['chars_per_token'])} |")
-    w("| **7개 평균 비율** | 1.00 | " + " | ".join(_f(cross[v]["ratio_total_mean"]) for v in ALL_VARIANTS[1:]) + " | |")
+    w("| **7-tokenizer mean ratio** | 1.00 | " + " | ".join(_f(cross[v]["ratio_total_mean"]) for v in ALL_VARIANTS[1:]) + " | |")
     w("")
 
-    # 3. 메시지당 분포
-    w("## 3. 메시지당 토큰 수 분포")
+    # 3. Distribution per message
+    w("## 3. Distribution of tokens per message")
     w("")
-    w("셀 = median / p90 (메시지 40개).")
+    w("Cell = median / p90 (40 messages).")
     w("")
-    w("| 토크나이저 | " + " | ".join(ALL_VARIANTS) + " |")
+    w("| Tokenizer | " + " | ".join(ALL_VARIANTS) + " |")
     w("|---|" + "---:|" * len(ALL_VARIANTS))
     for n in names:
         w(f"| {n} | " + " | ".join(f"{_f(pt[n][v]['median'], 1)} / {_f(pt[n][v]['p90'], 1)}" for v in ALL_VARIANTS) + " |")
     w("")
 
-    # 4. 메시지별 비율 분포
-    w("## 4. 메시지별 en 대비 비율의 분포")
+    # 4. Distribution of per-message ratios
+    w("## 4. Distribution of per-message ratios vs en")
     w("")
-    w("셀 = 메시지마다 구한 (표기 / en) 의 median / p90, 괄호는 en 보다 토큰이 적은 메시지 비율.")
+    w("Cell = median / p90 of (variant / en) computed for each message; in parentheses, the share of messages with fewer tokens than en.")
     w("")
-    w("| 토크나이저 | en_terse | ko | json | oracle_min |")
+    w("| Tokenizer | en_terse | ko | json | oracle_min |")
     w("|---|---:|---:|---:|---:|")
     for n in names:
         w(f"| {n} | " + " | ".join(
@@ -366,12 +366,12 @@ def write_md(res: dict, msgs: list[dict]) -> str:
             for v in ALL_VARIANTS[1:]) + " |")
     w("")
 
-    # 5. 범주별
-    w("## 5. 범주별")
+    # 5. By category
+    w("## 5. By category")
     w("")
-    w("en 은 o200k 메시지당 평균 토큰, 나머지는 범주 안 합계 비율(표기 / en)의 7개 토크나이저 평균이다.")
+    w("en is the mean tokens per message on o200k. The other columns are the mean over the 7 tokenizers of the total ratio within the category (variant / en).")
     w("")
-    w("| 범주 | n | en (o200k 평균) | en_terse | ko | json | oracle_min |")
+    w("| Category | n | en (o200k mean) | en_terse | ko | json | oracle_min |")
     w("|---|---:|---:|---:|---:|---:|---:|")
     for c in CATEGORIES:
         bc = {n: res["by_category"][n][c] for n in names}
@@ -379,31 +379,31 @@ def write_md(res: dict, msgs: list[dict]) -> str:
           + " | ".join(_f(statistics.mean(bc[n]["ratio_total"][v] for n in names)) for v in ALL_VARIANTS[1:]) + " |")
     w("")
 
-    # 6. 탈출 대상
-    w("## 6. 탈출 대상 포함 여부별")
+    # 6. Escape targets
+    w("## 6. With and without escape targets")
     w("")
-    w("셀 = 메시지당 평균 토큰 (en 대비 합계 비율).")
+    w("Cell = mean tokens per message (total ratio vs en).")
     w("")
-    w("| 토크나이저 | 부분집합 | n | en | en_terse | ko | json |")
+    w("| Tokenizer | Subset | n | en | en_terse | ko | json |")
     w("|---|---|---:|---:|---:|---:|---:|")
     for n in names:
-        for key, label in [("with_escape", "탈출 있음"), ("without_escape", "탈출 없음")]:
+        for key, label in [("with_escape", "with escapes"), ("without_escape", "without escapes")]:
             b = res["by_escape"][n][key]
             w(f"| {n} | {label} | {b['n']} | {_f(b['mean']['en'], 1)} | "
               + " | ".join(f"{_f(b['mean'][v], 1)} ({_f(b['ratio_total'][v])})" for v in ["en_terse", "ko", "json"]) + " |")
     w("")
 
-    # 7. 목표선
-    w("## 7. 이 언어의 목표선")
+    # 7. Target line
+    w("## 7. Target line for this language")
     w("")
-    w("이 언어가 같은 메시지를 아래 토큰 수보다 적게 써야 각 기준선을 이긴다 (메시지당 평균).")
+    w("To beat each baseline, this language must write the same messages in fewer tokens than shown below (mean per message).")
     w("")
     budget = res["morpheme_budget"]
     if budget:
-        w("E2(`alignment.json`)의 W2_spaced + token_picked 토큰/형태소 값으로 나누면 메시지당 쓸 수 있는 형태소 수가 된다. "
-          "E2 값은 이 스크립트를 실행한 시점의 `alignment.json` 에서 읽었다.")
+        w("Dividing by the E2 (`alignment.json`) tokens/morpheme value for W2_spaced + token_picked gives the number of morphemes available per message. "
+          "The E2 values were read from `alignment.json` as it was when this script ran.")
         w("")
-        w("| 토크나이저 | en | en_terse | oracle_min | E2 토큰/형태소 | 형태소 예산 (= en) | 형태소 예산 (= en_terse) |")
+        w("| Tokenizer | en | en_terse | oracle_min | E2 tokens/morpheme | Morpheme budget (= en) | Morpheme budget (= en_terse) |")
         w("|---|---:|---:|---:|---:|---:|---:|")
         for n in names:
             b = budget.get(n)
@@ -412,33 +412,33 @@ def write_md(res: dict, msgs: list[dict]) -> str:
             w(f"| {n} | {_f(pt[n]['en']['mean'], 1)} | {_f(pt[n]['en_terse']['mean'], 1)} | "
               f"{_f(pt[n]['oracle_min']['mean'], 1)} | {tail} |")
     else:
-        w("(`alignment.json` 이 없어 형태소 예산은 계산하지 않았다.)")
+        w("(`alignment.json` was not found, so the morpheme budget was not computed.)")
         w("")
-        w("| 토크나이저 | en | en_terse | oracle_min |")
+        w("| Tokenizer | en | en_terse | oracle_min |")
         w("|---|---:|---:|---:|")
         for n in names:
             w(f"| {n} | {_f(pt[n]['en']['mean'], 1)} | {_f(pt[n]['en_terse']['mean'], 1)} | {_f(pt[n]['oracle_min']['mean'], 1)} |")
     w("")
 
-    # 8. 한계
-    w("## 8. 한계")
+    # 8. Limitations
+    w("## 8. Limitations")
     w("")
-    w("- 코퍼스는 한 모델이 한 번에 쓴 40개 메시지다. 문체가 한쪽으로 치우쳤을 수 있고, 표본이 작아 비율의 소수 둘째 자리는 믿기 어렵다.")
-    w("- 네 표기가 정말 같은 정보를 담는지는 작성자가 맞췄을 뿐 사람이나 다른 모델이 검증하지 않았다. "
-      "en_terse 가 사양 없이 정확히 이해되는지도 모델 API 없이 확인할 수 없어 재지 않았다.")
-    w("- 현행 Claude 토크나이저는 공개되지 않았다. claude_legacy 는 대용 지표다.")
-    w("- en_terse 의 약어 선택은 이 토크나이저들로 재 보며 골랐으므로 경쟁자에게 유리한 쪽으로 치우쳐 있다 (의도한 것이다).")
-    w("- json 은 짧은 키와 snake_case 값을 쓴 비교적 압축된 형태다. 실제 에이전트 사이 JSON 은 키가 더 길거나 공백이 들어가 더 비쌀 수 있다.")
-    w("- 탈출 대상 판정은 휴리스틱이다. 전부 대문자인 약어는 세지 않는다.")
-    w("- 채팅 템플릿, 역할 표지 같은 메시지 부가 토큰과 사양(컨텍스트) 비용은 세지 않았다.")
+    w("- The corpus is 40 messages written by one model in one pass. The style may be skewed, and the sample is small, so the second decimal place of the ratios is not reliable.")
+    w("- The author aligned the four variants to carry the same information, but no person or other model verified this. "
+      "Whether en_terse is understood correctly without a spec could not be checked without a model API, so it was not measured.")
+    w("- The current Claude tokenizer is not public. claude_legacy is a proxy.")
+    w("- The abbreviations in en_terse were chosen by measuring with these tokenizers, so they are biased in the competitor's favor (on purpose).")
+    w("- json is a fairly compact form with short keys and snake_case values. Real JSON between agents may cost more because of longer keys or whitespace.")
+    w("- Escape detection is a heuristic. All-caps abbreviations are not counted.")
+    w("- Extra message tokens such as chat templates and role markers, and the cost of the spec (context), were not counted.")
     w("")
 
-    # 부록
-    w("## 부록: 메시지별 토큰 수")
+    # Appendix
+    w("## Appendix: tokens per message")
     w("")
-    w("셀 = o200k / claude_legacy.")
+    w("Cell = o200k / claude_legacy.")
     w("")
-    w("| id | 범주 | en | en_terse | ko | json |")
+    w("| id | Category | en | en_terse | ko | json |")
     w("|---|---|---:|---:|---:|---:|")
     pm = res["per_message"]
     for m in msgs:

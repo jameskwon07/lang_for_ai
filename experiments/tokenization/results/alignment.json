@@ -5,22 +5,22 @@
   "n_draws": 5,
   "zipf_s": 1.0,
   "tokenizers": {
-   "o200k": "OpenAI GPT-4o / o-series / GPT-5 계열 (200K)",
+   "o200k": "OpenAI GPT-4o / o-series / GPT-5 family (200K)",
    "cl100k": "OpenAI GPT-4 / GPT-3.5 (100K)",
-   "claude_legacy": "Anthropic Claude 2 시절 토크나이저 (65K, 현행 Claude의 대용)",
+   "claude_legacy": "Anthropic Claude 2-era tokenizer (65K, proxy for the current Claude)",
    "llama3": "Meta Llama 3 (128K)",
    "llama4": "Meta Llama 4 (200K)",
-   "mistral_tekken": "Mistral Tekken (Nemo 이후, 131K)",
-   "mistral_sp": "Mistral SentencePiece v3 (7B 계열, 32K)"
+   "mistral_tekken": "Mistral Tekken (Nemo and later, 131K)",
+   "mistral_sp": "Mistral SentencePiece v3 (7B family, 32K)"
   },
   "designs": {
-   "W1_nospace": "모두 붙여 쓴다",
-   "W2_spaced": "형태소마다 띄운다",
-   "W3_wordspaced": "단어마다 띄우고 단어 안은 붙인다",
-   "W4_camel": "띄우지 않고 형태소마다 첫 글자 대문자",
-   "W5_wordcamel": "단어마다 띄우고 형태소마다 첫 글자 대문자",
-   "W6_lowercamel": "(추가) 단어마다 띄우고 단어의 첫 형태소만 소문자, 나머지는 첫 글자 대문자",
-   "W7_rootcamel": "(추가) 띄우지 않고 어근만 첫 글자 대문자"
+   "W1_nospace": "everything glued",
+   "W2_spaced": "one space between morphemes",
+   "W3_wordspaced": "one space between words, glued inside words",
+   "W4_camel": "no spaces, each morpheme capitalized",
+   "W5_wordcamel": "one space between words, each morpheme capitalized",
+   "W6_lowercamel": "(added) one space between words; only the first morpheme of a word is lowercase, the rest capitalized",
+   "W7_rootcamel": "(added) no spaces, only roots capitalized"
   },
   "pass_criteria": {
    "strict": {
@@ -76,7 +76,7 @@
    "compound_word_share": 0.1071,
    "affixes_per_word_mean": 1.037
   },
-  "runtime_sec": 29.2
+  "runtime_sec": 14.3
  },
  "pools": {
   "candidates": {
@@ -289,7 +289,7 @@
   "lexicon_size_used": {
    "roots": 59,
    "affixes": 34,
-   "note": "모든 인벤토리가 같은 크기의 어휘를 쓴다 (가장 작은 풀에 맞춤)"
+   "note": "every inventory uses a lexicon of the same size (matched to the smallest pool)"
   },
   "isolated_single_token_rates": {
    "naive": {

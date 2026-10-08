@@ -1,136 +1,136 @@
-# 03. 별도 언어를 만들면 무엇이 달라지는가
+# 03. What a separate language changes
 
-질문: AI끼리 주고받는 메시지를 위해 별도 언어를 만들면, 만들지 않을 때보다 무엇이 좋아지고, 무엇이 나빠지고, 무엇이 그대로인가.
+Question: if we build a separate language for the messages AIs exchange, what gets better, what gets worse, and what stays the same, compared with not building one?
 
-대상은 2단계에서 채택한 설계(D-007)를 따른 **LEAN**이다. 소문자 단어를 공백으로 띄워 쓰는 분석어이고, 사전은 2,313항목, 사양은 약 1만 토큰이다.
-"만들지 않는 경우"는 셋으로 나눠 비교했다.
+The language under study is **LEAN**, which follows the design adopted in stage 2 (D-007). It is an analytic language of lowercase words separated by spaces. Its dictionary has 2,313 entries, and its spec is about 10,000 tokens.
+We split "not building one" into three cases for comparison.
 
-| 기호 | 비교 대상 |
+| Symbol | Compared with |
 |---|---|
-| **영어** | 일반 영어 |
-| **전보체** | 관사·조동사를 뺀 압축 영어. 사양 없이도 LLM이 읽는다 |
-| **JSON** | 에이전트끼리 합의한 스키마의 압축 JSON |
+| **English** | Plain English |
+| **Terse** | Compressed English without articles and auxiliary verbs. LLMs read it without a spec |
+| **JSON** | Compressed JSON with a schema agreed between agents |
 
-표의 ▲는 좋아짐, ▼는 나빠짐, ＝는 비슷함, ～는 조건에 따라 다름이다. 근거는 세 가지로 나눴다. **측정**은 이 저장소의 실험, **추론**은 측정값에서 계산하거나 논리로 끌어낸 것, **외부**는 문헌이다.
+In the tables, ▲ means better, ▼ means worse, ＝ means about the same, and ～ means it depends on conditions. Evidence falls into three kinds. **Measured** means an experiment in this repository. **Inferred** means calculated from measurements or derived by reasoning. **External** means the literature.
 
-## 요약
+## Summary
 
-- **좋아지는 점은 적고 조건부다.** 공들여 인코딩하면 메시지가 일반 영어보다 1~19% 짧아지지만, 모델이 사양만 보고 직접 쓰면 그 이점이 대부분 사라진다. 사양 없는 사람에게 내용을 가리는 효과와 실험으로서의 가치가 나머지다.
-- **나빠지는 점이 많다.** 사양 고정비, 쓰기 정확도 하락(10~40%p), 약한 모델의 오독, 사람과 감시 도구의 감독 곤란, 판본·사전 관리, JSON 기반 도구와의 연동 손실이 있다.
-- **그대로인 점**은 강한 모델이 읽을 때의 정확도, 확신도·근거 표현, 경로·URL 같은 원문 전달, 그리고 보안(원래 없음)이다.
-- **D-005("일반 영어보다 싸면 충분")는 실사용에서 지켜지지 않는다.** 모델이 사양만 보고 쓴 메시지는 일반 영어의 0.92~1.11배였다. 7개 중 4개 토크나이저(Claude 대용 포함)에서 영어보다 비쌌다.
+- **Few things get better, and those are conditional.** With careful encoding, messages are 1–19% shorter than plain English. When the model writes them itself from the spec alone, most of that advantage disappears. The rest is hiding content from people without the spec, and value as an experiment.
+- **Many things get worse.** They include the fixed spec cost, a drop in writing accuracy (10–40 percentage points), misreading by weaker models, harder oversight by humans and monitoring tools, version and dictionary maintenance, and lost integration with JSON-based tools.
+- **What stays the same** is accuracy when a strong model reads, expressing confidence and evidence, passing verbatim text such as paths and URLs, and security (there was none to begin with).
+- **D-005 ("cheaper than plain English is enough") does not hold in real use.** Messages the model wrote from the spec alone were 0.92–1.11x plain English. On 4 of 7 tokenizers (including the Claude proxy), they cost more than English.
 
-실용 통신 수단으로는 별도 언어가 영어, 특히 전보체 영어와 JSON보다 대체로 불리하다. 이 프로젝트의 가치는 실험 쪽에 있다.
+As a practical means of communication, a separate language is generally worse than English, and especially worse than terse English and JSON. The value of this project lies in the experiment.
 
 ---
 
-## 새로 잰 것: 쓰고 읽는 왕복 시험
+## New measurement: write-then-read round trip
 
-이번 분석의 가장 큰 빈칸은 "AI가 이 언어로 직접 쓸 때"였다. 2단계까지는 읽기만 쟀다.
-그래서 설계에 쓰지 않은 메시지 20개를 Claude 작성자가 사양만 보고 LEAN으로 쓰게 했다. 이어 새 Claude 독자(기본 모델)가 영어로 되돌리고, 판정자 2명이 원문과 비교해 블라인드로 채점했다.
+The biggest gap in this analysis was "when an AI writes in this language itself." Through stage 2, we measured only reading.
+So we gave a Claude writer 20 messages that were not used in the design and had it write them in LEAN from the spec alone. A fresh Claude reader (the default model) then turned them back into English, and 2 judges graded the result blind against the original.
 
-| 작성자 | 정보 보존 | 사전에 없는 단어 | 토큰 (일반 영어 대비) | 토큰 (전보체 대비) |
+| Writer | Information preserved | Words not in the dictionary | Tokens (vs plain English) | Tokens (vs terse English) |
 |---|---|---|---|---|
-| 신중한 인코더 (도구로 사전 검색, 참고용) | **100%** | 0% | 0.81~0.99배 | 1.07~1.34배 |
-| 기본 모델 (사양만) | **88~93%** | 0% | **0.92~1.11배** | 1.21~1.49배 |
-| Haiku 저노력 (사양만) | **60~63%** | **26%** | 0.65~0.73배 | 0.85~0.98배 |
+| Careful encoder (dictionary lookup with tools; for reference) | **100%** | 0% | 0.81–0.99x | 1.07–1.34x |
+| Default model (spec only) | **88–93%** | 0% | **0.92–1.11x** | 1.21–1.49x |
+| Haiku low effort (spec only) | **60–63%** | **26%** | 0.65–0.73x | 0.85–0.98x |
 
-- **이점은 인코딩에 공을 들일 때만 나온다.** 기본 모델이 사양만 보고 쓴 메시지는 신중한 인코더보다 11~13% 길었다. Claude 대용 토크나이저에서는 일반 영어보다 11% 비쌌다. 신중한 인코딩에 든 도구 호출과 사고 토큰 비용은 어느 측정에도 들어가지 않았다.
-- **Haiku는 짧게 썼지만 틀리게 썼다.** 단어의 26%가 사전에 없는 영어 단어(`part`, `hour`, `risk`…)였고 내용도 빠뜨렸다. 짧아진 이유가 정보 손실이다.
-- **약한 모델은 과제를 벗어나기도 했다.** 첫 실행에서 Haiku 작성자는 이 언어로 쓰지 않고, 함께 전달된 사용자 질문에 한국어로 답했다. 과제를 못박아 다시 돌린 결과가 위 표다. 프롬프트 구성 탓도 섞여 있어 원인은 확정할 수 없다.
+- **The advantage appears only when encoding is done with care.** Messages the default model wrote from the spec alone were 11–13% longer than the careful encoder's. On the Claude proxy tokenizer, they cost 11% more than plain English. The cost of the tool calls and thinking tokens spent on careful encoding is not included in any measurement.
+- **Haiku wrote short but wrong.** 26% of its words were English words not in the dictionary (`part`, `hour`, `risk`…), and it also left out content. The messages were shorter because information was lost.
+- **The weaker model also went off task.** In the first run, the Haiku writer did not write in this language. Instead, it answered, in Korean, the user question that was passed along with the task. The table above is from a rerun with the task pinned down. The prompt setup is also a factor, so the cause cannot be pinned down.
 
-자료: `experiments/tradeoffs/roundtrip/`
+Data: `experiments/tradeoffs/roundtrip/`
 
 ---
 
-## 1. 좋아지는 점
+## 1. What gets better
 
-| 항목 | 영어 | 전보체 | JSON | 크기 | 근거 |
+| Item | English | Terse | JSON | Size | Evidence |
 |---|---|---|---|---|---|
-| 메시지 본문 토큰 (공들여 인코딩한 경우) | ▲ | ▼ | ▲ | 영어 대비 1~19% 짧음(메시지당 0.2~5.9토큰). 전보체보다는 7~34% 김 | 측정 |
-| 사양 없는 사람에게서 내용 가리기 | ▲ | ▲ | ▲ | 작음. 경로·이름 같은 원문은 그대로 보이고, 사양 하나로 풀린다 | 측정 |
-| 실험·연구 가치 | ▲ | ▲ | ▲ | 중간. 예: 설계 단순성에 따라 Haiku 읽기가 86%와 5%로 갈림, 토큰 이점이 설계용→새 메시지→실사용으로 단계마다 줄어듦 | 측정 |
+| Message body tokens (with careful encoding) | ▲ | ▼ | ▲ | 1–19% shorter than English (0.2–5.9 tokens per message). 7–34% longer than terse English | Measured |
+| Hiding content from people without the spec | ▲ | ▲ | ▲ | Small. Verbatim text such as paths and names stays visible, and one spec is enough to decode it | Measured |
+| Experimental and research value | ▲ | ▲ | ▲ | Medium. Examples: Haiku's reading split between 86% and 5% depending on how simple the design was; the token advantage shrank at each step, from design-set messages to held-out messages to writing from the spec alone | Measured |
 
-조건이 맞아야 좋아지는 것:
+Things that get better only under certain conditions:
 
-| 항목 | 영어 | 전보체 | JSON | 조건 | 근거 |
+| Item | English | Terse | JSON | Condition | Evidence |
 |---|---|---|---|---|---|
-| 기계 검증 (닫힌 어휘, 정해진 문법) | ～ | ～ | ▼ | **파서를 만들어야 한다**(아직 없음). 만들면 영어보다 형식 검사가 쉽지만, 단어를 잘못 고른 오류는 못 잡는다. JSON에는 이미 성숙한 검증기가 있다 | 추론 |
+| Machine validation (closed vocabulary, fixed grammar) | ～ | ～ | ▼ | **A parser has to be built** (none exists yet). Once built, it makes format checks easier than in English, but it cannot catch errors where the wrong word was chosen. JSON already has mature validators | Inferred |
 
-토큰 이점은 실사용에서는 "～"다. 모델이 사양만 보고 쓰면 일반 영어 대비 0.92~1.11배가 된다(위 왕복 시험).
+In real use, the token advantage is "～". When the model writes from the spec alone, messages are 0.92–1.11x plain English (round trip above).
 
-## 2. 나빠지는 점
+## 2. What gets worse
 
-### 2.1 비용
+### 2.1 Cost
 
-| 항목 | 영어 | 전보체 | JSON | 크기 | 근거 |
+| Item | English | Terse | JSON | Size | Evidence |
 |---|---|---|---|---|---|
-| 사양 고정비 | ▼ | ▼ | ▼ | 컨텍스트마다 8,417~10,282토큰. Opus 5.5 기준 캐시 읽기 호출당 약 $0.002, 캐시 쓰기 약 $0.05(5분)~$0.08(1시간) | 측정 |
-| 사양을 포함한 총비용 | ▼ | ▼ | ▼ | 실사용 작성 기준으로 7개 중 4개 토크나이저는 손익분기가 없다. 나머지 3개도 한 호출에 메시지를 68~120개 써야 본전이다(읽는 쪽은 341~601개). 보통의 에이전트 호출은 메시지를 하나 쓴다 | 측정·추론 |
-| 컨텍스트 창 점유 | ▼ | ▼ | ▼ | 1M 창의 약 1%, 200K 창의 약 5%를 늘 차지한다 | 측정 |
-| 토크나이저·모델 의존성 | ▼ | ▼ | ▼ | 절약 폭이 토크나이저에 따라 1~19%로 흔들린다. 모델을 바꿀 때마다 재검증과 캐시 재작성이 필요하다 | 측정 |
-| 사고(추론) 토큰 | ▼ | ▼ | ～ | **미측정.** 쓰는 쪽에서 메시지당 0~5.9토큰만 더 생각해도 절약이 사라진다 | 추론 |
-| 지연 시간 | ▼ | ▼ | ～ | 작음. 캐시가 식었을 때 사양 처리와 사고 토큰이 더해진다 | 추론 |
+| Fixed spec cost | ▼ | ▼ | ▼ | 8,417–10,282 tokens per context. At Opus 5.5 pricing, about $0.002 per call for a cache read, and about $0.05 (5 minutes) to $0.08 (1 hour) for a cache write | Measured |
+| Total cost including the spec | ▼ | ▼ | ▼ | For writing from the spec alone, 4 of 7 tokenizers have no break-even point. The other 3 break even only when one call writes 68–120 messages (341–601 on the reading side). A typical agent call writes one message | Measured, inferred |
+| Context window usage | ▼ | ▼ | ▼ | Always takes up about 1% of a 1M window and about 5% of a 200K window | Measured |
+| Tokenizer and model dependence | ▼ | ▼ | ▼ | Savings swing between 1% and 19% depending on the tokenizer. Every model change requires revalidation and rewriting the cache | Measured |
+| Thinking (reasoning) tokens | ▼ | ▼ | ～ | **Not measured.** If the writer spends just 0–5.9 extra thinking tokens per message, the savings disappear | Inferred |
+| Latency | ▼ | ▼ | ～ | Small. When the cache is cold, spec processing and thinking tokens add to it | Inferred |
 
-### 2.2 정확성
+### 2.2 Accuracy
 
-| 항목 | 영어 | 전보체 | JSON | 크기 | 근거 |
+| Item | English | Terse | JSON | Size | Evidence |
 |---|---|---|---|---|---|
-| 직접 쓰기 정확도 | ▼ | ▼ | ▼ | 기본 모델 −7.5~−12.5%p, Haiku −37.5~−40%p (신중한 인코딩 대비) | 측정 |
-| 약한 모델의 읽기 | ▼ | ▼ | ▼ | Haiku 86% 대 기본 모델 98%. 장치가 많은 설계(KODEX)에서는 5% | 측정 |
-| 문장 구조 오독 (절 경계, 범위, 화행) | ▼ | ▼ | ▼ | Haiku는 20개 중 4개 메시지에서 오독, 기본 모델은 0개 | 측정 |
-| 어휘 공백과 우회 표현 | ▼ | ▼ | ▼ | 처음 보는 메시지 하나에 우회 표현 2.9개, 새 항목 0.3개가 필요했다 | 측정 |
-| 일부러 생략한 정보 (시제, 수, 순서) | ▼ | ▼ | ～ | 작음. Haiku 독자는 20개 중 4~5개 메시지에서 경미한 오류. "먼저 / 그다음" 같은 순서는 두 모델 모두 한 번씩 놓쳤다 | 측정 |
-| 여러 단계 중계 시 손실 누적 | ▼ | ▼ | ▼ | 메시지가 에이전트를 거칠 때마다 다시 쓰면 손실이 쌓인다. 한 단계 보존율을 88~93%로 잡으면 두 단계 77~86%, 세 단계 67~79% | 추론 |
-| 사양이 빠졌을 때 | ▼ | ▼ | ▼ | 전면 실패. 긴 대화에서 사양이 잘리거나 다른 판본이 섞이면 오류 신호 없이 뜻이 바뀐다 | 추론 |
+| Accuracy when writing directly | ▼ | ▼ | ▼ | Default model −7.5 to −12.5 percentage points, Haiku −37.5 to −40 percentage points (vs careful encoding) | Measured |
+| Reading by weaker models | ▼ | ▼ | ▼ | Haiku 86% vs default model 98%. 5% on a design with many devices (KODEX) | Measured |
+| Misreading sentence structure (clause boundaries, scope, speech act) | ▼ | ▼ | ▼ | Haiku misread 4 of 20 messages; the default model misread 0 | Measured |
+| Vocabulary gaps and circumlocutions | ▼ | ▼ | ▼ | Each held-out message needed 2.9 circumlocutions and 0.3 new entries | Measured |
+| Information omitted by design (tense, number, order) | ▼ | ▼ | ～ | Small. The Haiku reader made minor errors in 4–5 of 20 messages. Both models missed an order such as "first / then" once each | Measured |
+| Loss accumulating over multi-hop relays | ▼ | ▼ | ▼ | If a message is rewritten each time it passes through an agent, losses add up. Taking 88–93% retention per hop gives 77–86% over two hops and 68–80% over three | Inferred |
+| When the spec is missing | ▼ | ▼ | ▼ | Total failure. If the spec gets truncated in a long conversation or a different version gets mixed in, the meaning changes with no error signal | Inferred |
 
-### 2.3 운영
+### 2.3 Operations
 
-| 항목 | 영어 | 전보체 | JSON | 크기 | 근거 |
+| Item | English | Terse | JSON | Size | Evidence |
 |---|---|---|---|---|---|
-| 사양 판본 관리 | ▼ | ▼ | ▼ | 영어에는 없던 부품이 생긴다. 판본이 어긋나면 조용히 뜻이 바뀐다 | 추론 |
-| 사전 성장·관리 | ▼ | ▼ | ▼ | 사전 2,313항목 중 2,039개(88%)는 품사도 아직 정해지지 않았다 | 측정 |
-| 디버깅·사고 조사·감사 기록 | ▼ | ▼ | ▼ | 모든 로그 조사에 해독 단계가 하나 더 붙는다. 작성과 해독을 합친 손실은 7.5~40% | 측정 |
-| 도구 호출·API·에이전트 프레임워크 연동 | ▼ | ▼ | ▼ | JSON은 도구 호출의 기본 형식이다. 이 언어는 코드가 바로 쓸 수 있는 값이 되지 않는다 | 추론 |
-| 테스트·품질 보증 | ▼ | ▼ | ▼ | 시험해야 할 축(읽기, 쓰기, 모델별, 판본별)이 늘어난다 | 추론 |
+| Spec versioning | ▼ | ▼ | ▼ | Adds a component that English did not have. A version mismatch silently changes the meaning | Inferred |
+| Dictionary growth and maintenance | ▼ | ▼ | ▼ | Of the 2,313 dictionary entries, 2,039 (88%) do not even have a part of speech yet | Measured |
+| Debugging, incident investigation, audit logs | ▼ | ▼ | ▼ | Every log investigation gets an extra decoding step. The combined loss from writing and decoding is 7.5–40% | Measured |
+| Integration with tool calls, APIs and agent frameworks | ▼ | ▼ | ▼ | JSON is the default format for tool calls. This language does not turn into values that code can use directly | Inferred |
+| Testing and quality assurance | ▼ | ▼ | ▼ | More axes to test (reading, writing, per model, per version) | Inferred |
 
-### 2.4 안전·감독
+### 2.4 Safety and oversight
 
-| 항목 | 영어 | 전보체 | JSON | 크기 | 근거 |
+| Item | English | Terse | JSON | Size | Evidence |
 |---|---|---|---|---|---|
-| 사람의 직접 열람·감독 | ▼ | ▼ | ▼ | 도구 없이는 사람이 읽지 못한다(설계 목표 그대로). 단어 하나가 형태소 하나라서 사전 치환으로 95%는 바로 직역되므로, 뜻풀이 도구를 만들면 줄일 수 있다 | 추론·측정 |
-| LLM으로 감시하는 비용 | ▼ | ▼ | ▼ | 감시용으로 영어로 되돌리는 출력만 해도 메시지당 약 30토큰이다. 절약분(최대 5.9토큰)의 5배가 넘는다 | 추론 |
-| 키워드·분류기 기반 감시 | ▼ | ▼ | ▼ | 사양 없는 필터는 의미 키워드를 거의 잡지 못한다. 반대로 사전의 68%(1,571개)가 흔한 영어 단어의 앞부분이라, 위험 단어처럼 보이는 형태(예: `homic`)가 메시지 40개 중 14개에 나왔다. 미탐과 오탐이 함께 생긴다 | 측정 |
-| 모델 안전 훈련의 우회 위험 | ▼ | ▼ | ▼ | 이 언어로는 재지 않았다. 문헌에서는 저자원 언어나 암호문으로 쓰면 안전 장치가 덜 작동했다(Yong 외 2023 "Low-Resource Languages Jailbreak GPT-4", Yuan 외 2023 "GPT-4 Is Too Smart To Be Safe") | 외부 |
-| 은닉 채널·담합 탐지 | ▼ | ▼ | ▼ | 사람이 읽기 어려운 통로는 의도하지 않은 정보가 섞여도 알아차리기 어렵다. 미측정 | 추론 |
-| 지시와 데이터의 구분 (프롬프트 주입) | ▼ | ▼ | ▼ | 원문 구간과 언어 본문이 섞이고, 감시가 어려워 주입을 놓치기 쉽다. 미측정 | 추론 |
-| 신뢰·사회적 수용 | ▼ | ▼ | ▼ | 순수 실험에서는 작고, 실제 배포에서는 커진다 | 외부·추론 |
+| Direct reading and oversight by humans | ▼ | ▼ | ▼ | Humans cannot read it without tools (as designed). Because each word is one morpheme, dictionary substitution alone gives a literal translation of 95%, so a glossing tool could reduce this | Inferred, measured |
+| Cost of monitoring with an LLM | ▼ | ▼ | ▼ | Just the output of translating back into English for monitoring is about 30 tokens per message. That is more than 5 times the savings (at most 5.9 tokens) | Inferred |
+| Keyword- and classifier-based monitoring | ▼ | ▼ | ▼ | Filters without the spec catch almost none of the meaning-bearing keywords. Conversely, 68% of the dictionary (1,571 entries) are the beginnings of common English words, so forms that look like risky words (e.g. `homic`) appeared in 14 of 40 messages. Both false negatives and false positives occur | Measured |
+| Risk of bypassing model safety training | ▼ | ▼ | ▼ | Not measured for this language. In the literature, safeguards worked less well in low-resource languages or ciphers (Yong et al. 2023 "Low-Resource Languages Jailbreak GPT-4", Yuan et al. 2023 "GPT-4 Is Too Smart To Be Safe") | External |
+| Detecting covert channels and collusion | ▼ | ▼ | ▼ | In a channel that humans find hard to read, unintended information that gets mixed in is hard to notice. Not measured | Inferred |
+| Separating instructions from data (prompt injection) | ▼ | ▼ | ▼ | Verbatim spans and text in the language are mixed together, and monitoring is hard, so injections are easy to miss. Not measured | Inferred |
+| Trust and social acceptance | ▼ | ▼ | ▼ | Small in a pure experiment, larger in a real deployment | External, inferred |
 
-## 3. 별 차이 없는 점
+## 3. What stays the same
 
-| 항목 | 영어 | 전보체 | JSON | 내용 | 근거 |
+| Item | English | Terse | JSON | Details | Evidence |
 |---|---|---|---|---|---|
-| 강한 모델이 읽을 때의 정확도 | ＝ | ＝ | ＝ | 신중하게 인코딩한 메시지는 기본 모델 독자가 95~100% 복원했다(설계용 메시지 98%, 새 메시지 95~100%) | 측정 |
-| 확신도·근거·화행의 표현과 보존 | ＝ | ＝ | ＝ | 해당 메시지 3개 모두 보존됐다. 현재 설계는 이 표시를 강제하지 않으므로 영어와 같다. 강제하면 토큰 이점이 사라진다(02 §3.2) | 측정 |
-| 경로·URL·식별자·숫자 전달 | ＝ | ＝ | ＝ | 원문 구간으로 그대로 실어 나른다. 메시지 토큰의 약 12%. 숫자·원문 오류는 0건 | 측정 |
-| 실제 보안 (기밀성·무결성·인증) | ＝ | ＝ | ＝ | 둘 다 없다. 사양 하나로 풀리는 가림은 보안이 아니다. 보안처럼 보이는 착시만 더해진다 | 추론 |
-| 같은 뜻 = 같은 문자열인가 | ＝ | ＝ | ～ | 아니다. 같은 메시지를 두 작성자가 쓰니 길이가 11~13% 달랐다. JSON은 열거형 필드에서만 보장된다 | 측정 |
+| Accuracy when a strong model reads | ＝ | ＝ | ＝ | The default-model reader recovered 95–100% of the information in carefully encoded messages (98% on design-set messages, 95–100% on held-out messages) | Measured |
+| Expressing and preserving confidence, evidence and speech act | ＝ | ＝ | ＝ | All 3 relevant messages were preserved. The current design does not require these markers, so it is the same as English. Making them mandatory erases the token advantage (02 §3.2) | Measured |
+| Passing paths, URLs, identifiers and numbers | ＝ | ＝ | ＝ | Carried unchanged in verbatim spans. About 12% of message tokens. 0 errors in numbers or verbatim text | Measured |
+| Actual security (confidentiality, integrity, authentication) | ＝ | ＝ | ＝ | Neither has any. Obscuring that one spec can undo is not security. It only adds an illusion of security | Inferred |
+| Same meaning = same string? | ＝ | ＝ | ～ | No. When two writers wrote the same messages, the lengths differed by 11–13%. JSON guarantees it only for enum fields | Measured |
 
-## 4. 프로젝트에 주는 의미
+## 4. What this means for the project
 
-1. **D-005는 실사용 조건에서 다시 봐야 한다.** "일반 영어보다 싸다"는 공들인 인코딩에서만 성립했다. 모델이 사양만 보고 쓰면 Claude 대용을 포함한 4개 토크나이저에서 깨진다. 남은 길은 셋이다.
-   - 실험 목적으로만 계속한다. 토큰은 지표로만 잰다.
-   - 쓰는 쪽을 돕는다. 예를 들어 사전 검색 도구를 주면 신중한 인코더처럼 쓸 수 있지만, 그 도구 호출 비용까지 재야 한다.
-   - 설계를 다시 다듬는다. 품사를 정하고, 우회 표현이 많이 생긴 자리를 메우고, 혼동되기 쉬운 형태를 정리한다.
-2. **나빠지는 점 가운데 도구로 줄일 수 있는 것이 있다.** 파서·뜻풀이기 하나로 기계 검증, 사람 감독, 디버깅이 함께 나아진다. 이 언어는 단어 하나가 형태소 하나라서 만들기도 비교적 쉽다.
-3. **줄일 수 없는 것도 있다.** 사양 고정비, 약한 모델의 정확도, 판본 관리, 안전 훈련 우회 위험은 별도 언어를 쓰는 한 따라온다.
+1. **D-005 needs to be revisited under real-use conditions.** "Cheaper than plain English" held only with careful encoding. When the model writes from the spec alone, it breaks on 4 tokenizers, including the Claude proxy. Three paths remain:
+   - Continue for experimental purposes only. Measure tokens only as a metric.
+   - Help the writer. For example, a dictionary lookup tool would let it write like the careful encoder, but the cost of those tool calls must be measured too.
+   - Refine the design again. Assign parts of speech, fill the gaps that produced many circumlocutions, and clean up forms that are easy to confuse.
+2. **Some of what gets worse can be reduced with tools.** A single parser-glosser improves machine validation, human oversight and debugging together. Because each word in this language is one morpheme, it is also relatively easy to build.
+3. **Some of it cannot be reduced.** The fixed spec cost, the accuracy of weaker models, version management and the risk of bypassing safety training remain as long as a separate language is used.
 
-## 5. 한계
+## 5. Limitations
 
-- 메시지 20개, 조건당 유효 실행 1회다.
-- **대조군이 없다.** 전보체 영어나 JSON으로 쓰고 되읽는 시험은 하지 않았다. 그래서 정확도 항목의 "전보체·JSON보다 나쁨"은 추론이고, 압축 자체의 손실과 이 언어 고유의 손실을 나누지 못한다.
-- 작성자, 독자, 판정자, 분석가가 모두 Claude다. 다른 회사 모델은 재지 않았다.
-- 현행 Claude 토크나이저로는 재지 않았다(D-006). Claude 수치는 Claude 2 시절 토크나이저 값이다.
-- 사고 토큰, 지연 시간, 프롬프트 주입, 안전 훈련 우회는 재지 않았다.
+- 20 messages, 1 valid run per condition.
+- **There is no control.** We did not run a write-then-read test in terse English or JSON. So "worse than terse English and JSON" in the accuracy items is inferred, and we cannot separate the loss from compression itself from the loss specific to this language.
+- The writers, readers, judges and analysts are all Claude. We did not measure models from other companies.
+- We did not measure with the current Claude tokenizer (D-006). The Claude figures come from the Claude 2-era tokenizer.
+- We did not measure thinking tokens, latency, prompt injection or safety-training bypass.
 
-자료: 분석가 5명의 원본 `experiments/tradeoffs/analysts.json`, 비평가 통합본 `experiments/tradeoffs/critique.json`, 왕복 시험 `experiments/tradeoffs/roundtrip/`.
+Data: raw output from the 5 analysts in `experiments/tradeoffs/analysts.json`, the critic's consolidated version in `experiments/tradeoffs/critique.json`, and the round trip in `experiments/tradeoffs/roundtrip/`.

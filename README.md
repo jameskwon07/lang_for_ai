@@ -1,82 +1,84 @@
 # lang_for_ai
 
-**사람은 못 읽고 AI끼리만 읽고 쓰는 알파벳 언어를 만들 수 있을까?** 그 언어로 AI 간 통신의 토큰을 아낄 수 있을까?
+**Can we build an alphabetic language that humans cannot read and that only AIs read and write among themselves?** Can that language save tokens in AI-to-AI communication?
 
-이 질문을 단계별로 실험한 기록이다. 실험은 여기서 마쳤다.
+This is a stage-by-stage record of experiments on these questions. The experiment is finished.
 
-## 결론
+## Conclusion
 
-> **만들 수는 있다. 하지만 AI끼리 쓰기에 영어보다 낫지 않았다.**
+> **It can be built. But for AI-to-AI use it was not better than English.**
 >
-> - Claude는 사양(약 1만 토큰)만 읽고 이 언어를 95~100% 정확히 읽었다.
-> - 하지만 **직접 쓰면** 정보가 7.5~40% 샜고, 토큰은 일반 영어와 비슷했다(0.92~1.11배).
-> - 관사 등을 뺀 **전보체 영어**는 사양 없이도 읽히는데, 어떤 설계도 처음 보는 메시지에서 이를 이기지 못했다.
+> - Claude read this language with 95–100% accuracy after reading only the spec (about 10,000 tokens).
+> - But **when it wrote the language itself**, 7.5–40% of the information leaked, and the token count was about the same as plain English (0.92–1.11x).
+> - **Terse English**, which drops articles and similar words, is readable without a spec, and no design beat it on held-out messages.
 
-## 이렇게 생겼다
+## What it looks like
 
-| | 메시지 | 토큰 (o200k / Claude 대용) |
+| | Message | Tokens (o200k / Claude proxy) |
 |---|---|---|
-| 영어 | Find recent peer-reviewed studies on how sleep deprivation affects working memory. Return the five most relevant, each with a one-sentence summary. | 27 / 28 |
-| 전보체 영어 | Find recent peer-reviewed studies: sleep deprivation -> working memory. Return top 5, 1-sentence summary each. | 24 / 23 |
-| **이 언어 (LEAN)** | `aqu antib persec despe adap tob obliv sovere consec afges agreg fle oll fres swo flav avut anunc conv` | 20 / 24 |
-| Claude가 사양만 보고 되읽은 것 | Find recent peer-reviewed studies about how sleep loss affects working memory, and return the 5 most relevant ones, with a one-sentence summary for each. | |
+| English | Find recent peer-reviewed studies on how sleep deprivation affects working memory. Return the five most relevant, each with a one-sentence summary. | 27 / 28 |
+| Terse English | Find recent peer-reviewed studies: sleep deprivation -> working memory. Return top 5, 1-sentence summary each. | 24 / 23 |
+| **This language (LEAN)** | `aqu antib persec despe adap tob obliv sovere consec afges agreg fle oll fres swo flav avut anunc conv` | 20 / 24 |
+| What Claude read back from the spec alone | Find recent peer-reviewed studies about how sleep loss affects working memory, and return the 5 most relevant ones, with a one-sentence summary for each. | |
 
-이 예시는 설계에 쓴 메시지라 이 언어에 유리하다. 설계에 쓰지 않은 메시지에서는 이 언어가 전보체 영어보다 7~34% 길었다.
+This example is a design-set message, so it favors this language. On messages not used in the design, this language was 7–34% longer than terse English.
 
-## 실험과 결과
+## Experiments and results
 
-| 단계 | 질문 | 한 일 | 결과 | 자세히 |
+| Stage | Question | What we did | Result | Details |
 |---|---|---|---|---|
-| 1. 설계 원칙 | 어떤 구조로 만들까? | 사람과 LLM의 차이를 정리하고, 언어를 7개 계층(문자 → 형태소 → … → 화용)으로 나눠 선택지 검토 | 핵심 위험은 토큰화. LLM은 글자가 아니라 토큰을 본다 | [00](docs/00-foundations.md), [01](docs/01-structure.md) |
-| 2. 표기 | 글자를 어떻게 적어야 AI가 싸게 읽나? | 토크나이저 7종으로 형태 후보 10만 개와 표기 방식 5가지 측정, Claude 읽기·쓰기 파일럿 | **소문자 + 형태소마다 띄어쓰기**가 최선. 7개 중 5개 토크나이저에서 형태소 하나가 1.01토큰 | [02 §2](docs/02-tokens-and-forms.md#2-표기-l0-l1) |
-| 3. 토큰 절약 | 영어보다 짧게 쓸 수 있나? | AI 에이전트 메시지 40개 말뭉치, 초안 문법 투영, 이 언어 편에 선 에이전트 2명의 반박 시도, 처음 보는 메시지로 일반화 시험 | 초안 문법은 전보체 영어의 1.26~2.20배. 최선 설계(LEAN)도 처음 보는 메시지에서 **전보체의 1.07~1.34배**, 일반 영어의 0.81~0.99배 | [02 §3](docs/02-tokens-and-forms.md#3-토큰-절약-l2l5까지) |
-| 4. 읽기 | Claude가 사양만 보고 읽나? | 새 Claude에게 사양과 메시지만 주고 영어로 되돌리게 한 뒤 블라인드 채점 | 기본 모델 **98%**, Haiku 86%. 장치가 많은 설계(KODEX)는 Haiku **5%** | [02 §3.4](docs/02-tokens-and-forms.md#34-claude가-실제로-읽는가--verifyreadability) |
-| 5. 쓰기와 득실 | 직접 쓰면? 영어 대신 쓸 이유가 있나? | Claude가 쓰고 다른 Claude가 읽는 왕복 시험, 관점 5개 분석 + 비평 | 기본 모델이 쓰면 **88~93%** 보존, 토큰은 일반 영어의 0.92~1.11배. Haiku가 쓰면 60~63% 보존 | [03](docs/03-tradeoffs.md) |
+| 1. Design principles | What structure should it have? | Listed the differences between humans and LLMs, split the language into 7 layers (characters → morphemes → … → pragmatics) and reviewed the options | The key risk is tokenization. LLMs see tokens, not characters | [00](docs/00-foundations.md), [01](docs/01-structure.md) |
+| 2. Spelling | How should the letters be written so that AI reads them cheaply? | Measured 100,000 form candidates and 5 spelling schemes on 7 tokenizers; Claude read/write pilot | **Lowercase + one space between morphemes** is best. On 5 of 7 tokenizers, one morpheme costs 1.01 tokens | [02 §2](docs/02-tokens-and-forms.md#2-spelling-l0-l1) |
+| 3. Token savings | Can it be shorter than English? | A corpus of 40 AI agent messages, projection of the draft grammar, rebuttal attempts by 2 agents arguing for this language, a generalization test on held-out messages | The draft grammar costs 1.26–2.20x terse English. Even the best design (LEAN) costs **1.07–1.34x terse English** on held-out messages, and 0.81–0.99x plain English | [02 §3](docs/02-tokens-and-forms.md#3-token-savings) |
+| 4. Reading | Does Claude read it from the spec alone? | Gave a fresh Claude only the spec and the messages, had it translate them back into English, and graded the results blind | Default model **98%**, Haiku 86%. On a design with many devices (KODEX), Haiku **5%** | [02 §3.4](docs/02-tokens-and-forms.md#34-does-claude-actually-read-it) |
+| 5. Writing and trade-offs | What if it writes the language itself? Is there a reason to use it instead of English? | Write-then-read round trip in which one Claude writes and another Claude reads; analysis from 5 perspectives + critique | When the default model writes, **88–93%** is preserved and tokens are 0.92–1.11x plain English. When Haiku writes, 60–63% is preserved | [03](docs/03-tradeoffs.md) |
 
-## 별도 언어를 만들면 (영어, 전보체 영어, JSON과 비교)
+## What a separate language changes (vs plain English, terse English, JSON)
 
-| 좋아지는 점 | 나빠지는 점 | 그대로인 점 |
+| What gets better | What gets worse | What stays the same |
 |---|---|---|
-| 공들여 인코딩하면 메시지가 일반 영어보다 1~19% 짧다 (모델이 직접 쓰면 사라짐) | 대화마다 사양 약 1만 토큰이 고정으로 든다 | 강한 모델이 읽을 때의 정확도 |
-| 사양 없는 사람에게 내용이 가려진다 (보안은 아님) | 직접 쓸 때 정보 손실 7.5~40% | 확신도·근거 표현 |
-| 실험으로서의 가치 | 약한 모델에서 읽기·쓰기가 크게 떨어진다 | 경로·URL·숫자 전달 |
-| | 사람과 키워드 필터의 감독이 어려워진다 | 보안 (둘 다 없음) |
-| | 사양 판본·사전 관리, 디버깅, JSON 도구 연동 비용 | |
+| With careful encoding, messages are 1–19% shorter than plain English (gone when the model writes them itself) | A fixed spec cost of about 10,000 tokens in every conversation | Accuracy when a strong model reads |
+| Content is hidden from people without the spec (this is not security) | 7.5–40% information loss when the model writes directly | Expressing confidence and evidence |
+| Value as an experiment | Reading and writing drop sharply on weaker models | Passing paths, URLs and numbers |
+| | Oversight by humans and keyword filters gets harder | Security (neither has any) |
+| | Costs of spec versioning, dictionary maintenance, debugging and integration with JSON tools | |
 
-전체 비교표와 근거는 [03. 별도 언어의 득실](docs/03-tradeoffs.md)에 있다.
+The full comparison tables and evidence are in [03. What a separate language changes](docs/03-tradeoffs.md).
 
-## 배운 것
+## Lessons
 
-1. **영어 토크나이저 안에서는 영어를 이기기 어렵다.** 영어 단어는 이미 1토큰이다. 새 언어가 쓸 수 있는 싼 형태는 남은 조각뿐이고, LEAN 사전의 68%가 흔한 영어 단어의 앞부분이었다.
-2. **설계에 쓴 예시에서의 우위는 과적합이었다.** 두 설계 모두 설계용 메시지에서는 대부분의 토크나이저에서 전보체 영어를 이겼지만, 처음 보는 메시지에서는 모든 토크나이저에서 졌다.
-3. **읽기는 쉽고 쓰기는 어렵다.** 같은 언어를 Claude는 거의 완벽히 읽었지만, 직접 쓸 때는 정보를 흘렸다. 약한 모델은 영어 단어를 섞어 썼다.
-4. **단순해야 약한 모델도 쓸 수 있다.** 같은 Haiku가 단순한 설계는 86%, 장치가 많은 설계는 5%를 읽었다.
-5. **사양 비용이 메시지당 절약을 압도한다.** 메시지당 몇 토큰을 아껴도, 매 대화 1만 토큰의 사양을 회수하려면 한 호출에 메시지를 수십~수백 개 써야 한다. Claude 대용 토크나이저에서는 사실상 회수할 수 없었다.
+1. **It is hard to beat English inside an English tokenizer.** English words are already single tokens. The only cheap forms left for a new language are the leftover pieces, and 68% of the LEAN dictionary entries are prefixes of common English words.
+2. **The advantage on the design examples was overfitting.** On design-set messages, both designs beat terse English on most tokenizers. On held-out messages, they lost on every tokenizer.
+3. **Reading is easy; writing is hard.** Claude read the same language almost perfectly, but leaked information when it wrote it. Weaker models mixed in English words.
+4. **The design must be simple for weaker models to use it.** The same Haiku read 86% of a simple design and 5% of a design with many devices.
+5. **The spec cost outweighs the per-message savings.** Even if each message saves a few tokens, paying back a 10,000-token spec in every conversation takes tens to hundreds of messages per API call. On the Claude proxy tokenizer, the cost was effectively unrecoverable.
 
-## 한계
+## Limitations
 
-- 피험자(읽기·쓰기)와 판정자는 모두 Claude다. 다른 회사 모델은 재지 않았다.
-- 현행 Claude 토크나이저는 공개되지 않아 Claude 2 시절 토크나이저(`claude_legacy`)를 대용으로 썼다.
-- 메시지는 20~40개이고, 조건마다 한 번씩 실행했다.
-- 전보체 영어나 JSON으로 쓰고 되읽는 대조 시험은 하지 않았다.
+- The subjects (reading and writing) and the judges are all Claude. We did not measure models from other companies.
+- The current Claude tokenizer is not public, so we used the Claude 2-era tokenizer (`claude_legacy`) as a proxy.
+- There are 20–40 messages, and each condition was run once.
+- We did not run a control that writes and reads back in terse English or JSON.
 
-## 저장소 구성
+## Repository layout
 
-| 경로 | 내용 |
+| Path | Contents |
 |---|---|
-| [docs/](docs/) | 설계 원칙(00), 언어 구조(01), 표기·토큰 실험(02), 득실 분석(03), [결정 기록](docs/decisions.md) |
-| [experiments/tokenization/](experiments/tokenization/) | 토크나이저 7종 측정 스크립트, AI 메시지 말뭉치, 반박 검증과 읽기 실험 기록. 재현 방법은 그 안의 README |
-| [experiments/tradeoffs/](experiments/tradeoffs/) | 득실 분석 원자료와 쓰고 읽는 왕복 시험 |
+| [docs/](docs/) | Design principles (00), language structure (01), spelling and token experiments (02), trade-off analysis (03), [decision log](docs/decisions.md) |
+| [experiments/tokenization/](experiments/tokenization/) | Measurement scripts for 7 tokenizers, the AI message corpus, rebuttal checks and reading-experiment records. Its README explains how to reproduce the results |
+| [experiments/tradeoffs/](experiments/tradeoffs/) | Raw data for the trade-off analysis and the write-then-read round trip |
 
-재현:
+The documents were first written in Korean; those versions are in the git history. Some raw data and experiment materials stay in their original Korean, for example the `ko` field of the corpus, the pilot task files given to subjects (`experiments/tokenization/results/pilot/task_*.md`) and the code that generates them, and raw agent outputs (gloss notes, analyst and critic JSON, note fields in result JSON, the fact-check report that quotes the Korean docs, and the invalid first-run Haiku answer).
+
+To reproduce:
 
 ```bash
 cd experiments/tokenization
 pip install -r requirements.txt
-python3 fetch_tokenizers.py   # 토크나이저 7종을 PyPI 패키지에서 받는다
+python3 fetch_tokenizers.py   # downloads the 7 tokenizers from PyPI packages
 python3 inventory.py && python3 alignment.py && python3 baseline.py && python3 projection.py
 ```
 
-## 라이선스
+## License
 
 [MIT License](LICENSE)

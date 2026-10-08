@@ -1,74 +1,74 @@
-# E1. 형태소 후보 목록: 토큰 하나로 끝나는 형태는 몇 개인가
+# E1. Morpheme candidate inventory: how many forms fit in one token?
 
-`python3 inventory.py` 로 만든 결과다. 전체 수치와 형태 목록은 [inventory.json](inventory.json)에 있다. 표기는 `kat`(붙임 소문자), `␣kat`(앞 공백), `Kat`(붙임 대문자 시작), `␣Kat`(앞 공백 + 대문자 시작)으로 적는다. 'zipf < 3.0'은 11개 언어(en, es, de, fr, it, pt, nl, tr, id, pl, sv) 가운데 가장 높은 zipf 빈도가 3.0 미만이라는 뜻이다.
+Output of `python3 inventory.py`. All numbers and form lists are in [inventory.json](inventory.json). Spellings are written `kat` (glued, lowercase), `␣kat` (leading space), `Kat` (glued, capitalized), `␣Kat` (leading space + capitalized). 'zipf < 3.0' means that the highest zipf frequency across the 11 languages (en, es, de, fr, it, pt, nl, tr, id, pl, sv) is below 3.0.
 
-## 1. 핵심 질문에 대한 답
+## 1. Answer to the key question
 
-질문: 어근 약 1,000개와 문법 형태 약 100개를, 토크나이저 7종 모두(또는 mistral_sp만 빼고)에서 토큰 하나이면서 흔한 단어가 아닌 형태로 채울 수 있는 모양·표기가 있는가.
+Question: is there a shape and spelling that can supply about 1,000 roots and about 100 grammatical forms with forms that are a single token on all 7 tokenizers (or on all but mistral_sp) and are not common words?
 
-- **목표(어근 1,000 + 문법 100, 단일 토큰, 단어 필터 zipf < 3.0)를 채우는 모양·표기 조합은 없다.** 7종 모두, mistral_sp 뺀 6종, 7종 중 6종 이상 어느 기준에서도 없다. 막히는 쪽은 어근이다.
-- 문법 형태 100개는 7종 모두 단일 토큰으로 채울 수 있다: VCC kat 125개 (zipf < 3.0), VCVC kat 225개 (zipf < 3.0), VCVC kat 148개 (zipf < 2.0). 모두 붙임 표기이므로 붙여 쓰기나 '어근 앞만 띄우기' 설계에 해당한다. 다만 이 형태들은 거의 모두 흔한 단어 안의 조각(`ated`, `atic`, `ity` 등)이다(2.5절).
-- docs/01의 스케치(붙여 쓴 CVC 어근 + VC 접사)를 그대로 재면: CVC kat 7종 단일 547 → zipf < 3.0 41 → < 2.0 5, VC kat 7종 단일 102 → zipf < 3.0 0 → < 2.0 0. VC 105개 중 zipf < 3.0인 것은 토큰화와 상관없이 1개뿐이다(두 글자 문자열은 거의 다 어느 언어에선가 단어·약어다).
-- 어근 최대치 (7종 모두, 모양 하나): 필터 없음 610 (CVC ␣kat) → zipf < 3.0 78 (CVCC ␣kat) → zipf < 2.0 26 (CVCVC ␣kat).
-- 어근 최대치 (mistral_sp 뺀 6종 모두, 모양 하나): 필터 없음 728 (CVC ␣kat) → zipf < 3.0 121 (CVCC ␣kat) → zipf < 2.0 44 (CVCC ␣kat).
-- 띄어 쓰는 설계에서 자음 시작 모양을 모두 합친 어근 풀(␣kat, 7종 모두 단일 토큰): 필터 없음 2,063 → zipf < 3.0 205 → < 2.0 62. 단어 필터가 없으면 1,000을 넘지만 필터를 걸면 크게 모자란다.
-- 병목은 단어 필터다. 어느 언어에선가 zipf ≥ 3.0인 형태의 비율 — CVC ␣kat: 7종 모두 단일 토큰인 610개 중 95%, 어느 토크나이저에서도 단일 토큰이 아닌 598개 중 13%; CVC kat: 7종 모두 단일 토큰인 547개 중 92%, 어느 토크나이저에서도 단일 토큰이 아닌 837개 중 26%. 토크나이저가 한 토큰으로 만든 글자열은 원래 자주 나오는 글자열이므로, 단일 토큰일수록 실제 단어다(2.4절).
-- CVC는 토큰화와 상관없이 2,205개 중 907개만 zipf < 3.0, 493개만 zipf < 2.0이다. CVC 하나로는 토큰 수를 따지기 전에 이미 1,000개 어근을 채울 수 없다.
-- 필터를 통과한 단일 토큰도 대부분 흔한 단어의 조각이다(` calc`, ` gover`, `ated` 등). 흔한 단어의 진부분 접두(␣ 표기) 또는 진부분 문자열(붙임 표기)인 비율: CVCC ␣kat 100% (78개 중); CVCVC ␣kat 93% (46개 중); VCVC kat 100% (225개 중), 기준선(단일 토큰 아님) 45%; CVC ␣kat 100% (32개 중), 기준선(단일 토큰 아님) 37% (2.5절). 조각이 아닌 7종 단일 형태는 `akov`, `cref`, `debug`, `href`, `idx`, `javax`, `json`, `mutex`, `popup`, `regex`, `yaml`뿐이다(코드 식별자가 많다). zipf 필터는 '단어 그 자체'만 거르고 이런 조각이 끌고 오는 뜻은 거르지 못한다.
-- 타협 1 (2토큰 허용): zipf < 3.0을 지키며 토큰 비용이 가장 낮은 어근 1,000개를 고르면 — 어근 풀(띄어 쓰기 전용) ␣kat: 7종 단일 205개, 7종 모두 2토큰 이하 987개, 평균 토큰 o200k 1.03 / claude_legacy 1.59 / mistral_sp 1.72; CVCV ␣kat: 7종 단일 10개, 7종 모두 2토큰 이하 940개, 평균 토큰 o200k 1.54 / claude_legacy 2.00 / mistral_sp 2.03; CVCC kat: 7종 단일 66개, 7종 모두 2토큰 이하 981개, 평균 토큰 o200k 1.71 / claude_legacy 1.74 / mistral_sp 1.90 (2.3절).
-- 타협 2 (필터 완화): CVC ␣kat 7종 단일 토큰은 11개 언어 기준 zipf < 3.0에서 32, < 4.0에서 165; 영어만 보면 < 3.0에서 169, < 4.0에서 400개다(2.1절). 필터를 완화한다는 것은 실제 단어를 어근으로 쓰겠다는 뜻이다.
-- CVC ␣kat 7종 단일 토큰 가운데 zipf ≥ 3.0으로 빠진 형태를 빈도가 가장 높은 언어로 나누면 en 189, sv 72, de 49, id 46, tr 46, nl 43 … 이고, 그중 137개는 영어 zipf가 3.0 미만이다.
-- claude_legacy 단독: 어근(모양 하나) 필터 없음 최대 900 (CVC kat), zipf < 3.0 최대 271 (CVCC kat); ␣kat 어근 풀 zipf < 3.0 560개; 문법 형태 zipf < 3.0 최대 448 (VCVC kat). CVC에서 ␣kat 단일 토큰이 kat보다 적은 토크나이저: claude_legacy (claude_legacy ␣kat 762 / kat 900). 나머지 토크나이저는 CVC에서 ␣kat 단일 토큰이 kat 이상이다.
+- **No shape and spelling combination meets the target (1,000 roots + 100 grammatical forms, single token, word filter zipf < 3.0).** None does at any level: all 7, the 6 other than mistral_sp, or 6 or more of 7. The roots are what falls short.
+- 100 grammatical forms can be filled with forms that are single tokens on all 7: VCC kat 125 (zipf < 3.0), VCVC kat 225 (zipf < 3.0), VCVC kat 148 (zipf < 2.0). All of these are glued spellings, so they fit the glued design or the 'space before roots only' design. But almost all of these forms are fragments inside common words (e.g. `ated`, `atic`, `ity`) (section 2.5).
+- Measuring the docs/01 sketch (glued CVC roots + VC affixes) as is: CVC kat single on all 7: 547 → zipf < 3.0: 41 → < 2.0: 5; VC kat single on all 7: 102 → zipf < 3.0: 0 → < 2.0: 0. Regardless of tokenization, only 1 of the 105 VC forms has zipf < 3.0 (almost every two-letter string is a word or abbreviation in some language).
+- Maximum roots (all 7, one shape): no filter: 610 (CVC ␣kat) → zipf < 3.0: 78 (CVCC ␣kat) → zipf < 2.0: 26 (CVCVC ␣kat).
+- Maximum roots (all 6 except mistral_sp, one shape): no filter: 728 (CVC ␣kat) → zipf < 3.0: 121 (CVCC ␣kat) → zipf < 2.0: 44 (CVCC ␣kat).
+- Root pool that combines all consonant-initial shapes in a spaced design (␣kat, single token on all 7): no filter: 2,063 → zipf < 3.0: 205 → < 2.0: 62. Without the word filter it exceeds 1,000; with the filter it falls far short.
+- The bottleneck is the word filter. Share of forms with zipf ≥ 3.0 in some language — CVC ␣kat: 95% of the 610 forms that are single tokens on all 7, 13% of the 598 forms that are a single token on no tokenizer; CVC kat: 92% of the 547 forms that are single tokens on all 7, 26% of the 837 forms that are a single token on no tokenizer. A letter string that a tokenizer made into one token is a string that occurs often in the first place, so forms that are single tokens on more tokenizers are more often real words (section 2.4).
+- Regardless of tokenization, only 907 of the 2,205 CVC forms have zipf < 3.0, and only 493 have zipf < 2.0. CVC alone cannot supply 1,000 roots even before token counts are considered.
+- Even the single tokens that pass the filter are mostly fragments of common words (e.g. ` calc`, ` gover`, `ated`). Share of forms that are a proper prefix (␣ spelling) or a proper substring (glued spelling) of a common word: CVCC ␣kat 100% (of 78); CVCVC ␣kat 93% (of 46); VCVC kat 100% (of 225), baseline (not a single token) 45%; CVC ␣kat 100% (of 32), baseline (not a single token) 37% (section 2.5). The only forms single on all 7 that are not fragments: `akov`, `cref`, `debug`, `href`, `idx`, `javax`, `json`, `mutex`, `popup`, `regex`, `yaml` (many are code identifiers). The zipf filter removes only 'the word itself'; it does not remove the meaning that such fragments bring in.
+- Compromise 1 (allow 2 tokens): picking the 1,000 roots with the lowest token cost while keeping zipf < 3.0 — root pool (spaced designs only) ␣kat: 205 single on all 7, 987 at 2 tokens or fewer on all 7, mean tokens o200k 1.03 / claude_legacy 1.59 / mistral_sp 1.72; CVCV ␣kat: 10 single on all 7, 940 at 2 tokens or fewer on all 7, mean tokens o200k 1.54 / claude_legacy 2.00 / mistral_sp 2.03; CVCC kat: 66 single on all 7, 981 at 2 tokens or fewer on all 7, mean tokens o200k 1.71 / claude_legacy 1.74 / mistral_sp 1.90 (section 2.3).
+- Compromise 2 (relax the filter): CVC ␣kat forms that are single tokens on all 7: 32 at zipf < 3.0 and 165 at < 4.0 by the 11-language measure; by English alone, 169 at < 3.0 and 400 at < 4.0 (section 2.1). Relaxing the filter means using real words as roots.
+- Of the CVC ␣kat forms that are single tokens on all 7, those removed for zipf ≥ 3.0, split by the language with the highest frequency: en 189, sv 72, de 49, id 46, tr 46, nl 43 …; of these, 137 have an English zipf below 3.0.
+- claude_legacy alone: roots (one shape) max 900 with no filter (CVC kat), max 271 at zipf < 3.0 (CVCC kat); ␣kat root pool at zipf < 3.0: 560; grammatical forms max 448 at zipf < 3.0 (VCVC kat). Tokenizers with fewer CVC single tokens for ␣kat than for kat: claude_legacy (claude_legacy ␣kat 762 / kat 900). On the other tokenizers, CVC has at least as many single tokens for ␣kat as for kat.
 
-### 1.1 설계별 최대치 (모양 하나씩)
+### 1.1 Maximum per design (one shape each)
 
-어근은 자음 시작 모양(CV, CVV, CCV, CVC, CVCV, CCVC, CVCC, CVCVC), 문법 형태는 모음 시작 모양(V, VV, VC, VCV, VCC, VCVC)에서 가장 많이 나오는 모양 하나를 고른다. 붙여 써도 '다음 글자가 자음이면 어근, 모음이면 문법 형태'로 끊을 수 있는 조건이다. 칸 값은 `모양 개수`이고, 셋은 각각 `필터 없음 / zipf < 3.0 / zipf < 2.0`이다(필터마다 가장 많은 모양이 다를 수 있다).
+For roots, pick the one consonant-initial shape (CV, CVV, CCV, CVC, CVCV, CCVC, CVCC, CVCVC) that yields the most forms; for grammatical forms, the one vowel-initial shape (V, VV, VC, VCV, VCC, VCVC) that yields the most. This is the condition under which even glued text can be split by the rule 'if the next letter is a consonant, a root starts; if it is a vowel, a grammatical form starts'. Each cell is `shape count`, and the three values are `no filter / zipf < 3.0 / zipf < 2.0` (the shape with the most forms can differ by filter).
 
-| 설계 (어근 표기 + 문법 표기) | 합의 수준 | 어근 | 문법 형태 |
+| Design (root spelling + grammatical spelling) | Agreement level | Roots | Grammatical forms |
 | --- | --- | --- | --- |
-| 붙여 쓰기 (kat + kat) | 7종 모두 | CVC 547 / CVCC 66 / CCVC 25 | VCVC 383 / VCVC 225 / VCVC 148 |
-|  | mistral_sp 뺀 6종 모두 | CVC 655 / CVCC 81 / CCVC 36 | VCVC 534 / VCVC 324 / VCVC 220 |
-|  | 7종 중 6종 이상 | CVC 692 / CVCC 95 / CCVC 41 | VCVC 584 / VCVC 355 / VCVC 242 |
-|  | claude_legacy 단독 | CVC 900 / CVCC 271 / CCVC 161 | VCVC 700 / VCVC 448 / VCVC 315 |
-| 붙여 쓰기 + 형태소 첫 글자 대문자 (Kat + Kat) | 7종 모두 | CVC 212 / CVCC 11 / CVCC 1 | VCC 55 / VCC 4 / VCV 1 |
-|  | mistral_sp 뺀 6종 모두 | CVC 348 / CVCC 18 / CVCVC 2 | VCC 82 / VCC 8 / VCV 1 |
-|  | 7종 중 6종 이상 | CVC 350 / CVCC 18 / CVCVC 3 | VCC 84 / VCC 9 / VCV 1 |
-|  | claude_legacy 단독 | CVC 463 / CVCC 42 / CVCVC 14 | VCC 99 / VCC 12 / VCVC 2 |
-| 형태소마다 띄우기 (␣kat + ␣kat) | 7종 모두 | CVC 610 / CVCC 78 / CVCVC 26 | VCC 126 / VCC 20 / VCVC 8 |
-|  | mistral_sp 뺀 6종 모두 | CVC 728 / CVCC 121 / CVCC 44 | VCC 161 / VCVC 32 / VCVC 20 |
-|  | 7종 중 6종 이상 | CVC 785 / CVCC 138 / CVCVC 50 | VCC 172 / VCVC 37 / VCVC 23 |
-|  | claude_legacy 단독 | CVCC 810 / CVCC 173 / CVCVC 93 | VCC 205 / VCC 51 / VCVC 32 |
-| 어근 앞만 띄우기 (문법 형태는 붙임) (␣kat + kat) | 7종 모두 | CVC 610 / CVCC 78 / CVCVC 26 | VCVC 383 / VCVC 225 / VCVC 148 |
-|  | mistral_sp 뺀 6종 모두 | CVC 728 / CVCC 121 / CVCC 44 | VCVC 534 / VCVC 324 / VCVC 220 |
-|  | 7종 중 6종 이상 | CVC 785 / CVCC 138 / CVCVC 50 | VCVC 584 / VCVC 355 / VCVC 242 |
-|  | claude_legacy 단독 | CVCC 810 / CVCC 173 / CVCVC 93 | VCVC 700 / VCVC 448 / VCVC 315 |
-| 어근 앞 띄우기 + 대문자 (문법 형태는 붙임) (␣Kat + kat) | 7종 모두 | CVC 562 / CVCC 34 / CVC 1 | VCVC 383 / VCVC 225 / VCVC 148 |
-|  | mistral_sp 뺀 6종 모두 | CVC 699 / CVCC 55 / CVCC 8 | VCVC 534 / VCVC 324 / VCVC 220 |
-|  | 7종 중 6종 이상 | CVC 742 / CVCC 70 / CVCC 11 | VCVC 584 / VCVC 355 / VCVC 242 |
-|  | claude_legacy 단독 | CVC 739 / CVCC 84 / CVCC 20 | VCVC 700 / VCVC 448 / VCVC 315 |
+| Glued (no spaces) (kat + kat) | all 7 | CVC 547 / CVCC 66 / CCVC 25 | VCVC 383 / VCVC 225 / VCVC 148 |
+|  | all 6 except mistral_sp | CVC 655 / CVCC 81 / CCVC 36 | VCVC 534 / VCVC 324 / VCVC 220 |
+|  | 6 or more of 7 | CVC 692 / CVCC 95 / CCVC 41 | VCVC 584 / VCVC 355 / VCVC 242 |
+|  | claude_legacy alone | CVC 900 / CVCC 271 / CCVC 161 | VCVC 700 / VCVC 448 / VCVC 315 |
+| Glued + capitalized first letter of each morpheme (Kat + Kat) | all 7 | CVC 212 / CVCC 11 / CVCC 1 | VCC 55 / VCC 4 / VCV 1 |
+|  | all 6 except mistral_sp | CVC 348 / CVCC 18 / CVCVC 2 | VCC 82 / VCC 8 / VCV 1 |
+|  | 6 or more of 7 | CVC 350 / CVCC 18 / CVCVC 3 | VCC 84 / VCC 9 / VCV 1 |
+|  | claude_legacy alone | CVC 463 / CVCC 42 / CVCVC 14 | VCC 99 / VCC 12 / VCVC 2 |
+| One space between morphemes (␣kat + ␣kat) | all 7 | CVC 610 / CVCC 78 / CVCVC 26 | VCC 126 / VCC 20 / VCVC 8 |
+|  | all 6 except mistral_sp | CVC 728 / CVCC 121 / CVCC 44 | VCC 161 / VCVC 32 / VCVC 20 |
+|  | 6 or more of 7 | CVC 785 / CVCC 138 / CVCVC 50 | VCC 172 / VCVC 37 / VCVC 23 |
+|  | claude_legacy alone | CVCC 810 / CVCC 173 / CVCVC 93 | VCC 205 / VCC 51 / VCVC 32 |
+| Space before roots only (grammatical forms glued) (␣kat + kat) | all 7 | CVC 610 / CVCC 78 / CVCVC 26 | VCVC 383 / VCVC 225 / VCVC 148 |
+|  | all 6 except mistral_sp | CVC 728 / CVCC 121 / CVCC 44 | VCVC 534 / VCVC 324 / VCVC 220 |
+|  | 6 or more of 7 | CVC 785 / CVCC 138 / CVCVC 50 | VCVC 584 / VCVC 355 / VCVC 242 |
+|  | claude_legacy alone | CVCC 810 / CVCC 173 / CVCVC 93 | VCVC 700 / VCVC 448 / VCVC 315 |
+| Space before roots + capital letter (grammatical forms glued) (␣Kat + kat) | all 7 | CVC 562 / CVCC 34 / CVC 1 | VCVC 383 / VCVC 225 / VCVC 148 |
+|  | all 6 except mistral_sp | CVC 699 / CVCC 55 / CVCC 8 | VCVC 534 / VCVC 324 / VCVC 220 |
+|  | 6 or more of 7 | CVC 742 / CVCC 70 / CVCC 11 | VCVC 584 / VCVC 355 / VCVC 242 |
+|  | claude_legacy alone | CVC 739 / CVCC 84 / CVCC 20 | VCVC 700 / VCVC 448 / VCVC 315 |
 
-### 1.2 띄어 쓰는 설계: 길이가 다른 모양을 합친 풀
+### 1.2 Spaced designs: pools that combine shapes of different lengths
 
-공백이 경계를 알려 주므로 길이가 다른 모양을 섞어도 된다. 칸 값은 `필터 없음 / zipf < 3.0 / zipf < 2.0`이다.
+The space marks the boundary, so shapes of different lengths can be mixed. Each cell is `no filter / zipf < 3.0 / zipf < 2.0`.
 
-| 표기 | 합의 수준 | 어근 풀 | 문법 풀 |
+| Spelling | Agreement level | Root pool | Grammatical pool |
 | --- | --- | ---: | ---: |
-| ␣kat | 7종 모두 | 2,063 / 205 / 62 | 315 / 37 / 13 |
-|  | mistral_sp 뺀 6종 모두 | 2,720 / 319 / 104 | 437 / 63 / 26 |
-|  | 7종 중 6종 이상 | 2,924 / 366 / 118 | 460 / 73 / 29 |
-|  | claude_legacy 단독 | 3,148 / 560 / 255 | 528 / 106 / 40 |
-|  | 7종 모두 2토큰 이하 | 119,536 / 107,295 / 99,214 | 9,896 / 8,099 / 6,827 |
-| ␣Kat | 7종 모두 | 1,407 / 81 / 3 | 213 / 11 / 1 |
-|  | mistral_sp 뺀 6종 모두 | 1,975 / 143 / 19 | 270 / 14 / 2 |
-|  | 7종 중 6종 이상 | 2,097 / 170 / 26 | 288 / 17 / 2 |
-|  | claude_legacy 단독 | 2,222 / 240 / 55 | 303 / 25 / 7 |
-|  | 7종 모두 2토큰 이하 | 102,003 / 90,130 / 82,443 | 8,554 / 6,801 / 5,578 |
+| ␣kat | all 7 | 2,063 / 205 / 62 | 315 / 37 / 13 |
+|  | all 6 except mistral_sp | 2,720 / 319 / 104 | 437 / 63 / 26 |
+|  | 6 or more of 7 | 2,924 / 366 / 118 | 460 / 73 / 29 |
+|  | claude_legacy alone | 3,148 / 560 / 255 | 528 / 106 / 40 |
+|  | 2 tokens or fewer on all 7 | 119,536 / 107,295 / 99,214 | 9,896 / 8,099 / 6,827 |
+| ␣Kat | all 7 | 1,407 / 81 / 3 | 213 / 11 / 1 |
+|  | all 6 except mistral_sp | 1,975 / 143 / 19 | 270 / 14 / 2 |
+|  | 6 or more of 7 | 2,097 / 170 / 26 | 288 / 17 / 2 |
+|  | claude_legacy alone | 2,222 / 240 / 55 | 303 / 25 / 7 |
+|  | 2 tokens or fewer on all 7 | 102,003 / 90,130 / 82,443 | 8,554 / 6,801 / 5,578 |
 
-### 1.3 토크나이저별 (zipf < 3.0, 단일 토큰)
+### 1.3 Per tokenizer (zipf < 3.0, single token)
 
-토크나이저 하나만 볼 때 단어 필터(zipf < 3.0)를 통과하는 단일 토큰 형태 수다. claude_legacy 행이 Claude 대용 지표다.
+Number of single-token forms that pass the word filter (zipf < 3.0), looking at one tokenizer at a time. The claude_legacy row is the Claude proxy.
 
-| 토크나이저 | 어근 풀 ␣kat | CVC kat | CVC ␣kat | CVCC ␣kat | VCC kat | VCVC kat | 문법 풀 ␣kat |
+| Tokenizer | Root pool ␣kat | CVC kat | CVC ␣kat | CVCC ␣kat | VCC kat | VCVC kat | Grammatical pool ␣kat |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | o200k | 3,009 | 203 | 375 | 852 | 352 | 1,219 | 607 |
 | cl100k | 781 | 107 | 109 | 296 | 237 | 594 | 165 |
@@ -78,44 +78,44 @@
 | mistral_tekken | 1,593 | 154 | 181 | 540 | 231 | 810 | 300 |
 | mistral_sp | 303 | 62 | 47 | 113 | 154 | 283 | 51 |
 
-## 2. 타협의 크기
+## 2. Size of the compromises
 
-### 2.1 단어 필터 기준을 바꾸면
+### 2.1 Changing the word-filter threshold
 
-7종 모두 단일 토큰인 형태 수. 위 줄은 11개 언어 최댓값 기준, 아래 줄(en)은 영어 zipf만 본 기준이다.
+Number of forms that are single tokens on all 7. The upper row uses the maximum over the 11 languages; the lower row (en) uses the English zipf only.
 
-| 모양 표기 | 필터 언어 | < 2.0 | < 2.5 | < 3.0 | < 3.5 | < 4.0 | < 4.5 | < 5.0 | 필터 없음 |
+| Shape, spelling | Filter languages | < 2.0 | < 2.5 | < 3.0 | < 3.5 | < 4.0 | < 4.5 | < 5.0 | no filter |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| VC kat | 11개 언어 | 0 | 0 | 0 | 9 | 25 | 41 | 47 | 102 |
+| VC kat | 11 languages | 0 | 0 | 0 | 9 | 25 | 41 | 47 | 102 |
 |  | en | 0 | 4 | 12 | 30 | 58 | 74 | 85 | 102 |
-| VCV kat | 11개 언어 | 11 | 24 | 44 | 86 | 132 | 171 | 192 | 246 |
+| VCV kat | 11 languages | 11 | 24 | 44 | 86 | 132 | 171 | 192 | 246 |
 |  | en | 29 | 81 | 171 | 213 | 228 | 238 | 240 | 246 |
-| VCC kat | 11개 언어 | 21 | 69 | 125 | 200 | 254 | 285 | 302 | 340 |
+| VCC kat | 11 languages | 21 | 69 | 125 | 200 | 254 | 285 | 302 | 340 |
 |  | en | 66 | 149 | 220 | 277 | 309 | 322 | 326 | 340 |
-| VC ␣kat | 11개 언어 | 0 | 0 | 0 | 4 | 11 | 23 | 28 | 79 |
+| VC ␣kat | 11 languages | 0 | 0 | 0 | 4 | 11 | 23 | 28 | 79 |
 |  | en | 0 | 0 | 5 | 16 | 38 | 52 | 63 | 79 |
-| VCC ␣kat | 11개 언어 | 4 | 11 | 20 | 47 | 64 | 81 | 92 | 126 |
+| VCC ␣kat | 11 languages | 4 | 11 | 20 | 47 | 64 | 81 | 92 | 126 |
 |  | en | 7 | 22 | 48 | 76 | 97 | 108 | 112 | 126 |
-| CVC kat | 11개 언어 | 5 | 13 | 41 | 77 | 153 | 244 | 335 | 547 |
+| CVC kat | 11 languages | 5 | 13 | 41 | 77 | 153 | 244 | 335 | 547 |
 |  | en | 16 | 61 | 171 | 269 | 364 | 439 | 484 | 547 |
-| CVC ␣kat | 11개 언어 | 0 | 3 | 32 | 82 | 165 | 266 | 359 | 610 |
+| CVC ␣kat | 11 languages | 0 | 3 | 32 | 82 | 165 | 266 | 359 | 610 |
 |  | en | 6 | 42 | 169 | 288 | 400 | 486 | 539 | 610 |
-| CCV ␣kat | 11개 언어 | 1 | 7 | 14 | 28 | 34 | 44 | 48 | 65 |
+| CCV ␣kat | 11 languages | 1 | 7 | 14 | 28 | 34 | 44 | 48 | 65 |
 |  | en | 8 | 14 | 39 | 51 | 57 | 59 | 61 | 65 |
-| CVCV ␣kat | 11개 언어 | 5 | 8 | 10 | 17 | 26 | 68 | 114 | 212 |
+| CVCV ␣kat | 11 languages | 5 | 8 | 10 | 17 | 26 | 68 | 114 | 212 |
 |  | en | 16 | 32 | 41 | 49 | 71 | 120 | 157 | 212 |
-| CCVC kat | 11개 언어 | 25 | 35 | 47 | 56 | 73 | 89 | 110 | 135 |
+| CCVC kat | 11 languages | 25 | 35 | 47 | 56 | 73 | 89 | 110 | 135 |
 |  | en | 32 | 50 | 62 | 74 | 89 | 105 | 118 | 135 |
-| CVCC ␣kat | 11개 언어 | 25 | 50 | 78 | 106 | 166 | 274 | 386 | 550 |
+| CVCC ␣kat | 11 languages | 25 | 50 | 78 | 106 | 166 | 274 | 386 | 550 |
 |  | en | 53 | 104 | 137 | 173 | 249 | 350 | 447 | 550 |
-| CVCVC ␣kat | 11개 언어 | 26 | 39 | 46 | 59 | 91 | 176 | 234 | 304 |
+| CVCVC ␣kat | 11 languages | 26 | 39 | 46 | 59 | 91 | 176 | 234 | 304 |
 |  | en | 54 | 70 | 77 | 91 | 120 | 210 | 261 | 304 |
 
-### 2.2 단일 토큰 대신 '2토큰 이하'를 허용하면
+### 2.2 Allowing '2 tokens or fewer' instead of a single token
 
-7종 모두에서 2토큰 이하인 형태 수 (`필터 없음 / zipf < 3.0 / zipf < 2.0`).
+Number of forms that take 2 tokens or fewer on all 7 (`no filter / zipf < 3.0 / zipf < 2.0`).
 
-| 모양 | kat | ␣kat | Kat | ␣Kat |
+| Shape | kat | ␣kat | Kat | ␣Kat |
 | --- | ---: | ---: | ---: | ---: |
 | VC | 105 / 1 / 0 | 105 / 1 / 0 | 105 / 1 / 0 | 105 / 1 / 0 |
 | VCV | 516 / 198 / 84 | 499 / 184 / 70 | 487 / 175 / 64 | 495 / 181 / 67 |
@@ -126,46 +126,46 @@
 | CCVC | 26,383 / 25,548 / 24,691 | 19,568 / 18,749 / 17,927 | 13,962 / 13,242 / 12,539 | 14,872 / 14,095 / 13,351 |
 | CVCC | 19,510 / 17,512 / 15,845 | 21,105 / 19,066 / 17,323 | 11,384 / 9,527 / 8,146 | 18,063 / 16,051 / 14,375 |
 
-### 2.3 필터를 지키고 가장 싼 1,000개 어근 / 100개 문법 형태를 고르면
+### 2.3 Picking the cheapest 1,000 roots / 100 grammatical forms that pass the filter
 
-단어 필터(zipf < 3.0)를 통과한 후보를 토큰 비용 순(단일 토큰이 아닌 토크나이저 수 → 7종 토큰 수 합)으로 정렬해 어근 1,000개, 문법 형태 100개를 고른 뒤 형태 하나당 평균 토큰 수를 쟀다. `풀`은 역할의 모든 모양을 합친 것으로 띄어 쓰는 설계에서만 쓸 수 있다. `후보`는 필터를 통과한 형태 수다(CCVC, CVCC, CVCVC는 빈도를 잰 형태, 즉 어디선가 단일 토큰이거나 7종 모두 2토큰 이하인 형태만 센다). 오른쪽 일곱 칸은 고른 형태의 평균 토큰 수다.
+Candidates that pass the word filter (zipf < 3.0) were sorted by token cost (number of tokenizers on which the form is not a single token → total tokens over the 7). Then 1,000 roots and 100 grammatical forms were picked, and the mean number of tokens per form was measured. `pool` combines all shapes of a role and can be used only in spaced designs. `Candidates` is the number of forms that pass the filter (for CCVC, CVCC and CVCVC, only forms whose frequency was measured are counted, that is, forms that are a single token somewhere or take 2 tokens or fewer on all 7). The seven columns on the right are the mean number of tokens of the picked forms.
 
-| 표기 | 후보 풀 | 후보 | 고른 수 | 7종 단일 | 7종 ≤2 | o200k | cl100k | claude_legacy | llama3 | llama4 | mistral_tekken | mistral_sp |
+| Spelling | Candidate pool | Candidates | Picked | Single on all 7 | ≤2 on all 7 | o200k | cl100k | claude_legacy | llama3 | llama4 | mistral_tekken | mistral_sp |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| kat | 어근 CVC | 907 | 907 | 41 | 901 | 1.78 | 1.88 | 1.86 | 1.86 | 1.76 | 1.83 | 1.94 |
-| kat | 어근 CVCV | 8,000 | 1,000 | 10 | 989 | 1.78 | 1.96 | 1.95 | 1.94 | 1.83 | 1.87 | 1.99 |
-| kat | 어근 CVCC | 22,963 | 1,000 | 66 | 981 | 1.71 | 1.81 | 1.74 | 1.80 | 1.68 | 1.80 | 1.90 |
-| kat | 어근 CVCVC | 80,024 | 1,000 | 25 | 943 | 1.74 | 1.86 | 1.83 | 1.82 | 1.68 | 1.82 | 1.99 |
-| kat | 문법 VC | 1 | 1 | 0 | 1 | 1.00 | 2.00 | 2.00 | 2.00 | 1.00 | 1.00 | 2.00 |
-| kat | 문법 VCV | 207 | 100 | 44 | 100 | 1.01 | 1.12 | 1.41 | 1.06 | 1.01 | 1.10 | 1.47 |
-| kat | 문법 VCC | 1,687 | 100 | 100 | 100 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 |
-| kat | 문법 VCVC | 10,113 | 100 | 100 | 100 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 |
-| ␣kat | 어근 CVC | 907 | 907 | 32 | 898 | 1.59 | 1.88 | 1.94 | 1.85 | 1.71 | 1.80 | 1.96 |
-| ␣kat | 어근 CVCV | 8,000 | 1,000 | 10 | 940 | 1.54 | 1.98 | 2.00 | 1.96 | 1.82 | 1.88 | 2.03 |
-| ␣kat | 어근 CVCC | 22,963 | 1,000 | 78 | 974 | 1.22 | 1.71 | 1.85 | 1.65 | 1.32 | 1.48 | 1.91 |
-| ␣kat | 어근 CVCVC | 80,024 | 1,000 | 46 | 839 | 1.34 | 1.86 | 1.97 | 1.78 | 1.38 | 1.57 | 2.04 |
-| ␣kat | 어근 풀 | 139,963 | 1,000 | 205 | 987 | 1.03 | 1.29 | 1.59 | 1.19 | 1.04 | 1.16 | 1.72 |
-| ␣kat | 문법 VC | 1 | 1 | 0 | 1 | 1.00 | 2.00 | 2.00 | 2.00 | 2.00 | 2.00 | 2.00 |
-| ␣kat | 문법 VCV | 207 | 100 | 2 | 97 | 1.29 | 1.91 | 1.97 | 1.91 | 1.71 | 1.87 | 2.01 |
-| ␣kat | 문법 VCC | 1,687 | 100 | 20 | 100 | 1.05 | 1.22 | 1.58 | 1.12 | 1.07 | 1.30 | 1.73 |
-| ␣kat | 문법 VCVC | 10,113 | 100 | 15 | 99 | 1.02 | 1.36 | 1.57 | 1.30 | 1.03 | 1.10 | 1.79 |
-| ␣kat | 문법 풀 | 12,008 | 100 | 37 | 100 | 1.00 | 1.01 | 1.31 | 1.01 | 1.01 | 1.05 | 1.51 |
-| ␣Kat | 어근 CVC | 907 | 907 | 20 | 899 | 1.81 | 1.91 | 1.94 | 1.90 | 1.82 | 1.86 | 1.98 |
-| ␣Kat | 어근 CVCV | 8,000 | 1,000 | 0 | 996 | 1.97 | 1.99 | 1.99 | 1.99 | 1.98 | 1.98 | 2.00 |
-| ␣Kat | 어근 CVCC | 22,963 | 1,000 | 34 | 989 | 1.72 | 1.85 | 1.92 | 1.84 | 1.69 | 1.74 | 1.95 |
-| ␣Kat | 어근 CVCVC | 80,024 | 1,000 | 5 | 975 | 1.90 | 1.96 | 1.97 | 1.95 | 1.86 | 1.90 | 2.00 |
-| ␣Kat | 어근 풀 | 139,963 | 1,000 | 81 | 988 | 1.32 | 1.63 | 1.78 | 1.60 | 1.25 | 1.40 | 1.88 |
-| ␣Kat | 문법 VC | 1 | 1 | 0 | 1 | 2.00 | 2.00 | 2.00 | 2.00 | 2.00 | 2.00 | 2.00 |
-| ␣Kat | 문법 VCV | 207 | 100 | 2 | 99 | 1.93 | 1.98 | 1.98 | 1.98 | 1.92 | 1.97 | 1.99 |
-| ␣Kat | 문법 VCC | 1,687 | 100 | 6 | 100 | 1.57 | 1.71 | 1.88 | 1.71 | 1.48 | 1.67 | 1.90 |
-| ␣Kat | 문법 VCVC | 10,113 | 100 | 3 | 100 | 1.63 | 1.86 | 1.89 | 1.85 | 1.59 | 1.71 | 1.93 |
-| ␣Kat | 문법 풀 | 12,008 | 100 | 11 | 100 | 1.26 | 1.55 | 1.76 | 1.55 | 1.18 | 1.42 | 1.81 |
+| kat | root CVC | 907 | 907 | 41 | 901 | 1.78 | 1.88 | 1.86 | 1.86 | 1.76 | 1.83 | 1.94 |
+| kat | root CVCV | 8,000 | 1,000 | 10 | 989 | 1.78 | 1.96 | 1.95 | 1.94 | 1.83 | 1.87 | 1.99 |
+| kat | root CVCC | 22,963 | 1,000 | 66 | 981 | 1.71 | 1.81 | 1.74 | 1.80 | 1.68 | 1.80 | 1.90 |
+| kat | root CVCVC | 80,024 | 1,000 | 25 | 943 | 1.74 | 1.86 | 1.83 | 1.82 | 1.68 | 1.82 | 1.99 |
+| kat | grammatical VC | 1 | 1 | 0 | 1 | 1.00 | 2.00 | 2.00 | 2.00 | 1.00 | 1.00 | 2.00 |
+| kat | grammatical VCV | 207 | 100 | 44 | 100 | 1.01 | 1.12 | 1.41 | 1.06 | 1.01 | 1.10 | 1.47 |
+| kat | grammatical VCC | 1,687 | 100 | 100 | 100 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 |
+| kat | grammatical VCVC | 10,113 | 100 | 100 | 100 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 |
+| ␣kat | root CVC | 907 | 907 | 32 | 898 | 1.59 | 1.88 | 1.94 | 1.85 | 1.71 | 1.80 | 1.96 |
+| ␣kat | root CVCV | 8,000 | 1,000 | 10 | 940 | 1.54 | 1.98 | 2.00 | 1.96 | 1.82 | 1.88 | 2.03 |
+| ␣kat | root CVCC | 22,963 | 1,000 | 78 | 974 | 1.22 | 1.71 | 1.85 | 1.65 | 1.32 | 1.48 | 1.91 |
+| ␣kat | root CVCVC | 80,024 | 1,000 | 46 | 839 | 1.34 | 1.86 | 1.97 | 1.78 | 1.38 | 1.57 | 2.04 |
+| ␣kat | root pool | 139,963 | 1,000 | 205 | 987 | 1.03 | 1.29 | 1.59 | 1.19 | 1.04 | 1.16 | 1.72 |
+| ␣kat | grammatical VC | 1 | 1 | 0 | 1 | 1.00 | 2.00 | 2.00 | 2.00 | 2.00 | 2.00 | 2.00 |
+| ␣kat | grammatical VCV | 207 | 100 | 2 | 97 | 1.29 | 1.91 | 1.97 | 1.91 | 1.71 | 1.87 | 2.01 |
+| ␣kat | grammatical VCC | 1,687 | 100 | 20 | 100 | 1.05 | 1.22 | 1.58 | 1.12 | 1.07 | 1.30 | 1.73 |
+| ␣kat | grammatical VCVC | 10,113 | 100 | 15 | 99 | 1.02 | 1.36 | 1.57 | 1.30 | 1.03 | 1.10 | 1.79 |
+| ␣kat | grammatical pool | 12,008 | 100 | 37 | 100 | 1.00 | 1.01 | 1.31 | 1.01 | 1.01 | 1.05 | 1.51 |
+| ␣Kat | root CVC | 907 | 907 | 20 | 899 | 1.81 | 1.91 | 1.94 | 1.90 | 1.82 | 1.86 | 1.98 |
+| ␣Kat | root CVCV | 8,000 | 1,000 | 0 | 996 | 1.97 | 1.99 | 1.99 | 1.99 | 1.98 | 1.98 | 2.00 |
+| ␣Kat | root CVCC | 22,963 | 1,000 | 34 | 989 | 1.72 | 1.85 | 1.92 | 1.84 | 1.69 | 1.74 | 1.95 |
+| ␣Kat | root CVCVC | 80,024 | 1,000 | 5 | 975 | 1.90 | 1.96 | 1.97 | 1.95 | 1.86 | 1.90 | 2.00 |
+| ␣Kat | root pool | 139,963 | 1,000 | 81 | 988 | 1.32 | 1.63 | 1.78 | 1.60 | 1.25 | 1.40 | 1.88 |
+| ␣Kat | grammatical VC | 1 | 1 | 0 | 1 | 2.00 | 2.00 | 2.00 | 2.00 | 2.00 | 2.00 | 2.00 |
+| ␣Kat | grammatical VCV | 207 | 100 | 2 | 99 | 1.93 | 1.98 | 1.98 | 1.98 | 1.92 | 1.97 | 1.99 |
+| ␣Kat | grammatical VCC | 1,687 | 100 | 6 | 100 | 1.57 | 1.71 | 1.88 | 1.71 | 1.48 | 1.67 | 1.90 |
+| ␣Kat | grammatical VCVC | 10,113 | 100 | 3 | 100 | 1.63 | 1.86 | 1.89 | 1.85 | 1.59 | 1.71 | 1.93 |
+| ␣Kat | grammatical pool | 12,008 | 100 | 11 | 100 | 1.26 | 1.55 | 1.76 | 1.55 | 1.18 | 1.42 | 1.81 |
 
-### 2.4 단일 토큰일수록 실제 단어다
+### 2.4 Single-token forms are more often real words
 
-단일 토큰이 되는 토크나이저 수(k)별로 형태 수와 zipf ≥ 3.0인 비율(%)이다(`형태 수 (비율)`).
+Number of forms and the share (%) with zipf ≥ 3.0, by the number of tokenizers (k) on which the form is a single token (`forms (share)`).
 
-| 모양 표기 | k=0 | k=1 | k=2 | k=3 | k=4 | k=5 | k=6 | k=7 |
+| Shape, spelling | k=0 | k=1 | k=2 | k=3 | k=4 | k=5 | k=6 | k=7 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | VC kat | - | - | - | 1 (0) | 1 (100) | - | 1 (100) | 102 (100) |
 | VC ␣kat | - | 1 (0) | 3 (100) | 1 (100) | 1 (100) | 5 (100) | 15 (100) | 79 (100) |
@@ -178,11 +178,11 @@
 | CVCV kat | 9,889 (22) | 380 (57) | 187 (65) | 187 (74) | 76 (79) | 88 (88) | 84 (85) | 134 (93) |
 | CVCV ␣kat | 8,982 (17) | 773 (56) | 363 (78) | 376 (84) | 71 (83) | 138 (93) | 110 (96) | 212 (95) |
 
-### 2.5 필터를 통과한 단일 토큰은 대개 단어 조각이다
+### 2.5 Single tokens that pass the filter are mostly word fragments
 
-11개 언어에서 zipf ≥ 3.0인 단어 319,468개(언어 간 중복 제거)를 모아, zipf < 3.0인 형태가 그 단어들의 진부분 접두(␣ 표기: 단어 첫머리 조각, 예 ` calc` ← calculate)이거나 진부분 문자열(붙임 표기: 단어 안 조각, 예 `ated` ← created)인 비율(%)을 쟀다. 기준선은 같은 모양에서 어느 토크나이저에서도 단일 토큰이 아닌 형태다(모든 형태의 빈도를 잰 모양만).
+We collected the 319,468 words with zipf ≥ 3.0 in the 11 languages (duplicates across languages removed) and measured the share (%) of zipf < 3.0 forms that are a proper prefix of those words (␣ spelling: a fragment from the start of a word, e.g. ` calc` ← calculate) or a proper substring (glued spelling: a fragment inside a word, e.g. `ated` ← created). The baseline is the set of forms of the same shape that are a single token on no tokenizer (only shapes where every form's frequency was measured).
 
-| 모양 표기 | 7종 단일 & < 3.0 | 조각 % | 단일 아님 & < 3.0 | 조각 % | 조각이 아닌 7종 단일 형태 (최대 10개) |
+| Shape, spelling | Single on all 7 & < 3.0 | Fragment % | Not single & < 3.0 | Fragment % | Non-fragment forms single on all 7 (up to 10) |
 | --- | ---: | ---: | ---: | ---: | --- |
 | VCV kat | 44 | 100 | 55 | 67 | - |
 | VCV ␣kat | 2 | 100 | 132 | 49 | - |
@@ -203,38 +203,38 @@
 | CVCVC kat | 25 | 84 | - | - | debug mutex popup regex |
 | CVCVC ␣kat | 46 | 93 | - | - | debug javax regex |
 
-## 3. 측정 방법과 점검
+## 3. Method and checks
 
-- 모음 V = aeiou, 자음 C = 나머지 21자(y 포함). 모양마다 가능한 형태를 모두 만들었다.
-- 앞 공백 표기는 `the` 뒤에, 붙임 표기는 `1` 뒤에 붙여 토큰화하고, 문맥 뒤의 토큰 수를 셌다. 문맥과 형태가 한 토큰으로 합쳐지면 단일 토큰이 아닌 것으로 쳤다.
-  - 이유: mistral_sp(SentencePiece)는 입력 맨 앞에 가짜 공백을 붙인다. 그래서 `kat`을 홀로 재면 사실상 `␣kat`을, `␣kat`을 홀로 재면 공백 두 개짜리를 재게 된다. 문맥을 두면 문장 중간의 실제 모습을 잰다.
-  - 붙임 표기 값은 '형태가 글자 덩어리의 맨 앞에 올 때'의 값이다. `katenmirob`처럼 글자가 이어질 때 이웃 글자와 섞여 잘리는 문제는 이 실험에서 재지 않았다(E2의 몫).
-  - o200k, llama4, mistral_tekken은 사전 분할 정규식이 대문자 앞에서 끊으므로 `KatEnMirOb`의 각 형태소가 `Kat` 표기 값과 같은 조건에서 토큰화된다. cl100k, llama3, claude_legacy는 대소문자 경계에서 끊지 않는다.
-- 단어 필터: wordfreq `zipf_frequency`를 11개 언어에서 재어 최댓값을 썼다. 대문자 표기도 소문자 형태의 빈도로 거른다.
-- 합의 수준: `7종 모두`, `mistral_sp 뺀 6종 모두`, `7종 중 6종 이상`, `7종 중 5종 이상`, `claude_legacy 단독`, `7종 모두 2토큰 이하`. `7종 중 6종 이상`은 어느 토크나이저가 빠져도 된다.
-- claude_legacy는 Claude 2 시절 토크나이저다. 현행 Claude 토크나이저는 공개되지 않아 대용으로만 쓴다.
+- Vowels V = aeiou, consonants C = the other 21 letters (including y). Every possible form of each shape was generated.
+- Leading-space spellings were appended after `the` and glued spellings after `1`, then tokenized, and the tokens after the context were counted. If the context and the form merged into one token, the form counted as not a single token.
+  - Reason: mistral_sp (SentencePiece) adds a dummy space at the start of the input. So measuring `kat` alone in effect measures `␣kat`, and measuring `␣kat` alone measures a form with two spaces. With a context, the measurement reflects the form as it actually appears mid-sentence.
+  - Glued-spelling values are for 'the form at the start of a run of letters'. When letters run on, as in `katenmirob`, a form can be cut together with neighboring letters; this experiment did not measure that (E2 does).
+  - The pre-tokenization regexes of o200k, llama4 and mistral_tekken split before a capital letter, so each morpheme in `KatEnMirOb` is tokenized under the same condition as the `Kat` spelling value. cl100k, llama3 and claude_legacy do not split at case boundaries.
+- Word filter: wordfreq `zipf_frequency` was measured in the 11 languages and the maximum was used. Capitalized spellings are also filtered by the frequency of the lowercase form.
+- Agreement levels: `all 7`, `all 6 except mistral_sp`, `6 or more of 7`, `5 or more of 7`, `claude_legacy alone`, `2 tokens or fewer on all 7`. `6 or more of 7` allows any one tokenizer to miss.
+- claude_legacy is the tokenizer from the Claude 2 era. The current Claude tokenizer is not public, so claude_legacy serves only as a proxy.
 
-**점검 1: CVC + VC 전체에서 문맥 측정과 홀로 측정의 단일 토큰 판정이 다른 형태 수**
+**Check 1: number of forms, over all of CVC + VC, where the single-token verdict differs between the in-context and standalone measurements**
 
-| 표기 | o200k | cl100k | claude_legacy | llama3 | llama4 | mistral_tekken | mistral_sp |
+| Spelling | o200k | cl100k | claude_legacy | llama3 | llama4 | mistral_tekken | mistral_sp |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | kat | 0 | 0 | 0 | 0 | 0 | 0 | 405 |
 | ␣kat | 0 | 0 | 0 | 0 | 0 | 0 | 760 |
 | Kat | 0 | 0 | 0 | 0 | 0 | 0 | 435 |
 | ␣Kat | 0 | 0 | 0 | 0 | 0 | 0 | 680 |
 
-**점검 2: 모든 모양에서 문맥 토큰과 합쳐진 형태 수** (0이면 문맥이 형태를 건드리지 않았다)
+**Check 2: number of forms, over all shapes, that merged with the context token** (0 means the context did not affect the form)
 
-| 표기 | o200k | cl100k | claude_legacy | llama3 | llama4 | mistral_tekken | mistral_sp |
+| Spelling | o200k | cl100k | claude_legacy | llama3 | llama4 | mistral_tekken | mistral_sp |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | kat | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | ␣kat | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Kat | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | ␣Kat | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 
-## 4. 모양·표기별 단일 토큰 수 (토크나이저별, 필터 없음)
+## 4. Single-token counts by shape and spelling (per tokenizer, no filter)
 
-| 모양 | 표기 | 전체 | o200k | cl100k | claude_legacy | llama3 | llama4 | mistral_tekken | mistral_sp |
+| Shape | Spelling | Total | o200k | cl100k | claude_legacy | llama3 | llama4 | mistral_tekken | mistral_sp |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | V | kat | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 |
 |  | ␣kat | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 5 |
@@ -293,11 +293,11 @@
 |  | Kat | 231,525 | 284 | 174 | 169 | 175 | 254 | 149 | 50 |
 |  | ␣Kat | 231,525 | 715 | 451 | 285 | 478 | 778 | 602 | 147 |
 
-## 5. 합의 수준 × 단어 필터
+## 5. Agreement level × word filter
 
-칸 값은 `필터 없음 / zipf < 3.0 / zipf < 2.0` 순서다. `필터 통과`는 토큰화와 상관없이 단어 필터를 통과하는 형태 수다(빈도를 일부 형태만 잰 큰 모양은 `-`).
+Cells are in the order `no filter / zipf < 3.0 / zipf < 2.0`. `Pass filter` is the number of forms that pass the word filter regardless of tokenization (`-` for large shapes where frequency was measured for only some forms).
 
-| 모양 | 표기 | 전체 | 필터 통과 (< 3.0 / < 2.0) | 7종 모두 | mistral_sp 뺀 6종 모두 | 7종 중 6종 이상 | 7종 중 5종 이상 | claude_legacy 단독 | 7종 모두 2토큰 이하 |
+| Shape | Spelling | Total | Pass filter (< 3.0 / < 2.0) | all 7 | all 6 except mistral_sp | 6 or more of 7 | 5 or more of 7 | claude_legacy alone | 2 tokens or fewer on all 7 |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | V | kat | 5 | 0 / 0 | 5 / 0 / 0 | 5 / 0 / 0 | 5 / 0 / 0 | 5 / 0 / 0 | 5 / 0 / 0 | 5 / 0 / 0 |
 |  | ␣kat | 5 |  | 5 / 0 / 0 | 5 / 0 / 0 | 5 / 0 / 0 | 5 / 0 / 0 | 5 / 0 / 0 | 5 / 0 / 0 |
@@ -356,9 +356,9 @@
 |  | Kat | 231,525 |  | 48 / 4 / 0 | 114 / 8 / 2 | 115 / 9 / 3 | 143 / 13 / 4 | 169 / 28 / 14 | 27,143 / 24,501 / 22,639 |
 |  | ␣Kat | 231,525 |  | 126 / 5 / 1 | 239 / 13 / 5 | 249 / 15 / 7 | 351 / 29 / 13 | 285 / 40 / 18 | 56,751 / 52,614 / 49,782 |
 
-**7종 중 정확히 6종에서 단일 토큰인 형태에서 홀로 실패한 토크나이저** (필터 없음)
+**For forms that are single tokens on exactly 6 of 7, the one tokenizer that failed** (no filter)
 
-| 모양 | 표기 | o200k | cl100k | claude_legacy | llama3 | llama4 | mistral_tekken | mistral_sp |
+| Shape | Spelling | o200k | cl100k | claude_legacy | llama3 | llama4 | mistral_tekken | mistral_sp |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | CV | kat | 0 | 0 | 0 | 0 | 0 | 0 | 6 |
 |  | ␣kat | 0 | 0 | 1 | 0 | 0 | 0 | 7 |
@@ -393,13 +393,13 @@
 |  | Kat | 0 | 0 | 0 | 0 | 0 | 2 | 102 |
 |  | ␣Kat | 1 | 0 | 42 | 0 | 1 | 0 | 151 |
 
-## 6. 글자별 생산성
+## 6. Productivity by letter
 
-CVC에서 그 자음이 첫 자리(C1) 또는 끝 자리(C2)에 올 때의 단일 토큰 비율(%)이다. `평균`은 7종의 단일 토큰 비율 평균, `6+`는 7종 중 6종 이상에서 단일 토큰인 비율, `claude`는 claude_legacy의 비율이다. C1 6+와 C2 6+의 합이 큰 순서로 정렬했다. 단어 필터는 걸지 않았다.
+Single-token share (%) in CVC when the consonant is in the first position (C1) or the last position (C2). `mean` is the mean single-token share over the 7, `6+` is the share that is a single token on 6 or more of 7, and `claude` is the claude_legacy share. Rows are sorted by the sum of C1 6+ and C2 6+, largest first. No word filter is applied.
 
 **CVC ␣kat**
 
-| 자음 | C1 평균 | C1 6+ | C1 claude | C2 평균 | C2 6+ | C2 claude |
+| Consonant | C1 mean | C1 6+ | C1 claude | C2 mean | C2 6+ | C2 claude |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | r | 65 | 51 | 48 | 80 | 71 | 68 |
 | t | 64 | 47 | 48 | 77 | 70 | 70 |
@@ -425,7 +425,7 @@ CVC에서 그 자음이 첫 자리(C1) 또는 끝 자리(C2)에 올 때의 단�
 
 **CVC kat**
 
-| 자음 | C1 평균 | C1 6+ | C1 claude | C2 평균 | C2 6+ | C2 claude |
+| Consonant | C1 mean | C1 6+ | C1 claude | C2 mean | C2 6+ | C2 claude |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | r | 83 | 75 | 73 | 76 | 65 | 70 |
 | n | 58 | 43 | 53 | 83 | 77 | 84 |
@@ -449,9 +449,9 @@ CVC에서 그 자음이 첫 자리(C1) 또는 끝 자리(C2)에 올 때의 단�
 | x | 13 | 5 | 16 | 27 | 21 | 32 |
 | q | 5 | 0 | 2 | 9 | 3 | 6 |
 
-**모음** (CVC는 가운데 모음, VC·CV는 그 모음을 포함한 형태의 7종 중 6종 이상 단일 토큰 비율 %)
+**Vowels** (CVC by its middle vowel, VC and CV by the vowel they contain; share (%) of those forms that are single tokens on 6 or more of 7)
 
-| 모음 | CVC␣ 평균 | CVC␣ 6+ | CVC 평균 | CVC 6+ | VC 6+ | VC␣ 6+ | CV 6+ | CV␣ 6+ |
+| Vowel | CVC␣ mean | CVC␣ 6+ | CVC mean | CVC 6+ | VC 6+ | VC␣ 6+ | CV 6+ | CV␣ 6+ |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | a | 62 | 45 | 52 | 38 | 100 | 95 | 100 | 90 |
 | e | 53 | 38 | 56 | 43 | 100 | 95 | 95 | 95 |
@@ -459,9 +459,9 @@ CVC에서 그 자음이 첫 자리(C1) 또는 끝 자리(C2)에 올 때의 단�
 | o | 51 | 37 | 42 | 30 | 95 | 90 | 95 | 90 |
 | u | 37 | 23 | 23 | 13 | 95 | 76 | 95 | 86 |
 
-**VC / CV 의 자음** (7종 중 6종 이상 단일 토큰 비율 %, 100이 아닌 자음만)
+**Consonants in VC / CV** (share (%) that are single tokens on 6 or more of 7; only consonants not at 100)
 
-| 자음 | VC | VC␣ | CV | CV␣ |
+| Consonant | VC | VC␣ | CV | CV␣ |
 | --- | ---: | ---: | ---: | ---: |
 | f | 100 | 80 | 100 | 100 |
 | j | 100 | 60 | 100 | 100 |
@@ -471,17 +471,17 @@ CVC에서 그 자음이 첫 자리(C1) 또는 끝 자리(C2)에 올 때의 단�
 | y | 100 | 80 | 100 | 60 |
 | z | 100 | 80 | 100 | 100 |
 
-CVC ␣kat에서 6+ 비율(C1, C2 평균)이 높은 자음은 r 61%, t 59%, n 58%, l 56%, d 56%, m 54%, 낮은 자음은 k 16%, j 14%, z 13%, y 13%, x 9%, q 1%이다. 모음은 a 45%, e 38%, o 37%, i 35%, u 23% 순이다. 끝 자리(C2)의 6+ 비율이 첫 자리(C1)보다 20%p 이상 낮은 자음: f, h.
+In CVC ␣kat, the consonants with the highest 6+ share (mean of C1 and C2) are r 61%, t 59%, n 58%, l 56%, d 56%, m 54%, and the lowest are k 16%, j 14%, z 13%, y 13%, x 9%, q 1%. Vowels rank a 45%, e 38%, o 37%, i 35%, u 23%. Consonants whose 6+ share in the last position (C2) is at least 20 percentage points lower than in the first position (C1): f, h.
 
-토크나이저별 글자 비율은 inventory.json 의 `letters`에 있다.
+Per-tokenizer letter shares are in `letters` in inventory.json.
 
-## 7. 자음 집합 줄이기
+## 7. Shrinking the consonant set
 
-CVC에서 해당 합의 수준의 단일 토큰 형태(단어 필터 없이)를 가장 적게 잃는 자음부터 하나씩 뺐다. `수율`은 남은 자음으로 만들 수 있는 CVC 전체 가운데 단일 토큰 형태의 비율, `그중 < 3.0`은 단어 필터를 통과하는 수다.
+Consonants were removed one at a time, starting with the one whose removal loses the fewest CVC forms that are single tokens at the given agreement level (no word filter). `Yield` is the share of single-token forms among all CVC forms that the remaining consonants can make; `Of which < 3.0` is the number that pass the word filter.
 
-**CVC ␣kat, mistral_sp 뺀 6종 모두**
+**CVC ␣kat, all 6 except mistral_sp**
 
-| 자음 수 | 뺀 자음 | 단일 토큰 | CVC 전체 | 수율 % | 그중 < 3.0 |
+| Consonants | Removed | Single token | All CVC | Yield % | Of which < 3.0 |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | 21 | - | 728 | 2,205 | 33 | 50 |
 | 20 | q | 726 | 2,000 | 36 | 49 |
@@ -496,9 +496,9 @@ CVC에서 해당 합의 수준의 단일 토큰 형태(단어 필터 없이)를 
 | 11 | v | 440 | 605 | 73 | 16 |
 | 10 | c | 375 | 500 | 75 | 10 |
 
-**CVC ␣kat, 7종 중 6종 이상**
+**CVC ␣kat, 6 or more of 7**
 
-| 자음 수 | 뺀 자음 | 단일 토큰 | CVC 전체 | 수율 % | 그중 < 3.0 |
+| Consonants | Removed | Single token | All CVC | Yield % | Of which < 3.0 |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | 21 | - | 785 | 2,205 | 36 | 59 |
 | 20 | q | 783 | 2,000 | 39 | 58 |
@@ -513,9 +513,9 @@ CVC에서 해당 합의 수준의 단일 토큰 형태(단어 필터 없이)를 
 | 11 | v | 458 | 605 | 76 | 19 |
 | 10 | c | 392 | 500 | 78 | 13 |
 
-**CVC kat, mistral_sp 뺀 6종 모두**
+**CVC kat, all 6 except mistral_sp**
 
-| 자음 수 | 뺀 자음 | 단일 토큰 | CVC 전체 | 수율 % | 그중 < 3.0 |
+| Consonants | Removed | Single token | All CVC | Yield % | Of which < 3.0 |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | 21 | - | 655 | 2,205 | 30 | 59 |
 | 20 | q | 652 | 2,000 | 33 | 57 |
@@ -530,9 +530,9 @@ CVC에서 해당 합의 수준의 단일 토큰 형태(단어 필터 없이)를 
 | 11 | v | 373 | 605 | 62 | 19 |
 | 10 | g | 326 | 500 | 65 | 16 |
 
-**CVC kat, 7종 중 6종 이상**
+**CVC kat, 6 or more of 7**
 
-| 자음 수 | 뺀 자음 | 단일 토큰 | CVC 전체 | 수율 % | 그중 < 3.0 |
+| Consonants | Removed | Single token | All CVC | Yield % | Of which < 3.0 |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | 21 | - | 692 | 2,205 | 31 | 68 |
 | 20 | q | 689 | 2,000 | 34 | 66 |
@@ -547,34 +547,34 @@ CVC에서 해당 합의 수준의 단일 토큰 형태(단어 필터 없이)를 
 | 11 | v | 383 | 605 | 63 | 19 |
 | 10 | g | 335 | 500 | 67 | 16 |
 
-**제안 (기준: 단일 토큰 형태를 95% 이상 남기는 가장 작은 집합)**
+**Proposal (criterion: the smallest set that keeps at least 95% of the single-token forms)**
 
-- CVC ␣kat, mistral_sp 뺀 6종 모두: 자음 19개 `bcdfghjklmnprstvwyz` (뺀 자음 `qx`) → 단일 토큰 707/728, 수율 33% → 39%, 단어 필터 통과 50 → 45
-- CVC ␣kat, 7종 중 6종 이상: 자음 19개 `bcdfghjklmnprstvwyz` (뺀 자음 `qx`) → 단일 토큰 764/785, 수율 36% → 42%, 단어 필터 통과 59 → 54
-- CVC kat, mistral_sp 뺀 6종 모두: 자음 19개 `bcdfghjklmnprstvwyz` (뺀 자음 `qx`) → 단일 토큰 631/655, 수율 30% → 35%, 단어 필터 통과 59 → 52
-- CVC kat, 7종 중 6종 이상: 자음 19개 `bcdfghjklmnprstvwyz` (뺀 자음 `qx`) → 단일 토큰 662/692, 수율 31% → 37%, 단어 필터 통과 68 → 58
+- CVC ␣kat, all 6 except mistral_sp: 19 consonants `bcdfghjklmnprstvwyz` (removed `qx`) → single tokens 707/728, yield 33% → 39%, pass word filter 50 → 45
+- CVC ␣kat, 6 or more of 7: 19 consonants `bcdfghjklmnprstvwyz` (removed `qx`) → single tokens 764/785, yield 36% → 42%, pass word filter 59 → 54
+- CVC kat, all 6 except mistral_sp: 19 consonants `bcdfghjklmnprstvwyz` (removed `qx`) → single tokens 631/655, yield 30% → 35%, pass word filter 59 → 52
+- CVC kat, 6 or more of 7: 19 consonants `bcdfghjklmnprstvwyz` (removed `qx`) → single tokens 662/692, yield 31% → 37%, pass word filter 68 → 58
 
-자음을 줄여도 단일 토큰 형태의 절대 개수는 늘지 않는다. 형태를 목록에서 고른다면 축소는 개수 면에서 이득이 없고, 이득은 사양을 짧게 쓰는 것과 붙여 쓴 문자열에서 경계가 덜 흔들릴 가능성(E2에서 확인할 것)뿐이다.
+Shrinking the consonant set does not increase the absolute number of single-token forms. If forms are picked from a list, shrinking gains nothing in count; the only gains are a shorter spec and possibly less boundary instability in glued strings (to be checked in E2).
 
-## 8. 형태 목록 미리 보기
+## 8. Form list preview
 
-전체 목록은 inventory.json 의 `lists`(모양 → 표기 → `all7_lt3`, `no_sp_lt3`, `ge6_lt3`, 항목은 [형태, max zipf])에 있다. 아래는 알파벳 순 앞의 40개다.
+The full lists are in `lists` in inventory.json (shape → spelling → `all7_lt3`, `no_sp_lt3`, `ge6_lt3`; each entry is [form, max zipf]). Below are the first 40 in alphabetical order.
 
-- VC kat, 7종 모두, zipf < 3.0 (0개): 없음
-- VCV kat, 7종 모두, zipf < 3.0 (44개): aco aho ake aqu avo awi aze azi azu enu equ ibe ifi igi igu ija ije iji ime iqu iro ixa ize obe oci oga oge ogo olo ope ote ube uce uga uge ugu ule ulo ume ura
-- VCC kat, 7종 모두, zipf < 3.0 (125개): acy adr adt agn ahr aky ald aml amm anz aph apy arb arl atz avy awk awn axy ays azy ekt ell elt emb emy enc enn eny erv esh ety etz exc ibr icl icz idx idy iff
-- VCVC kat, 7종 모두, zipf < 3.0 (225개): aban abet abil abol aced acon aded ades ador adow ager agon ahan aked akes akov aled alen aler amic anes anim aped aper apon ared aret ased aser asis ason atal ated ateg ater atic atin atis ativ aton
-- CVC kat, 7종 모두, zipf < 3.0 (41개): buf ced cer cil cov cur ded gom gos gow hed hib hir hom jav jud ked ker kov mov mul neg rac ral reb req rew ril ror rov rup vec veh vey wid wor xic xit zej zek
-- CVC ␣kat, 7종 모두, zipf < 3.0 (32개): buf cer cig cov cur fid fif fos hom jud ker lod lum mov mul neg nob rac rav reb req suc tob vac vec veh vig viv vot wid wor wur
-- CVC ␣kat, mistral_sp 뺀 6종 모두, zipf < 3.0 (50개): bif buf cer cif cig cov cur dob fid fif foc fos fug gid hil hom jav jud ker lod lum mav mov muc mul neg nob nud piv pix rac rav reb req suc tob tox vac vap vec
-- CVCC ␣kat, 7종 모두, zipf < 3.0 (78개): bapt barg batt bicy calc camb cand circ coff cogn conc cond conj conv cort cosm curr cush cust decl desc desp dest dict dign disg dist fant forg foss fost func furn hadn hasn horm kidn larg lect magn
-- CCVC kat, 7종 모두, zipf < 3.0 (47개): blem bler bles brid ched ches cker cles cret crit ctic ctor ffen ffic flix frac ften fter ghan gres href json ktop ndef nder nten phan pler plex plit pped prec pred prev ptic pton sson sted ston thal
-- CVCVC ␣kat, 7종 모두, zipf < 3.0 (46개): benef capac catal citiz conoc coron debug decid dedic deleg delet demol denom depos deriv difer dimin divid divis divor domin famil femin gover javax manip memor milit navig neces nomin polic popul posit recip regex regul relig renov reput
+- VC kat, all 7, zipf < 3.0 (0 forms): none
+- VCV kat, all 7, zipf < 3.0 (44 forms): aco aho ake aqu avo awi aze azi azu enu equ ibe ifi igi igu ija ije iji ime iqu iro ixa ize obe oci oga oge ogo olo ope ote ube uce uga uge ugu ule ulo ume ura
+- VCC kat, all 7, zipf < 3.0 (125 forms): acy adr adt agn ahr aky ald aml amm anz aph apy arb arl atz avy awk awn axy ays azy ekt ell elt emb emy enc enn eny erv esh ety etz exc ibr icl icz idx idy iff
+- VCVC kat, all 7, zipf < 3.0 (225 forms): aban abet abil abol aced acon aded ades ador adow ager agon ahan aked akes akov aled alen aler amic anes anim aped aper apon ared aret ased aser asis ason atal ated ateg ater atic atin atis ativ aton
+- CVC kat, all 7, zipf < 3.0 (41 forms): buf ced cer cil cov cur ded gom gos gow hed hib hir hom jav jud ked ker kov mov mul neg rac ral reb req rew ril ror rov rup vec veh vey wid wor xic xit zej zek
+- CVC ␣kat, all 7, zipf < 3.0 (32 forms): buf cer cig cov cur fid fif fos hom jud ker lod lum mov mul neg nob rac rav reb req suc tob vac vec veh vig viv vot wid wor wur
+- CVC ␣kat, all 6 except mistral_sp, zipf < 3.0 (50 forms): bif buf cer cif cig cov cur dob fid fif foc fos fug gid hil hom jav jud ker lod lum mav mov muc mul neg nob nud piv pix rac rav reb req suc tob tox vac vap vec
+- CVCC ␣kat, all 7, zipf < 3.0 (78 forms): bapt barg batt bicy calc camb cand circ coff cogn conc cond conj conv cort cosm curr cush cust decl desc desp dest dict dign disg dist fant forg foss fost func furn hadn hasn horm kidn larg lect magn
+- CCVC kat, all 7, zipf < 3.0 (47 forms): blem bler bles brid ched ches cker cles cret crit ctic ctor ffen ffic flix frac ften fter ghan gres href json ktop ndef nder nten phan pler plex plit pped prec pred prev ptic pton sson sted ston thal
+- CVCVC ␣kat, all 7, zipf < 3.0 (46 forms): benef capac catal citiz conoc coron debug decid dedic deleg delet demol denom depos deriv difer dimin divid divis divor domin famil femin gover javax manip memor milit navig neces nomin polic popul posit recip regex regul relig renov reput
 
-## 9. 한계
+## 9. Limitations
 
-- 현행 Claude 토크나이저는 공개되지 않았다. claude_legacy 결과가 현행 Claude에 그대로 적용된다는 보장은 없다.
-- 단일 토큰 여부만 쟀다. 붙여 쓴 문자열 안에서 형태소 경계와 토큰 경계가 맞는지는 재지 않았다(E2).
-- 단어 필터는 11개 언어의 빈도만 본다. 한국어·일본어·중국어 로마자 표기, 약어, 상표, 프로그래밍 식별자와의 겹침은 걸러지지 않는다.
-- wordfreq는 짧은 글자열에 약어·이름·다른 언어 조각의 빈도까지 잡는다. 그래서 짧은 모양일수록 필터에서 많이 빠지고, zipf ≥ 3.0이라고 해서 그 형태가 모두 LLM에게 강한 뜻을 가진다는 보장도 없다. 실제 의미 간섭의 크기는 모델 API 없이 잴 수 없다.
-- 단일 토큰이라도 그 토큰이 학습 데이터에서 특정 의미(이름, 약어, 코드 조각)에 묶여 있을 수 있다. 이 역시 이 실험으로는 잴 수 없다.
+- The current Claude tokenizer is not public. There is no guarantee that claude_legacy results apply as is to current Claude.
+- Only single-token status was measured. Whether morpheme boundaries match token boundaries inside glued strings was not measured (E2).
+- The word filter looks only at frequencies in 11 languages. Overlaps with romanized Korean, Japanese or Chinese, abbreviations, trademarks and programming identifiers are not filtered out.
+- For short letter strings, wordfreq also counts the frequency of abbreviations, names and fragments of other languages. So the shorter the shape, the more forms the filter removes, and zipf ≥ 3.0 does not guarantee that every such form carries a strong meaning for an LLM. The actual size of semantic interference cannot be measured without a model API.
+- Even a single token can be tied to a specific meaning in the training data (a name, an abbreviation, a code fragment). This experiment cannot measure that either.

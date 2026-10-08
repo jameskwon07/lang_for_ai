@@ -1,18 +1,18 @@
-"""여러 LLM 토크나이저를 같은 인터페이스로 다루는 모듈.
+"""A module that exposes several LLM tokenizers through one interface.
 
-먼저 `python3 fetch_tokenizers.py` 로 토크나이저 파일을 받아야 한다.
+Run `python3 fetch_tokenizers.py` first to download the tokenizer files.
 
     from toklib import load_all
     toks = load_all()
     for t in toks.values():
         print(t.name, t.count("katenmirob"), t.pieces("katenmirob"))
 
-모든 토크나이저는 다음을 제공한다.
-- count(text)       토큰 수
-- pieces(text)      토큰 조각 문자열 목록. 이어 붙이면 원문과 같다 (ASCII 입력 기준)
-- boundaries(text)  토큰이 시작하는 문자 위치 집합 (0과 len(text) 포함)
+Every tokenizer provides:
+- count(text)       number of tokens
+- pieces(text)      list of token piece strings. Joined, they equal the input (for ASCII input)
+- boundaries(text)  set of character positions where a token starts (includes 0 and len(text))
 
-현행 Claude 토크나이저는 공개되지 않았다. claude_legacy 는 Claude 2 시절 토크나이저로, 대용 지표로만 쓴다.
+The current Claude tokenizer is not public. claude_legacy is the Claude 2-era tokenizer and is used only as a proxy.
 """
 
 from __future__ import annotations
@@ -27,7 +27,7 @@ from tiktoken.load import load_tiktoken_bpe
 
 CACHE = Path(__file__).resolve().parent / ".cache" / "tokenizers"
 
-# tiktoken 계열 토크나이저의 사전 분할(pre-tokenization) 정규식
+# Pre-tokenization regexes for tiktoken-based tokenizers
 _O200K_PAT = "|".join([
     r"""[^\r\n\p{L}\p{N}]?[\p{Lu}\p{Lt}\p{Lm}\p{Lo}\p{M}]*[\p{Ll}\p{Lm}\p{Lo}\p{M}]+(?i:'s|'t|'re|'ve|'m|'ll|'d)?""",
     r"""[^\r\n\p{L}\p{N}]?[\p{Lu}\p{Lt}\p{Lm}\p{Lo}\p{M}]+[\p{Ll}\p{Lm}\p{Lo}\p{M}]*(?i:'s|'t|'re|'ve|'m|'ll|'d)?""",
@@ -42,7 +42,7 @@ _LLAMA3_PAT = r"(?i:'s|'t|'re|'ve|'m|'ll|'d)|[^\r\n\p{L}\p{N}]?\p{L}+|\p{N}{1,3}
 
 
 class Tok:
-    """토크나이저 공통 인터페이스."""
+    """Common tokenizer interface."""
 
     name: str
     description: str
@@ -58,7 +58,7 @@ class Tok:
         return len(self._piece_bytes(text))
 
     def boundaries(self, text: str) -> set[int]:
-        """토큰 시작 위치(문자 단위). ASCII 입력을 가정한다."""
+        """Token start positions (in characters). Assumes ASCII input."""
         out, pos = {0}, 0
         for p in self.pieces(text):
             pos += len(p)
@@ -82,7 +82,7 @@ class TiktokenTok(Tok):
 
 
 class HFTok(Tok):
-    """Hugging Face tokenizers 형식 (ByteLevel BPE)."""
+    """Hugging Face tokenizers format (ByteLevel BPE)."""
 
     def __init__(self, name: str, description: str, path: Path):
         from tokenizers import Tokenizer
@@ -90,7 +90,7 @@ class HFTok(Tok):
         self.name, self.description = name, description
         self._tok = Tokenizer.from_file(str(path))
         self.vocab_size = self._tok.get_vocab_size()
-        # GPT-2 ByteLevel 문자 → 바이트 역매핑
+        # Reverse mapping from GPT-2 ByteLevel characters to bytes
         bs = list(range(ord("!"), ord("~") + 1)) + list(range(ord("¡"), ord("¬") + 1)) + list(range(ord("®"), ord("ÿ") + 1))
         cs = bs[:]
         n = 0
@@ -107,7 +107,7 @@ class HFTok(Tok):
 
 
 class SentencePieceTok(Tok):
-    """SentencePiece 형식. 문장 앞에 붙는 가짜 공백(▁)은 첫 조각에서 떼어 낸다."""
+    """SentencePiece format. The dummy prefix space (▁) added before the text is stripped from the first piece."""
 
     def __init__(self, name: str, description: str, path: Path):
         import sentencepiece as spm
@@ -120,11 +120,11 @@ class SentencePieceTok(Tok):
         out = []
         for p in self._sp.encode(text, out_type=str):
             if len(p) == 6 and p.startswith("<0x") and p.endswith(">"):
-                out.append(bytes([int(p[3:5], 16)]))  # byte fallback 조각
+                out.append(bytes([int(p[3:5], 16)]))  # byte fallback piece
             else:
                 out.append(p.replace("▁", " ").encode("utf-8"))
         if out and not text.startswith(" ") and out[0].startswith(b" "):
-            # 가짜 공백만으로 된 토큰도 모델이 실제로 보는 토큰이므로 빈 조각으로 개수에 남긴다
+            # A token made only of the dummy space is still a token the model actually sees, so it stays in the count as an empty piece
             out[0] = out[0][1:]
         return out
 
@@ -149,20 +149,21 @@ def load_all() -> dict[str, Tok]:
                            "llama4.tiktoken", "mistral_tekken_240911.json", "mistral_sp_v3.model"]
                if not (CACHE / p).exists()]
     if missing:
-        raise FileNotFoundError(f"토크나이저 파일이 없습니다: {missing}. 먼저 python3 fetch_tokenizers.py 를 실행하세요.")
+        raise FileNotFoundError(f"Tokenizer files are missing: {missing}. Run python3 fetch_tokenizers.py first.")
     toks: list[Tok] = [
-        _tiktoken_file("o200k", "o200k_base.tiktoken", _O200K_PAT, "OpenAI GPT-4o / o-series / GPT-5 계열 (200K)"),
+        _tiktoken_file("o200k", "o200k_base.tiktoken", _O200K_PAT, "OpenAI GPT-4o / o-series / GPT-5 family (200K)"),
         _tiktoken_file("cl100k", "cl100k_base.tiktoken", _CL100K_PAT, "OpenAI GPT-4 / GPT-3.5 (100K)"),
-        HFTok("claude_legacy", "Anthropic Claude 2 시절 토크나이저 (65K, 현행 Claude의 대용)", CACHE / "claude_legacy.json"),
+        HFTok("claude_legacy", "Anthropic Claude 2-era tokenizer (65K, proxy for the current Claude)", CACHE / "claude_legacy.json"),
         _tiktoken_file("llama3", "llama3.tiktoken", _LLAMA3_PAT, "Meta Llama 3 (128K)"),
         _tiktoken_file("llama4", "llama4.tiktoken", _O200K_PAT, "Meta Llama 4 (200K)"),
-        _tekken("mistral_tekken", "mistral_tekken_240911.json", "Mistral Tekken (Nemo 이후, 131K)"),
-        SentencePieceTok("mistral_sp", "Mistral SentencePiece v3 (7B 계열, 32K)", CACHE / "mistral_sp_v3.model"),
+        _tekken("mistral_tekken", "mistral_tekken_240911.json", "Mistral Tekken (Nemo and later, 131K)"),
+        SentencePieceTok("mistral_sp", "Mistral SentencePiece v3 (7B family, 32K)", CACHE / "mistral_sp_v3.model"),
     ]
     return {t.name: t for t in toks}
 
 
 if __name__ == "__main__":
+    # The last sample is a Korean sentence used as tokenizer input data; it stays in Korean.
     samples = ["The user sent the file to me.", "katenmirob", " kat en mir ob", "사용자가 파일을 나에게 보냈다."]
     for t in load_all().values():
         print(f"{t.name:15} vocab={t.vocab_size:>7}")
