@@ -1,0 +1,110 @@
+{
+ "part1": {
+  "checked": 78,
+  "problems": [
+   {
+    "quote": "| W1 붙여 쓰기 `katenmirob` | 1.09~1.22 | 0.77~0.83 / 0.57~0.72 |",
+    "issue": "The precision range does not match the token-picked W1 data that the rest of the row and the W2/W3 rows describe. The lower bound 0.57 is the naive inventory's tokenizer-average precision (alignment.md 0절: naive 0.57, token_picked 0.71, bare_picked 0.72). Token-picked W1 precision per tokenizer is 0.674~0.752 in alignment.json and 0.666~0.724 in the verify replication. The row also mixes sources. Its tpm (1.09~1.22) and recall (0.77~0.83) come from the verify/v_alignment.py replication (1.094~1.222, 0.765~0.825). The W2 and W3 rows come from alignment.json, whose W1 values are tpm 1.10~1.26, recall 0.79~0.85, precision 0.67~0.75.",
+    "correct_value": "From alignment.py (same source as the W2/W3 rows): 1.10~1.26 | 0.79~0.85 / 0.67~0.75. From the v_alignment replication: 1.09~1.22 | 0.77~0.83 / 0.67~0.72.",
+    "source": "results/alignment.json results[inventory=token_picked, design=W1_nospace] (tpm 1.1014~1.257, recall 0.7871~0.8526, precision 0.6738~0.7516); verify/v_alignment.out section A (W1 P 0.666~0.724); verify/report_audit.json C2 evidence ('W1 gave 1.09-1.22 tokens per morpheme, recall 0.765-0.825, precision 0.666-0.724')",
+    "severity": "wrong"
+   },
+   {
+    "quote": "전보체 영어의 1.07~1.34배, 일반 영어의 0.81~0.99배였다. 설계에 쓴 메시지에서는 대부분의 토크나이저에서 전보체 영어보다 쌌지만(0.82~0.97배), 과적합이었다.",
+    "issue": "The sentence is about the analytic grammar (LEAN), and its held-out figures are LEAN-only. LEAN's design-set ratios below 1 are 0.843, 0.872, 0.875, 0.963 and 0.968, so 0.84~0.97. The 0.82 lower bound comes from KODEX (mistral_tekken 0.815, llama4 0.824). Section 3.3's own LEAN row gives 0.84~1.01.",
+    "correct_value": "LEAN design set vs en_terse: 0.84~0.97 on the 5 tokenizers where it was cheaper (claude_legacy 1.04, mistral_sp 1.01)",
+    "source": "verify/a2_results.json scenarios.A_conservative.ratio_vs_en_terse; verify/report_attempt_1.json totals._ratios_mine_vs_en_terse (KODEX 0.815~0.956)",
+    "severity": "misleading"
+   },
+   {
+    "quote": "Claude는 9천~1만 토큰짜리 사양으로 이 언어를 읽는다.",
+    "issue": "Neither spec measures 9K~10K. LEAN's spec is 8,417 (o200k) to 10,282 (mistral_sp) tokens, with claude_legacy at 9,747. KODEX's spec is 7,118 to 9,108, with claude_legacy at 8,433. The document's own 3.3 table gives 7.1K~9.1K and 8.4K~10.3K.",
+    "correct_value": "LEAN 8.4K~10.3K tokens (claude_legacy 9.7K); KODEX 7.1K~9.1K (claude_legacy 8.4K)",
+    "source": "verify/a2_results.json scenarios.A_conservative.spec_tokens; verify/report_attempt_1.json totals._spec_tokens",
+    "severity": "imprecise"
+   },
+   {
+    "quote": "전보체 영어보다 1.27~2.20배 많은 토큰이 든다.",
+    "issue": "The summary names no tokenizers, but projection.json has 7. Across all 7 the minimum is llama4, gloss 1, S5: 1070/848 = 1.262, which is below the stated lower bound. The range 1.27~2.20 holds only for the tokenizers shown in 3.2 (o200k, claude_legacy).",
+    "correct_value": "1.26~2.20 across all 7 tokenizers, or 1.27~2.20 if limited to o200k/claude_legacy",
+    "source": "results/projection.json glosses.1.S5_raw_digits.ratio_vs_en_terse.llama4 = 1.262",
+    "severity": "imprecise"
+   },
+   {
+    "quote": "| W3 단어마다 띄어 쓰기 | 1.02~1.19 | 단어 안 0.73~0.83 |",
+    "issue": "The tpm range is token-picked per tokenizer, as in the other rows. The within-word recall range is instead the tokenizer averages of the three inventories (bare 0.73, naive 0.78, token 0.83). Token-picked W3 within-word recall per tokenizer is 0.7375~0.8508.",
+    "correct_value": "단어 안 0.74~0.85 (token-picked, per tokenizer)",
+    "source": "results/alignment.json results[token_picked, W3_wordspaced].recall_inner_boundary; results/alignment.md 5절",
+    "severity": "imprecise"
+   },
+   {
+    "quote": "| W4·W5 대문자 표기 | 1.18~1.95 | 재현율 0.97~1.00 |",
+    "issue": "The upper bound 1.95 comes from the naive inventory (mistral_sp W4 1.9498, W5 1.9517). The other rows use token-picked forms, and for token-picked W4/W5 tpm is 1.1808~1.8746.",
+    "correct_value": "1.18~1.87 for token-picked (1.18~1.95 only across all three inventories)",
+    "source": "results/alignment.json results[design in W4_camel, W5_wordcamel]",
+    "severity": "imprecise"
+   },
+   {
+    "quote": "| **W2 형태소마다 띄어 쓰기** `kat en mir ob` | **1.01** (5종), claude_legacy 1.13, mistral_sp 1.33 | 1.00 / 0.99 |",
+    "issue": "The tpm cell breaks out claude_legacy and mistral_sp, but the precision 0.99 holds only for the 5 tokenizers (0.987~0.993). claude_legacy precision is 0.885 and mistral_sp is 0.746.",
+    "correct_value": "1.00 / 0.99 (5종), claude_legacy 0.89, mistral_sp 0.75",
+    "source": "results/alignment.json results[token_picked, W2_spaced].precision",
+    "severity": "imprecise"
+   },
+   {
+    "quote": "- 토큰에 맞춰 고른 형태라면 W2의 공백은 공짜다(`\" kat\"`이 1토큰). 메시지당 토큰도 W1보다 적다.",
+    "issue": "This holds on only 5 of 7 tokenizers. On claude_legacy only 88% of ' kat' morphemes are one token (alignment.md: '공짜가 아니다'). On mistral_sp the rate is 67%, and W2 costs +2.3 tokens/message more than W1. Summary item 1 ('띄어쓰기 앞 공백은 토큰 비용이 0이고') carries the same overgeneralization.",
+    "correct_value": "Free and cheaper than W1 on o200k, cl100k, llama3, llama4 and mistral_tekken (-3.0~-5.3 tokens/msg). Not free on claude_legacy (88%, -0.6) or mistral_sp (67%, +2.3).",
+    "source": "results/alignment.json space_cost_w2.token_picked; results/alignment.md 0절 item 2 and 4절",
+    "severity": "imprecise"
+   },
+   {
+    "quote": "출력은 실행 시간 필드를 빼면 실행마다 같다",
+    "issue": "This is true for the top-level scripts, which are seeded or sorted with tie-breaks. It is not true for the LEAN lexicon builder used for summary items 4 and 5. verify/a2_build.py sorts set(D) by zipf alone, so words with tied frequencies are ordered by hash seed. The held-out report records that a rebuild swapped 68 domain-word forms.",
+    "correct_value": "Deterministic for inventory/alignment/baseline/projection; verify/a2_build.py output varies with PYTHONHASHSEED",
+    "source": "verify/report_heldout.json lean.notes ('a2_build sorts set(D)... a rebuild swapped 68 domain-word forms'); verify/a2_build.py line 144",
+    "severity": "imprecise"
+   }
+  ]
+ },
+ "part2": {
+  "checked": 51,
+  "problems": [
+   {
+    "quote": "GPT·Llama·Mistral 계열에서 8~19%",
+    "issue": "The range leaves out mistral_sp, which is one of the Mistral tokenizers. On the held-out set LEAN costs 656 tokens against 667 for plain English on mistral_sp, a saving of only 1.6%. Per-tokenizer savings vs plain English: o200k 15.7%, cl100k 7.7%, llama3 8.5%, llama4 16.1%, mistral_tekken 18.8%, mistral_sp 1.6% (claude_legacy 0.7%). 8~19% holds only if mistral_sp is excluded.",
+    "correct_value": "About 2~19% across the GPT, Llama and Mistral tokenizers (mistral_sp 1.6%). Or keep 8~19% and name the exclusion: o200k, cl100k, llama3, llama4 and mistral_tekken only.",
+    "source": "experiments/tokenization/verify/report_heldout.json lean.totals (mistral_sp en 667, mine 656); verify/heldout_lean.json ratio_vs_en.mistral_sp = 0.984",
+    "severity": "wrong"
+   },
+   {
+    "quote": "설계에 쓴 메시지에서는 대부분의 토크나이저에서 전보체 영어보다 쌌지만(0.82~0.97배)",
+    "issue": "Bullet 4 is about LEAN; its held-out numbers, 1.07~1.34 and 0.81~0.99, are LEAN-only. On LEAN's design set, the 5 tokenizers where it beat terse English give 0.843, 0.872, 0.875, 0.963 and 0.968, so the range is 0.84~0.97. The lower bound 0.82 is KODEX's mistral_tekken value (349/428 = 0.815). The range therefore mixes the two designs. Read as covering both designs instead, the held-out ranges in the same bullet would have to be 1.04~1.34 and 0.78~0.99.",
+    "correct_value": "0.84~0.97 (LEAN A_conservative, 5 of 7 tokenizers; mistral_sp 1.01 and claude_legacy 1.04 are above 1)",
+    "source": "experiments/tokenization/verify/a2_results.json scenarios.A_conservative.ratio_vs_en_terse; KODEX 0.815 from verify/report_attempt_1.json totals._ratios_mine_vs_en_terse.mistral_tekken",
+    "severity": "imprecise"
+   },
+   {
+    "quote": "Claude는 9천~1만 토큰짜리 사양으로 이 언어를 읽는다.",
+    "issue": "No set of measured spec sizes falls in 9K~10K. LEAN's spec is 8,417~10,282 tokens; KODEX's is 7,118~9,108. On the Claude proxy tokenizer (claude_legacy), LEAN is 9,747 and KODEX is 8,433. Section 3.3's own table gives 7.1K~9.1K and 8.4K~10.3K.",
+    "correct_value": "About 7K~10K tokens across both designs and all tokenizers. On claude_legacy: LEAN 9.7K, KODEX 8.4K.",
+    "source": "experiments/tokenization/verify/a2_results.json scenarios.A_conservative.spec_tokens; verify/report_attempt_1.json totals._spec_tokens",
+    "severity": "imprecise"
+   },
+   {
+    "quote": "상투구 코드북 2,399개 + 전보체 문법",
+    "issue": "2,399 is the total number of entries in the KODEX spec. That total covers roots (2,000 frequent lemmas + 196 domain roots + 22 tech names), grammar markers, digits and phrase macros. The phrase codebook itself has 78 macros, and only 19 were used on the design set. As written, the text says KODEX has 2,399 stock phrases. It also blurs the comparison with LEAN's '어휘 2,313개'.",
+    "correct_value": "상투구 78개를 포함한 사전 2,399항목 + 전보체 문법",
+    "source": "experiments/tokenization/verify/report_attempt_1.json strategy ('Codebook: 78 phrase macros ... Spec total: 2,399 entries'); verify/run_log_attempt_1.txt line 35",
+    "severity": "misleading"
+   },
+   {
+    "quote": "KODEX에서는 숫자도 글자 형태가 더 쌌다",
+    "issue": "Letter digit forms were cheaper on 6 of 7 tokenizers but not on claude_legacy, the Claude proxy. There, raw Arabic digits were cheaper on both sets: 409 vs 413 tokens on the design set and 582 vs 592 on the held-out set. The claim is given as a reason for banning digits, yet it fails on the tokenizer the document treats as standing in for Claude.",
+    "correct_value": "Letter digit forms were cheaper on 6 of 7 tokenizers. On claude_legacy, raw digits were cheaper (design set 409 vs 413, held-out 582 vs 592).",
+    "source": "experiments/tokenization/verify/attempt_1.json measurement.totals.claude_legacy.RELAXATION_raw_digits (409) vs report_attempt_1.json totals.claude_legacy.mine (413); verify/heldout_kodex.json detail.variants_totals.RELAXATION_raw_digits.claude_legacy (582) vs main (592)",
+    "severity": "imprecise"
+   }
+  ]
+ }
+}
