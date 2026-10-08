@@ -1,0 +1,208 @@
+{
+ "kodex": {
+  "totals": {
+   "o200k": {
+    "en": 598,
+    "en_terse": 442,
+    "mine": 479
+   },
+   "cl100k": {
+    "en": 600,
+    "en_terse": 444,
+    "mine": 524
+   },
+   "claude_legacy": {
+    "en": 610,
+    "en_terse": 453,
+    "mine": 592
+   },
+   "llama3": {
+    "en": 600,
+    "en_terse": 444,
+    "mine": 516
+   },
+   "llama4": {
+    "en": 596,
+    "en_terse": 440,
+    "mine": 482
+   },
+   "mistral_tekken": {
+    "en": 623,
+    "en_terse": 471,
+    "mine": 488
+   },
+   "mistral_sp": {
+    "en": 667,
+    "en_terse": 512,
+    "mine": 603
+   }
+  },
+  "additions": [
+   "byen = exponential (m01; 'exponential backoff', pool rank 2399 = next unused)",
+   "pupp = integration (m07; 'integration tests', rank 2400)",
+   "kada = calendar (m15; 'calendar quarter' vs fiscal, rank 2401)",
+   "negl = loop (m25; code loop, rank 2402)",
+   "segn = encyclopedia (m33; cited source type, rank 2403)"
+  ],
+  "paraphrases": [
+   "m01 'Please' -> dropped; a bare imperative is the request form and KODEX-1 has no politeness marker",
+   "m01 'retry logic' -> retry code",
+   "m01 'backoff' -> delay (exponential delay)",
+   "m01 'at most 5' -> max 5",
+   "m01 purpose 'to use' -> CNT use ...",
+   "m07 'before opening the pull request' -> THEN + open-PR phrase",
+   "m11 'calculator' -> calculation tool",
+   "m11 'remaining margin' -> remain budget",
+   "m15 'fiscal' -> financial",
+   "m15 'do you mean X or Y' -> YOU mean 'last quarter' IS X OR Y QUES",
+   "m17 'in a row' -> 3 TIMES straight",
+   "m19 'translation' -> root translate (noun use)",
+   "m19 'exceeded' -> PAST go beyond",
+   "m19 'chunks' -> part",
+   "m19 'go ahead' -> proceed",
+   "m21 'complaints' -> root complain (noun use)",
+   "m21 'frequency' -> root frequent (noun use)",
+   "m21 'would like' -> want",
+   "m21 'a second reviewer' -> second review",
+   "m21 'there' -> FOR IT",
+   "m21 'within the hour' -> within 1 hour",
+   "m23 'could' (suggestion) -> CAN",
+   "m23 'revert' -> rollback",
+   "m25 'quadratic' -> raw O(n^2) via Q1",
+   "m25 'dictionary' -> map",
+   "m25 'keyed by ID' -> WITH ID key (ID raw via Q1)",
+   "m25 'so consider' -> CONSE YOU SHOULD consider (a bare verb after CONSE would take the previous subject)",
+   "m27 'paragraph' -> section",
+   "m31 'disagree' -> NEG agree",
+   "m31 'sensor' -> measure device",
+   "m31 'deleting' -> remove",
+   "m33 'capital of Australia' -> australian capital",
+   "m35 'version 4.2.1' -> 4 POINT 2 POINT 1 (the spec defines POINT only as a decimal point)",
+   "m37 'the fix is on branch X' -> branch X WITH fix (a clause-initial 'fix' would read as an imperative)",
+   "m37 'one run in ten' -> 1 PER 10 run",
+   "m39 'State so far' -> status + so-far phrase",
+   "m39 'both travelers' -> ALL 2 passenger",
+   "m39 'euros' -> raw EUR via Q1",
+   "m05/m25 '1,200', '3,000', '100,000' -> 12 HUNDRED, 3 THOUSAND, 100 THOUSAND"
+  ],
+  "files": [
+   "/home/user/lang_for_ai/experiments/tokenization/verify/heldout_kodex.py",
+   "/home/user/lang_for_ai/experiments/tokenization/verify/heldout_kodex.json"
+  ],
+  "beats_en_terse_on": [],
+  "notes": "KODEX-1 does not hold up on the held-out messages. On the 20 odd messages (m01 to m39) it loses to en_terse on all 7 tokenizers. It still beats full English on all 7.\n\nRatio of KODEX tokens to en_terse tokens, held-out set (design set in brackets):\n- o200k: 1.084 (0.837)\n- cl100k: 1.180 (0.931)\n- claude_legacy: 1.307 (1.027)\n- llama3: 1.162 (0.926)\n- llama4: 1.095 (0.824)\n- mistral_tekken: 1.036 (0.815)\n- mistral_sp: 1.178 (0.956)\n\nAgainst full English the held-out ratio is 0.78 to 0.97. Out of 20 messages, KODEX is shorter than en_terse in 1 to 6, depending on the tokenizer.\n\nHow it was run:\n- heldout_kodex.py imports attempt_1.evaluate() with config B_num10 rather than copying it. So form assignment, macro and number expansion, rendering and token counting are the original code.\n- Check 1: the script first reruns the original even messages and stops unless the totals (340/379/413/377/336/349/437), all 20 rendered messages and attempt_1_spec.txt match exactly. They do.\n- Check 2: it confirms every existing entry keeps its form.\n- The 5 new entries were added after the last frozen entry, in order of first use. assign_forms gave them pool ranks 2399 to 2403, the next unused forms; the related-word filter skipped none. Each costs 1 to 2 tokens and they appear once each, so they are not why it loses.\n- Adding them grows the spec by 11 to 17 tokens; the spec itself is 7,118 to 9,108 tokens and is not counted in the totals above.\n\nWhy it does not generalize (measured):\n1. The phrase codebook was fitted to the even messages. Those used 19 phrase occurrences of 19 different phrases. The odd messages could use only 4 phrases, 6 times in total (so_far, keep_unchanged, open_pr, conf_high). Phrases saved 37 tokens (about 10%) on o200k on the design set but only 9 (about 2%) here.\n2. The encodings got longer. The held-out set needs 407 forms against 442 en_terse tokens on o200k (0.92). The design set needed 312 against 406 (0.77).\n3. Of the 229 entries used, 162 were never used on the design set.\n4. The forms cost more than one token each on several tokenizers: 1.46 tokens per form on claude_legacy and 1.48 on mistral_sp.\n5. Raw chunks such as URLs, file paths and Q1 names cost as much as in English, plus the quote marker.\n\nCaveats:\n- The encodings are mine and are not checked by a model; no model was available, so the back-translations have not been tested by a decoder.\n- Some choices add forms for faithfulness: past-tense markers, extra sentence separators, an explicit subject after 'so', and 'branch X WITH fix' to avoid an imperative reading.\n- Some paraphrases stretch the grammar: two POINTs in a version number, 'straight' for 'in a row', raw O(n^2) for 'quadratic', and dropping 'Please'.\n- Every paraphrase is listed in the JSON; none of these choices changes the overall conclusion.\n\nThe JSON also holds per-message tokens, en and en_terse counts per message, wins and ties, totals for the other variants (with phrases expanded, rank-shuffled forms, raw digits), and spec token counts with and without the additions. The only files written are the two new ones; no existing file was changed."
+ },
+ "lean": {
+  "totals": {
+   "o200k": {
+    "en": 598,
+    "en_terse": 442,
+    "mine": 504
+   },
+   "cl100k": {
+    "en": 600,
+    "en_terse": 444,
+    "mine": 554
+   },
+   "claude_legacy": {
+    "en": 610,
+    "en_terse": 453,
+    "mine": 606
+   },
+   "llama3": {
+    "en": 600,
+    "en_terse": 444,
+    "mine": 549
+   },
+   "llama4": {
+    "en": 596,
+    "en_terse": 440,
+    "mine": 500
+   },
+   "mistral_tekken": {
+    "en": 623,
+    "en_terse": 471,
+    "mine": 506
+   },
+   "mistral_sp": {
+    "en": 667,
+    "en_terse": 512,
+    "mine": 656
+   }
+  },
+  "additions": [
+   "exponential = exponential (A, form 'prist', form-order position 2501; m01)",
+   "calendar = calendar (N, form 'progr', position 2502; m15)",
+   "loop = loop (N, form 'proib', position 2503; m25)",
+   "quadratic = quadratic (A, form 'prosp', position 2504; m25)",
+   "encyclopedia = encyclopedia (N, form 'przek', position 2505; m33)",
+   "euro = euro (N, form 'przes', position 2506; m39)"
+  ],
+  "paraphrases": [
+   "m01 retry logic -> retry LK code (no 'logic')",
+   "m01 keep unchanged -> NEG change (no 'unchanged')",
+   "m01 at most 5 -> maximum d5",
+   "m03 report (verb) -> return ('report' is frozen as N)",
+   "m03 sales -> sale",
+   "m05 1,200 of 3,000 -> ... FROM ... (LK is possessive)",
+   "m05/m37 about N -> approximately (D)",
+   "m07 pass -> successful (no 'pass')",
+   "m07/m35 locally -> ON local machine (no 'locally')",
+   "m07 unit tests -> EVERY unit LK test ('test' is frozen V1, so it cannot head an N compound)",
+   "m07 integration tests -> combine part LK test (no 'integration')",
+   "m07 pull request -> pull(N) request",
+   "m09 the search returned 14 results -> d10 d4 result FROM search ('search' is V1 and cannot start a subject; V2 'return' would take the next clause's NP)",
+   "m09 removed modules -> remove module (participle)",
+   "m11 calculator -> calculation tool",
+   "m11 within budget -> budget cover total cost",
+   "m11 remaining margin -> budget LK rest (no 'margin'/'remaining')",
+   "m13 alternative question -> Q ... OR IT MUST target ...; sentences reordered",
+   "m15 fiscal -> financial (no 'fiscal')",
+   "m15 By 'last quarter' -> ABOUT last quarter (frame)",
+   "m17 payments API -> payment api",
+   "m17 three times in a row -> ON d3 attempt IN series (no 'consecutive')",
+   "m17 rate limit -> rate LK limit ('limit' is frozen V1)",
+   "m17 to avoid hitting -> FOR rate LK limit LK avoid",
+   "m19 the translation step failed -> fail IN translate LK step (subject becomes I; no 'translation')",
+   "m19 exceeded -> MORE long THAN (no 'exceed')",
+   "m19 chunks -> part (no 'chunk')",
+   "m19 go ahead -> DELIB continue (no 'proceed')",
+   "m21 complaints -> negative customer feedback (no 'complaint')",
+   "m21 rank -> sort (no 'rank')",
+   "m21 by frequency -> FROM count (no 'frequency'; BY means agent only)",
+   "m21 there -> FOR IT",
+   "m21 unless you object -> IF YOU NEG oppose ('unless' not in the closed CONJ list)",
+   "m21 would like -> want",
+   "m23 caching layer -> cache (no 'layer')",
+   "m23 rewriting -> PASS write again (no 'rewrite')",
+   "m23 instead of rewriting, we could -> WE CAN ... instead + THAN whole module PASS write again",
+   "m23 easy to revert -> easy rollback (no 'revert')",
+   "m23 in front of X -> IN X LK front",
+   "m25 dictionary keyed by ID -> QT ID key map (no 'dictionary')",
+   "m27 paragraph -> part (no 'paragraph')",
+   "m29 cheaper/larger -> MORE cheap/MORE large",
+   "m31 disagree -> NEG agree (no 'disagree')",
+   "m31 sensor -> measurement device (no 'sensor')",
+   "m31 instead of deleting them -> instead",
+   "m33 website -> web site (no 'website')",
+   "m35 Yes -> dropped (no 'yes'; the following clause states the answer)",
+   "m35 reproduced -> verify (no 'reproduce')",
+   "m35 version 4.2.1 -> d4 POINT d2 POINT d1",
+   "m35 changelog at URL -> QT URL changelog (an NP cannot contain a P phrase)",
+   "m37 Handing off -> FOR handoff",
+   "m37 the fix is on branch X -> commit fix TO QT X branch (makes 'I' the explicit agent)",
+   "m37 remaining work -> rest",
+   "m37 flaky -> unreliable (no 'flaky')",
+   "m37 one run in ten -> IN d1 FROM d10 run",
+   "m39 travelers -> travel person (V0 participle; no 'traveler')",
+   "m39 both -> d2 (no 'both')",
+   "m39 remaining budget -> budget LK rest"
+  ],
+  "files": [
+   "/home/user/lang_for_ai/experiments/tokenization/verify/heldout_lean.py",
+   "/home/user/lang_for_ai/experiments/tokenization/verify/heldout_lean.json"
+  ],
+  "beats_en_terse_on": [],
+  "notes": "On the 20 held-out odd messages, LEAN (A_conservative) is longer than en_terse on all 7 tokenizers. Ratios vs en_terse: o200k 1.140, cl100k 1.248, claude_legacy 1.338, llama3 1.236, llama4 1.136, mistral_tekken 1.074, mistral_sp 1.281. On the even messages it was designed on, the same ratios were 0.84 to 1.04, and it was shorter than en_terse on 5 of the 7 tokenizers. It is still shorter than plain en on every tokenizer: 0.81 to 0.99 here, against 0.62 to 0.77 on the even set. Message by message, it is shorter than en_terse on only 1/20 (o200k), 1/20 (llama4) and 3/20 (mistral_tekken) messages, and on 0/20 for the other four tokenizers.\n\nWhy: it needs more words, not costlier ones. The odd encodings use 418 morphemes excluding raw spans, against 313 on the even set, while en_terse grows only from 406 to 442 tokens (o200k). The average tokens per morpheme is unchanged (o200k 1.038 on both sets; cl100k 1.165 vs 1.182). Workarounds drive the extra words:\n- The LK linker is used 17 times here and 0 times on the even set.\n- Function words are 40% of morphemes, against 29% on the even set.\n- Frozen verb classes block common noun compounds: 'test', 'fix', 'limit' and 'search' are verbs, and 'report' is a noun. So \"unit test\", \"rate limit\", \"the fix\" and \"the search\" all need workarounds.\n- A verb at the start of a clause is always read as the predicate.\n- 'return' takes two objects and would swallow the next clause's noun phrase.\n- 'BY' only means the agent (\"by someone\").\n- The grammar has no 'yes', and its closed list of conjunctions has no 'unless'.\n\nThe six additions cost 6 to 12 tokens per tokenizer in total. Even if they were free, the verdict would not change.\n\nMethod:\n- I used the frozen lexicon JSON rather than rebuilding it. a2_build sorts `set(D)`, so words with tied frequencies are ordered by Python's hash seed, and a rebuild swapped 68 domain-word forms. The script checks that the frozen JSON plus `a2_build.encode` reproduce the original even-message encodings and totals exactly.\n- New entries get forms by continuing the build loop with the same skip rules. Every reading of \"next unused form\" gives the same forms, at positions 2501 to 2506.\n- 126 existing entries had no class ('?') because no even message used them. I gave each the class needed here, one class per word, and did not change any class the even glosses had fixed. 'within' and 'near' became prepositions (P).\n\nFaithfulness compromises:\n- Two words are dropped: 'Please' in m01 (the request mode already marks a request) and 'Yes' in m35.\n- m37 now states that I committed the fix, rather than just that the fix is on the branch.\n- m19 says \"I failed in the translation step\" instead of \"the translation step failed\".\n- I bent three grammar rules: a clause-boundary marker (PD) after a raw name followed by a noun in m33, a mode word right after 'so' in m25, and 'HTTP 503' written as a raw identifier.\n\nHazard: 4 frozen forms used here look like the start of another word in these same messages, which the original review rule would have blocked: cach (unit) vs cache, interf (key) vs interface, offic (stop) vs official, inst (d50) vs instead.\n\nI judged faithfulness myself; with no model access, I could not check whether a model decodes these correctly."
+ }
+}

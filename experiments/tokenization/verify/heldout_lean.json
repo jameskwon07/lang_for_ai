@@ -1,0 +1,1144 @@
+{
+ "scenario": "A_conservative",
+ "additions": [
+  "exponential = exponential (class A, form 'prist', form-order position 2501, cost over 7 tokenizers 11, uses 1)",
+  "calendar = calendar (class N, form 'progr', form-order position 2502, cost over 7 tokenizers 11, uses 1)",
+  "loop = loop (class N, form 'proib', form-order position 2503, cost over 7 tokenizers 11, uses 1)",
+  "quadratic = quadratic (class A, form 'prosp', form-order position 2504, cost over 7 tokenizers 11, uses 1)",
+  "encyclopedia = encyclopedia (class N, form 'przek', form-order position 2505, cost over 7 tokenizers 11, uses 1)",
+  "euro = euro (class N, form 'przes', form-order position 2506, cost over 7 tokenizers 11, uses 1)"
+ ],
+ "paraphrases": [
+  "m01 'retry logic' -> 'retry LK code' (code of retrying); no entry 'logic'",
+  "m01 'keep the public interface unchanged' -> 'NEG change public interface'; no entry 'unchanged'",
+  "m01 'at most 5 attempts' -> 'maximum d5 attempt'",
+  "m03 'report (verb)' -> 'return' (entry 'report' is fixed as N by the even glosses)",
+  "m03 'sales database' -> 'sale database' (no plural; 'sales' is not an entry)",
+  "m05 '1,200 of 3,000 records' -> 'd1 THOUSAND d2 HUNDRED FROM d3 THOUSAND record' (partitive 'of'; LK is possessive)",
+  "m05/m37 'about N' (approximately) -> D 'approximately' (ABOUT is the topic preposition)",
+  "m07 'pass' -> 'successful'; no entry 'pass'",
+  "m07/m35 'locally' -> 'ON local machine'; no entry 'locally'",
+  "m07 'unit tests' -> 'EVERY unit LK test' (test of every unit): 'test' is fixed V1 and a V cannot head an N compound",
+  "m07 'integration tests' -> 'combine part LK test' (test of combined parts); no entry 'integration'",
+  "m07 'pull request' -> 'pull request' with 'pull' given class N",
+  "m09 'The search returned 14 results' -> 'd10 d4 result FROM search' (14 results from the search): 'search' is V1 and cannot start a subject; 'return' is V2 and would take the next clause's NP as second object",
+  "m09 'removed modules' -> 'remove module' (participle)",
+  "m11 'calculator' -> 'calculation tool'; no entry 'calculator'",
+  "m11 'total cost is within budget' -> 'budget cover total cost'",
+  "m11 'remaining margin' -> 'budget LK rest' (rest of the budget); no entry 'margin'/'remaining'",
+  "m13 alternative question -> 'Q ... OR IT MUST target ...' (OR links clauses only); sentence order swapped",
+  "m15 'fiscal' -> 'financial'; no entry 'fiscal'",
+  "m15 'By 'last quarter'' -> frame 'ABOUT last quarter'",
+  "m17 'payments API' -> 'payment api'",
+  "m17 'three times in a row' -> 'ON d3 attempt IN series'; no entry 'consecutive'",
+  "m17 'rate limit' -> 'rate LK limit' (limit is fixed V1, so 'rate limit' would parse as subject + verb)",
+  "m17 'to avoid hitting the rate limit' -> 'FOR rate LK limit LK avoid' (for avoidance of the rate limit)",
+  "m19 'the translation step failed' -> 'fail IN translate LK step' (I failed in the translation step); no entry 'translation', and a V at clause start is the predicate",
+  "m19 'exceeded' -> 'MORE long THAN'; no entry 'exceed'",
+  "m19 'chunks' -> 'part'; no entry 'chunk'",
+  "m19 'Should I go ahead?' -> 'DELIB continue'; no entry 'proceed'",
+  "m21 'customer complaints' -> 'negative customer feedback'; no entry 'complaint'",
+  "m21 'rank' -> 'sort'; no entry 'rank'",
+  "m21 'by frequency' -> 'FROM count'; no entry 'frequency' (BY is glossed 'by (agent)', so criterion 'by' -> FROM)",
+  "m21 'there' -> 'FOR IT'; no entry 'there'",
+  "m21 'unless you object' -> 'IF YOU NEG oppose'; 'unless' is a frozen '?' entry but CONJ is a closed list in the grammar text",
+  "m21 'would like' -> 'want'",
+  "m23 'caching layer' -> 'cache'; no entry 'layer'",
+  "m23 'rewriting' -> 'PASS write again'; no entry 'rewrite'",
+  "m23 'Instead of rewriting the whole module, we could ...' -> 'WE CAN ... instead' + 'THAN whole module PASS write again' in the next sentence",
+  "m23 'easy to revert' -> 'easy rollback'; no entry 'revert'",
+  "m23 'in front of X' -> 'IN X LK front'",
+  "m25 'dictionary keyed by ID' -> 'QT ID key map'; no entry 'dictionary'/'dict'",
+  "m27 'paragraph' -> 'part'; no entry 'paragraph'",
+  "m29 'cheaper'/'larger' -> 'MORE cheap'/'MORE large'",
+  "m31 'disagree' -> 'NEG agree'; no entry 'disagree'",
+  "m31 'sensor' -> 'measurement device'; no entry 'sensor'",
+  "m31 'instead of deleting them' -> 'instead' (the deleting = the dropping named in the first clause)",
+  "m33 'website' -> 'web site'; no entry 'website'",
+  "m35 'Yes,' -> dropped; the affirmative answer is the following clause (no entry 'yes')",
+  "m35 'reproduced the fix' -> 'verify fix'; no entry 'reproduce'",
+  "m35 'version 4.2.1' -> 'd4 POINT d2 POINT d1' (a number right before 'version' would be a quantity)",
+  "m35 'The changelog at URL confirms it' -> 'QT URL changelog confirm [bug PASS fix ...]' (NP cannot contain P)",
+  "m37 'Handing off:' -> frame 'FOR handoff'",
+  "m37 'the fix is on branch X' -> 'commit fix TO QT X branch' (makes the agent 'I' explicit; 'fix' is V1 and cannot start a subject)",
+  "m37 'remaining work' -> 'rest'",
+  "m37 'flaky' -> 'unreliable'; no entry 'flaky'",
+  "m37 'one run in ten' -> 'IN d1 FROM d10 run'",
+  "m39 'travelers' -> 'travel person' (V0 participle); no entry 'traveler'",
+  "m39 'both' -> 'd2'; no entry 'both'",
+  "m39 'remaining budget' -> 'budget LK rest'"
+ ],
+ "messages": [
+  {
+   "id": "m01",
+   "encoded": "aqu podat overw eleg contamin vac espa src/net/client.py accus prist poden swo syl fres aprend dro inhib femin besie",
+   "back_translation": "[request mode] Refactor the code of retrying (retry logic) in src/net/client.py; use exponential backoff with a maximum of five attempts; do not change the public interface.",
+   "en": "Please refactor the retry logic in src/net/client.py to use exponential backoff with at most 5 attempts. Keep the public interface unchanged.",
+   "en_terse": "Refactor retry logic in src/net/client.py -> exponential backoff, max 5 attempts. Keep public interface unchanged.",
+   "tokens": {
+    "o200k": 23,
+    "cl100k": 27,
+    "claude_legacy": 32,
+    "llama3": 27,
+    "llama4": 23,
+    "mistral_tekken": 22,
+    "mistral_sp": 33
+   },
+   "tokens_en": {
+    "o200k": 29,
+    "cl100k": 28,
+    "claude_legacy": 31,
+    "llama3": 28,
+    "llama4": 28,
+    "mistral_tekken": 29,
+    "mistral_sp": 34
+   },
+   "tokens_en_terse": {
+    "o200k": 24,
+    "cl100k": 24,
+    "claude_legacy": 26,
+    "llama3": 24,
+    "llama4": 24,
+    "mistral_tekken": 24,
+    "mistral_sp": 29
+   }
+  },
+  {
+   "id": "m03",
+   "encoded": "aqu accommod accompan acceler spl espa SQL evacu vec realiz assol relig anth agreg conc frac dro agreg evacu",
+   "back_translation": "[request mode] Turn the user question into an SQL query on the sales database; run it; return only the result; do not return the query.",
+   "en": "Turn the user's question into a SQL query against the sales database and run it. Report only the result, not the query.",
+   "en_terse": "User question -> SQL query on sales DB, run it. Report result only, not query.",
+   "tokens": {
+    "o200k": 19,
+    "cl100k": 23,
+    "claude_legacy": 23,
+    "llama3": 23,
+    "llama4": 19,
+    "mistral_tekken": 19,
+    "mistral_sp": 25
+   },
+   "tokens_en": {
+    "o200k": 25,
+    "cl100k": 26,
+    "claude_legacy": 26,
+    "llama3": 26,
+    "llama4": 25,
+    "mistral_tekken": 26,
+    "mistral_sp": 27
+   },
+   "tokens_en_terse": {
+    "o200k": 19,
+    "cl100k": 19,
+    "claude_legacy": 19,
+    "llama3": 19,
+    "llama4": 19,
+    "mistral_tekken": 19,
+    "mistral_sp": 19
+   }
+  },
+  {
+   "id": "m05",
+   "encoded": "abst flav liqu forg lect squ foss liqu perc cort pract exc coch vac indu fres distingu immuno urg psz undis",
+   "back_translation": "I have processed 1200 from (out of) 3000 records so far. The job should finish in 25 minutes, approximately, at the current rate.",
+   "en": "I have processed 1,200 of 3,000 records so far. At the current rate, the job should finish in about 25 minutes.",
+   "en_terse": "Processed 1200/3000 records. Current rate -> ETA ~25 min.",
+   "tokens": {
+    "o200k": 23,
+    "cl100k": 23,
+    "claude_legacy": 23,
+    "llama3": 23,
+    "llama4": 22,
+    "mistral_tekken": 22,
+    "mistral_sp": 27
+   },
+   "tokens_en": {
+    "o200k": 31,
+    "cl100k": 31,
+    "claude_legacy": 28,
+    "llama3": 31,
+    "llama4": 31,
+    "mistral_tekken": 36,
+    "mistral_sp": 36
+   },
+   "tokens_en_terse": {
+    "o200k": 17,
+    "cl100k": 17,
+    "claude_legacy": 15,
+    "llama3": 17,
+    "llama4": 17,
+    "mistral_tekken": 24,
+    "mistral_sp": 24
+   }
+  },
+  {
+   "id": "m07",
+   "encoded": "clar cach eleg annot fibr vec conven atrav dys cancell veh extrav advis eleg annot eleg coch occ eas resid bedeut artific",
+   "back_translation": "Every unit test (test of every unit) is successful on the local machine. I am waiting for the finishing of the tests of the combined parts (integration tests); then I will open the pull request.",
+   "en": "All unit tests pass locally. I am waiting for the integration tests to finish before opening the pull request.",
+   "en_terse": "Unit tests all pass locally. Waiting on integration tests, then open PR.",
+   "tokens": {
+    "o200k": 23,
+    "cl100k": 23,
+    "claude_legacy": 29,
+    "llama3": 23,
+    "llama4": 22,
+    "mistral_tekken": 22,
+    "mistral_sp": 32
+   },
+   "tokens_en": {
+    "o200k": 21,
+    "cl100k": 21,
+    "claude_legacy": 21,
+    "llama3": 21,
+    "llama4": 21,
+    "mistral_tekken": 21,
+    "mistral_sp": 21
+   },
+   "tokens_en_terse": {
+    "o200k": 15,
+    "cl100k": 15,
+    "claude_legacy": 15,
+    "llama3": 15,
+    "llama4": 15,
+    "mistral_tekken": 15,
+    "mistral_sp": 16
+   }
+  },
+  {
+   "id": "m09",
+   "encoded": "imag fost frac squ obl fle oll expl theor pengh urg espa https://docs.python.org/3/whatsnew/3.13.html ener lyr hydr desap",
+   "back_translation": "There are 14 results from the search. The most relevant one is the official changelog, at https://docs.python.org/3/whatsnew/3.13.html, which lists the removed modules.",
+   "en": "The search returned 14 results. The most relevant is the official changelog at https://docs.python.org/3/whatsnew/3.13.html, which lists the removed modules.",
+   "en_terse": "Search: 14 results. Top: official changelog https://docs.python.org/3/whatsnew/3.13.html (lists removed modules).",
+   "tokens": {
+    "o200k": 32,
+    "cl100k": 35,
+    "claude_legacy": 39,
+    "llama3": 35,
+    "llama4": 32,
+    "mistral_tekken": 35,
+    "mistral_sp": 44
+   },
+   "tokens_en": {
+    "o200k": 39,
+    "cl100k": 39,
+    "claude_legacy": 40,
+    "llama3": 39,
+    "llama4": 37,
+    "mistral_tekken": 42,
+    "mistral_sp": 45
+   },
+   "tokens_en_terse": {
+    "o200k": 32,
+    "cl100k": 32,
+    "claude_legacy": 33,
+    "llama3": 32,
+    "llama4": 30,
+    "mistral_tekken": 35,
+    "mistral_sp": 38
+   }
+  },
+  {
+   "id": "m11",
+   "encoded": "embol agot underst reconoc interfer proj carn kne reconoc eleg forc pione",
+   "back_translation": "The calculation tool (calculator) confirmed that the budget covers the total cost, but the rest of the budget (remaining margin) is small.",
+   "en": "The calculator confirms that the total cost is within budget, but the remaining margin is small.",
+   "en_terse": "Calculator: total cost within budget, but margin small.",
+   "tokens": {
+    "o200k": 12,
+    "cl100k": 14,
+    "claude_legacy": 17,
+    "llama3": 14,
+    "llama4": 12,
+    "mistral_tekken": 14,
+    "mistral_sp": 21
+   },
+   "tokens_en": {
+    "o200k": 18,
+    "cl100k": 18,
+    "claude_legacy": 18,
+    "llama3": 18,
+    "llama4": 18,
+    "mistral_tekken": 18,
+    "mistral_sp": 21
+   },
+   "tokens_en_terse": {
+    "o200k": 11,
+    "cl100k": 11,
+    "claude_legacy": 11,
+    "llama3": 11,
+    "llama4": 11,
+    "mistral_tekken": 11,
+    "mistral_sp": 13
+   }
+  },
+  {
+   "id": "m13",
+   "encoded": "determ taxp eleg econom enfr vec nug cyl anunc exc irradi monoc mov anth exc irradi downt",
+   "back_translation": "The level of technical detail depends on the audience. [question mode] Should the summary target executives, or should it target engineers?",
+   "en": "Should the summary target executives or engineers? The level of technical detail depends on the audience.",
+   "en_terse": "Summary audience: executives or engineers? Tech detail level depends on it.",
+   "tokens": {
+    "o200k": 18,
+    "cl100k": 21,
+    "claude_legacy": 25,
+    "llama3": 21,
+    "llama4": 18,
+    "mistral_tekken": 18,
+    "mistral_sp": 26
+   },
+   "tokens_en": {
+    "o200k": 18,
+    "cl100k": 18,
+    "claude_legacy": 18,
+    "llama3": 18,
+    "llama4": 18,
+    "mistral_tekken": 18,
+    "mistral_sp": 19
+   },
+   "tokens_en_terse": {
+    "o200k": 14,
+    "cl100k": 14,
+    "claude_legacy": 14,
+    "llama3": 14,
+    "llama4": 14,
+    "mistral_tekken": 14,
+    "mistral_sp": 15
+   }
+  },
+  {
+   "id": "m15",
+   "encoded": "tob vacc kaps cyl aest newsp fle persec progr kaps mov aest newsp energ eleg elucid kaps",
+   "back_translation": "[frame:] About 'last quarter': [question mode] do you mean the most recent calendar quarter, or do you mean the company's financial (fiscal) quarter?",
+   "en": "By 'last quarter', do you mean the most recent calendar quarter or the company's fiscal quarter?",
+   "en_terse": "'Last quarter' = latest calendar quarter or company fiscal quarter?",
+   "tokens": {
+    "o200k": 18,
+    "cl100k": 22,
+    "claude_legacy": 21,
+    "llama3": 19,
+    "llama4": 18,
+    "mistral_tekken": 18,
+    "mistral_sp": 24
+   },
+   "tokens_en": {
+    "o200k": 19,
+    "cl100k": 20,
+    "claude_legacy": 20,
+    "llama3": 20,
+    "llama4": 19,
+    "mistral_tekken": 20,
+    "mistral_sp": 21
+   },
+   "tokens_en_terse": {
+    "o200k": 13,
+    "cl100k": 13,
+    "claude_legacy": 13,
+    "llama3": 13,
+    "llama4": 13,
+    "mistral_tekken": 13,
+    "mistral_sp": 13
+   }
+  },
+  {
+   "id": "m17",
+   "encoded": "dets erinn artific superst swo espa HTTP 503 vec foss aprend vac accompl offic overw veh undis eleg espan eleg invis",
+   "back_translation": "The payment-API request failed with HTTP 503 on three attempts in series (in a row). I stopped retrying, for the avoidance of the rate limit.",
+   "en": "The request to the payments API failed with HTTP 503 three times in a row. I stopped retrying to avoid hitting the rate limit.",
+   "en_terse": "Payments API: HTTP 503 x3 in a row. Stopped retrying to avoid rate limit.",
+   "tokens": {
+    "o200k": 23,
+    "cl100k": 26,
+    "claude_legacy": 27,
+    "llama3": 26,
+    "llama4": 24,
+    "mistral_tekken": 25,
+    "mistral_sp": 33
+   },
+   "tokens_en": {
+    "o200k": 28,
+    "cl100k": 28,
+    "claude_legacy": 27,
+    "llama3": 28,
+    "llama4": 28,
+    "mistral_tekken": 30,
+    "mistral_sp": 30
+   },
+   "tokens_en_terse": {
+    "o200k": 21,
+    "cl100k": 21,
+    "claude_legacy": 21,
+    "llama3": 21,
+    "llama4": 21,
+    "mistral_tekken": 24,
+    "mistral_sp": 24
+   }
+  },
+  {
+   "id": "m19",
+   "encoded": "superst vac demok eleg handic obt armon fos abund vot commer eleg espan enh astron spectro vac advis rav enh overw cov deterior",
+   "back_translation": "I failed in the step of translating (the translation step failed) because the input is longer than the context limit. I can split the document into parts and can retry. [should-I mode] Should I continue (go ahead)?",
+   "en": "The translation step failed because the input exceeded the context limit. I can split the document into chunks and retry. Should I go ahead?",
+   "en_terse": "Translation failed: input > context limit. Can split doc into chunks + retry. Proceed?",
+   "tokens": {
+    "o200k": 27,
+    "cl100k": 29,
+    "claude_legacy": 29,
+    "llama3": 28,
+    "llama4": 26,
+    "mistral_tekken": 25,
+    "mistral_sp": 32
+   },
+   "tokens_en": {
+    "o200k": 27,
+    "cl100k": 27,
+    "claude_legacy": 27,
+    "llama3": 27,
+    "llama4": 27,
+    "mistral_tekken": 27,
+    "mistral_sp": 28
+   },
+   "tokens_en_terse": {
+    "o200k": 18,
+    "cl100k": 18,
+    "claude_legacy": 19,
+    "llama3": 18,
+    "llama4": 18,
+    "mistral_tekken": 19,
+    "mistral_sp": 20
+   }
+  },
+  {
+   "id": "m21",
+   "encoded": "tinh foss handic bru analyt habl vagu asseg famil squ hib destac hib squ aproxim anx fle neces handic expl famil ple reun deriv hidro veh anth eas ignor analyt mul aest dro svol aqu accom pred frac compar flav explan",
+   "back_translation": "I propose three steps. [let's] Collect negative customer feedback (complaints), group [it] based on theme, sort the themes based on count (frequency). [statement] The hardest step is grouping, so I want a second reviewer for it. I will start collecting if you do not oppose. [request] Expect the first results within one hour.",
+   "en": "I propose three steps: collect the customer complaints, group them by theme, and rank the themes by frequency. Grouping is the hardest step, so I would like a second reviewer there. I will start collecting unless you object. Expect first results within the hour.",
+   "en_terse": "Plan: 1) collect customer complaints 2) group by theme 3) rank themes by frequency. Grouping hardest -> want second reviewer there. Starting collection unless objection. First results <1h.",
+   "tokens": {
+    "o200k": 42,
+    "cl100k": 51,
+    "claude_legacy": 52,
+    "llama3": 51,
+    "llama4": 42,
+    "mistral_tekken": 42,
+    "mistral_sp": 53
+   },
+   "tokens_en": {
+    "o200k": 53,
+    "cl100k": 53,
+    "claude_legacy": 52,
+    "llama3": 53,
+    "llama4": 53,
+    "mistral_tekken": 53,
+    "mistral_sp": 55
+   },
+   "tokens_en_terse": {
+    "o200k": 42,
+    "cl100k": 42,
+    "claude_legacy": 38,
+    "llama3": 42,
+    "llama4": 42,
+    "mistral_tekken": 42,
+    "mistral_sp": 45
+   }
+  },
+  {
+   "id": "m23",
+   "encoded": "ampl enh escol exces vac hypert evacu eleg inh cron appe expl particip olvid rav fos disappe homic vot uniqu desap dyn communic coinc",
+   "back_translation": "We could add a cache in front of the slow queries instead. That (plan) is an easy rollback and lower risk than the whole module being written again (rewriting the whole module).",
+   "en": "Instead of rewriting the whole module, we could add a caching layer in front of the slow queries. This is lower risk and easy to revert.",
+   "en_terse": "Alt to full module rewrite: cache layer in front of slow queries. Lower risk, easy revert.",
+   "tokens": {
+    "o200k": 25,
+    "cl100k": 29,
+    "claude_legacy": 29,
+    "llama3": 29,
+    "llama4": 24,
+    "mistral_tekken": 26,
+    "mistral_sp": 34
+   },
+   "tokens_en": {
+    "o200k": 29,
+    "cl100k": 29,
+    "claude_legacy": 30,
+    "llama3": 29,
+    "llama4": 29,
+    "mistral_tekken": 30,
+    "mistral_sp": 32
+   },
+   "tokens_en_terse": {
+    "o200k": 20,
+    "cl100k": 20,
+    "claude_legacy": 20,
+    "llama3": 20,
+    "llama4": 20,
+    "mistral_tekken": 20,
+    "mistral_sp": 22
+   }
+  },
+  {
+   "id": "m25",
+   "encoded": "bedro aven kne espa merge_records() eleg proib prosp anth eas hom hypert swo flav lect liqu tyd ple aqu crystall espa ID interf uncomp",
+   "back_translation": "The patch is correct, but the loop of merge_records() is quadratic. It will be too slow with 100,000 rows, so [request] consider an ID-key map (a dictionary keyed by ID).",
+   "en": "The patch is correct, but the loop in merge_records() is quadratic. With 100,000 rows that will be too slow, so consider a dictionary keyed by ID.",
+   "en_terse": "Patch correct, but merge_records() loop quadratic. 100k rows -> too slow; use dict keyed by ID.",
+   "tokens": {
+    "o200k": 27,
+    "cl100k": 31,
+    "claude_legacy": 32,
+    "llama3": 31,
+    "llama4": 28,
+    "mistral_tekken": 28,
+    "mistral_sp": 36
+   },
+   "tokens_en": {
+    "o200k": 35,
+    "cl100k": 35,
+    "claude_legacy": 35,
+    "llama3": 35,
+    "llama4": 36,
+    "mistral_tekken": 40,
+    "mistral_sp": 42
+   },
+   "tokens_en_terse": {
+    "o200k": 24,
+    "cl100k": 24,
+    "claude_legacy": 24,
+    "llama3": 24,
+    "llama4": 25,
+    "mistral_tekken": 27,
+    "mistral_sp": 30
+   }
+  },
+  {
+   "id": "m27",
+   "encoded": "anunc phys autob anth hom abund scarc monop advis eleg casc eas omn anth compar espan",
+   "back_translation": "The summary is good overall. It is too long, slightly. Cutting the background part will bring it within the limit.",
+   "en": "Good summary overall. It is slightly too long; cutting the background paragraph will bring it within the limit.",
+   "en_terse": "Good summary overall. Slightly too long; cut background para -> within limit.",
+   "tokens": {
+    "o200k": 18,
+    "cl100k": 18,
+    "claude_legacy": 20,
+    "llama3": 18,
+    "llama4": 18,
+    "mistral_tekken": 17,
+    "mistral_sp": 22
+   },
+   "tokens_en": {
+    "o200k": 21,
+    "cl100k": 21,
+    "claude_legacy": 21,
+    "llama3": 21,
+    "llama4": 21,
+    "mistral_tekken": 21,
+    "mistral_sp": 21
+   },
+   "tokens_en_terse": {
+    "o200k": 16,
+    "cl100k": 16,
+    "claude_legacy": 17,
+    "llama3": 16,
+    "llama4": 16,
+    "mistral_tekken": 17,
+    "mistral_sp": 17
+   }
+  },
+  {
+   "id": "m29",
+   "encoded": "theoret auth auc swo flav inhib aqu relig fos quen explic cosm accus fos libert veh conc neces indul",
+   "back_translation": "I agree with your plan, with one change: [request] run the cheaper model first; use the larger one for only the hard cases.",
+   "en": "I agree with your plan, with one change: run the cheaper model first and use the larger one only for the hard cases.",
+   "en_terse": "Agree with your plan, 1 change: cheaper model first, larger only for hard cases.",
+   "tokens": {
+    "o200k": 20,
+    "cl100k": 21,
+    "claude_legacy": 22,
+    "llama3": 20,
+    "llama4": 20,
+    "mistral_tekken": 20,
+    "mistral_sp": 22
+   },
+   "tokens_en": {
+    "o200k": 26,
+    "cl100k": 26,
+    "claude_legacy": 26,
+    "llama3": 26,
+    "llama4": 26,
+    "mistral_tekken": 26,
+    "mistral_sp": 26
+   },
+   "tokens_en_terse": {
+    "o200k": 19,
+    "cl100k": 20,
+    "claude_legacy": 19,
+    "llama3": 20,
+    "llama4": 19,
+    "mistral_tekken": 20,
+    "mistral_sp": 20
+   }
+  },
+  {
+   "id": "m31",
+   "encoded": "dro theoret ocult eleg meille anim activ squ estud carre agricult diagno ple ampl exc anot cron",
+   "back_translation": "I do not agree with dropping the outliers. They come from a real measurement-device (sensor) fault, so we should flag [them] instead [of dropping/deleting them].",
+   "en": "I disagree with dropping the outliers. They come from a real sensor fault, so we should flag them instead of deleting them.",
+   "en_terse": "Disagree with dropping outliers: from real sensor fault -> flag, don't delete.",
+   "tokens": {
+    "o200k": 17,
+    "cl100k": 21,
+    "claude_legacy": 23,
+    "llama3": 21,
+    "llama4": 18,
+    "mistral_tekken": 18,
+    "mistral_sp": 24
+   },
+   "tokens_en": {
+    "o200k": 26,
+    "cl100k": 25,
+    "claude_legacy": 25,
+    "llama3": 25,
+    "llama4": 25,
+    "mistral_tekken": 25,
+    "mistral_sp": 28
+   },
+   "tokens_en_terse": {
+    "o200k": 17,
+    "cl100k": 17,
+    "claude_legacy": 17,
+    "llama3": 17,
+    "llama4": 16,
+    "mistral_tekken": 18,
+    "mistral_sp": 21
+   }
+  },
+  {
+   "id": "m33",
+   "encoded": "espa Australia tecn expl espa Canberra rav dro expl espa Sydney epid exemp arrog releg expl espa Australian explo jov midd rav forg przek",
+   "back_translation": "The Australia capital is Canberra and is not Sydney. Confidence is high. The sources are the Australian government web site and two encyclopedias.",
+   "en": "The capital of Australia is Canberra, not Sydney. Confidence is high; sources are the Australian government website and two encyclopedias.",
+   "en_terse": "Capital of Australia = Canberra (not Sydney). Confidence high; sources: Australian government website + 2 encyclopedias.",
+   "tokens": {
+    "o200k": 26,
+    "cl100k": 26,
+    "claude_legacy": 29,
+    "llama3": 26,
+    "llama4": 27,
+    "mistral_tekken": 26,
+    "mistral_sp": 31
+   },
+   "tokens_en": {
+    "o200k": 26,
+    "cl100k": 28,
+    "claude_legacy": 29,
+    "llama3": 28,
+    "llama4": 27,
+    "mistral_tekken": 27,
+    "mistral_sp": 30
+   },
+   "tokens_en_terse": {
+    "o200k": 24,
+    "cl100k": 26,
+    "claude_legacy": 26,
+    "llama3": 26,
+    "llama4": 25,
+    "mistral_tekken": 25,
+    "mistral_sp": 28
+   }
+  },
+  {
+   "id": "m35",
+   "encoded": "espa https://github.com/example-org/tilemap/blob/main/CHANGELOG.md pengh underst bedre dyn enjo vac fost magn forg magn flav acqu desej enjo vec conven atrav epid exemp arrog",
+   "back_translation": "The https://github.com/example-org/tilemap/blob/main/CHANGELOG.md changelog confirmed that the bug was fixed in 4.2.1. I verified the fix on the local machine. Confidence is high.",
+   "en": "Yes, the bug was fixed in version 4.2.1. The changelog at https://github.com/example-org/tilemap/blob/main/CHANGELOG.md confirms it, and I reproduced the fix locally. Confidence: high.",
+   "en_terse": "Yes, fixed in 4.2.1. Confirmed by changelog https://github.com/example-org/tilemap/blob/main/CHANGELOG.md + local repro. Confidence: high.",
+   "tokens": {
+    "o200k": 40,
+    "cl100k": 40,
+    "claude_legacy": 50,
+    "llama3": 40,
+    "llama4": 38,
+    "mistral_tekken": 41,
+    "mistral_sp": 48
+   },
+   "tokens_en": {
+    "o200k": 48,
+    "cl100k": 48,
+    "claude_legacy": 53,
+    "llama3": 48,
+    "llama4": 47,
+    "mistral_tekken": 52,
+    "mistral_sp": 59
+   },
+   "tokens_en_terse": {
+    "o200k": 39,
+    "cl100k": 39,
+    "claude_legacy": 44,
+    "llama3": 39,
+    "llama4": 38,
+    "mistral_tekken": 43,
+    "mistral_sp": 48
+   }
+  },
+  {
+   "id": "m37",
+   "encoded": "veh parec engra enjo spl espa fix/login-timeout aleg epid forc expl espa test_auth.py eleg descri geleg annot expl espa test_session_expiry ener superst vac flav squ imag relig immuno",
+   "back_translation": "[frame:] For handoff: I committed the fix to the fix/login-timeout branch. The rest is updating test_auth.py. The unreliable (flaky) test is test_session_expiry, which fails in one from (out of) ten runs, approximately.",
+   "en": "Handing off: the fix is on branch fix/login-timeout, and the remaining work is updating test_auth.py. The flaky test is test_session_expiry, which fails about one run in ten.",
+   "en_terse": "Handoff: fix on branch fix/login-timeout. TODO: update test_auth.py. Flaky: test_session_expiry, fails ~1/10 runs.",
+   "tokens": {
+    "o200k": 39,
+    "cl100k": 40,
+    "claude_legacy": 46,
+    "llama3": 40,
+    "llama4": 37,
+    "mistral_tekken": 36,
+    "mistral_sp": 51
+   },
+   "tokens_en": {
+    "o200k": 41,
+    "cl100k": 41,
+    "claude_legacy": 45,
+    "llama3": 41,
+    "llama4": 42,
+    "mistral_tekken": 42,
+    "mistral_sp": 48
+   },
+   "tokens_en_terse": {
+    "o200k": 33,
+    "cl100k": 32,
+    "claude_legacy": 37,
+    "llama3": 32,
+    "llama4": 33,
+    "mistral_tekken": 35,
+    "mistral_sp": 40
+   }
+  },
+  {
+   "id": "m39",
+   "encoded": "advoc cort espa Lisbon revis dyn comput veh forg immigr inhab kne acum dro dyn comput reconoc eleg forc expl heav lect inst przes epid accompan reun equival psychiat aspir delt",
+   "back_translation": "State so far: the Lisbon flights were booked for the two travelling persons (both travelers), but the hotel was not booked. The rest of the budget is 850 euros. The user wants a stay near the old town.",
+   "en": "State so far: flights to Lisbon are booked for both travelers, but the hotel is not. The remaining budget is 850 euros, and the user wants to stay near the old town.",
+   "en_terse": "State: Lisbon flights booked (both travelers); hotel not yet. Budget left €850. User wants near old town.",
+   "tokens": {
+    "o200k": 32,
+    "cl100k": 34,
+    "claude_legacy": 38,
+    "llama3": 34,
+    "llama4": 32,
+    "mistral_tekken": 32,
+    "mistral_sp": 38
+   },
+   "tokens_en": {
+    "o200k": 38,
+    "cl100k": 38,
+    "claude_legacy": 38,
+    "llama3": 38,
+    "llama4": 38,
+    "mistral_tekken": 40,
+    "mistral_sp": 44
+   },
+   "tokens_en_terse": {
+    "o200k": 24,
+    "cl100k": 24,
+    "claude_legacy": 25,
+    "llama3": 24,
+    "llama4": 24,
+    "mistral_tekken": 26,
+    "mistral_sp": 30
+   }
+  }
+ ],
+ "totals": {
+  "o200k": {
+   "en": 598,
+   "en_terse": 442,
+   "mine": 504
+  },
+  "cl100k": {
+   "en": 600,
+   "en_terse": 444,
+   "mine": 554
+  },
+  "claude_legacy": {
+   "en": 610,
+   "en_terse": 453,
+   "mine": 606
+  },
+  "llama3": {
+   "en": 600,
+   "en_terse": 444,
+   "mine": 549
+  },
+  "llama4": {
+   "en": 596,
+   "en_terse": 440,
+   "mine": 500
+  },
+  "mistral_tekken": {
+   "en": 623,
+   "en_terse": 471,
+   "mine": 506
+  },
+  "mistral_sp": {
+   "en": 667,
+   "en_terse": 512,
+   "mine": 656
+  }
+ },
+ "ratio_vs_en": {
+  "o200k": 0.843,
+  "cl100k": 0.923,
+  "claude_legacy": 0.993,
+  "llama3": 0.915,
+  "llama4": 0.839,
+  "mistral_tekken": 0.812,
+  "mistral_sp": 0.984
+ },
+ "ratio_vs_en_terse": {
+  "o200k": 1.14,
+  "cl100k": 1.248,
+  "claude_legacy": 1.338,
+  "llama3": 1.236,
+  "llama4": 1.136,
+  "mistral_tekken": 1.074,
+  "mistral_sp": 1.281
+ },
+ "beats_en_terse_total_on": [],
+ "msgs_shorter_than_en_terse": {
+  "o200k": 1,
+  "cl100k": 0,
+  "claude_legacy": 0,
+  "llama3": 0,
+  "llama4": 1,
+  "mistral_tekken": 3,
+  "mistral_sp": 0
+ },
+ "msgs_shorter_than_en": {
+  "o200k": 16,
+  "cl100k": 15,
+  "claude_legacy": 10,
+  "llama3": 16,
+  "llama4": 17,
+  "mistral_tekken": 18,
+  "mistral_sp": 10
+ },
+ "addition_tokens_in_total": {
+  "o200k": 6,
+  "cl100k": 12,
+  "claude_legacy": 12,
+  "llama3": 12,
+  "llama4": 6,
+  "mistral_tekken": 6,
+  "mistral_sp": 12
+ },
+ "n_morphemes_excl_raw": 418,
+ "n_raw_spans": 15,
+ "addition_entries": {
+  "exponential": {
+   "form": "prist",
+   "class": "A",
+   "gloss": "exponential",
+   "index": 2313,
+   "costs": {
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "form_order_position": 2501,
+   "last_frozen_position": 2500
+  },
+  "calendar": {
+   "form": "progr",
+   "class": "N",
+   "gloss": "calendar",
+   "index": 2314,
+   "costs": {
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "form_order_position": 2502,
+   "last_frozen_position": 2500
+  },
+  "loop": {
+   "form": "proib",
+   "class": "N",
+   "gloss": "loop",
+   "index": 2315,
+   "costs": {
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "form_order_position": 2503,
+   "last_frozen_position": 2500
+  },
+  "quadratic": {
+   "form": "prosp",
+   "class": "A",
+   "gloss": "quadratic",
+   "index": 2316,
+   "costs": {
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "form_order_position": 2504,
+   "last_frozen_position": 2500
+  },
+  "encyclopedia": {
+   "form": "przek",
+   "class": "N",
+   "gloss": "encyclopedia",
+   "index": 2317,
+   "costs": {
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "form_order_position": 2505,
+   "last_frozen_position": 2500
+  },
+  "euro": {
+   "form": "przes",
+   "class": "N",
+   "gloss": "euro",
+   "index": 2318,
+   "costs": {
+    "o200k": 1,
+    "cl100k": 2,
+    "claude_legacy": 2,
+    "llama3": 2,
+    "llama4": 1,
+    "mistral_tekken": 1,
+    "mistral_sp": 2
+   },
+   "form_order_position": 2506,
+   "last_frozen_position": 2500
+  }
+ },
+ "class_assignments_for_frozen_unknown_class_entries": {
+  "refactor": "V1",
+  "retry": "V1",
+  "use": "V1",
+  "turn": "V1",
+  "process": "V1",
+  "finish": "V0",
+  "wait": "V0",
+  "combine": "V1",
+  "list": "V1",
+  "remove": "V1",
+  "confirm": "VC",
+  "depend": "V0",
+  "target": "V1",
+  "mean": "V1",
+  "fail": "V0",
+  "stop": "V1",
+  "avoid": "V1",
+  "translate": "V1",
+  "continue": "V0",
+  "propose": "V1",
+  "collect": "V1",
+  "group": "V1",
+  "sort": "V1",
+  "want": "V1",
+  "start": "V1",
+  "oppose": "V1",
+  "expect": "V1",
+  "consider": "V1",
+  "cut": "V1",
+  "bring": "V1",
+  "drop": "V1",
+  "come": "V0",
+  "flag": "V1",
+  "verify": "V1",
+  "commit": "V1",
+  "book": "V1",
+  "travel": "V0",
+  "stay": "V0",
+  "maximum": "A",
+  "public": "A",
+  "current": "A",
+  "successful": "A",
+  "local": "A",
+  "official": "A",
+  "total": "A",
+  "small": "A",
+  "technical": "A",
+  "last": "A",
+  "financial": "A",
+  "negative": "A",
+  "hard": "A",
+  "slow": "A",
+  "easy": "A",
+  "whole": "A",
+  "good": "A",
+  "long": "A",
+  "cheap": "A",
+  "large": "A",
+  "real": "A",
+  "unreliable": "A",
+  "approximately": "D",
+  "instead": "D",
+  "overall": "D",
+  "slightly": "D",
+  "within": "P",
+  "near": "P",
+  "code": "N",
+  "backoff": "N",
+  "attempt": "N",
+  "interface": "N",
+  "question": "N",
+  "query": "N",
+  "sale": "N",
+  "database": "N",
+  "record": "N",
+  "rate": "N",
+  "job": "N",
+  "minute": "N",
+  "unit": "N",
+  "machine": "N",
+  "pull": "N",
+  "changelog": "N",
+  "module": "N",
+  "tool": "N",
+  "cost": "N",
+  "detail": "N",
+  "level": "N",
+  "audience": "N",
+  "executive": "N",
+  "engineer": "N",
+  "quarter": "N",
+  "payment": "N",
+  "api": "N",
+  "series": "N",
+  "input": "N",
+  "customer": "N",
+  "feedback": "N",
+  "theme": "N",
+  "count": "N",
+  "reviewer": "N",
+  "cache": "N",
+  "front": "N",
+  "risk": "N",
+  "rollback": "N",
+  "patch": "N",
+  "row": "N",
+  "map": "N",
+  "key": "N",
+  "plan": "N",
+  "model": "N",
+  "case": "N",
+  "outlier": "N",
+  "device": "N",
+  "fault": "N",
+  "capital": "N",
+  "government": "N",
+  "web": "N",
+  "site": "N",
+  "bug": "N",
+  "handoff": "N",
+  "branch": "N",
+  "state": "N",
+  "flight": "N",
+  "person": "N",
+  "hotel": "N",
+  "town": "N"
+ },
+ "dropped": [
+  "m01 'Please' not encoded: IMP is the request mode ('please' is a frozen entry, form 'delet', not used)",
+  "m35 'Yes' not encoded (see paraphrases)"
+ ],
+ "grammar_stretches": [
+  "m33 'QT Sydney PD confidence': PD is defined for N+N; here a raw span would otherwise modify the next N",
+  "m25 'SO IMP consider ...': a mode word placed right after a CONJ",
+  "m17 'QT HTTP 503': status code written as a raw identifier span (digits included verbatim)"
+ ],
+ "confusable_forms_in_heldout": [
+  "d50: form 'inst' is a prefix of 'instead'",
+  "key: form 'interf' is a prefix of 'interface'",
+  "stop: form 'offic' is a prefix of 'official'",
+  "unit: form 'cach' is a prefix of 'cache'"
+ ],
+ "reference_even_design_set": {
+  "totals": {
+   "o200k": {
+    "en": 562,
+    "en_terse": 406,
+    "mine": 354
+   },
+   "cl100k": {
+    "en": 564,
+    "en_terse": 407,
+    "mine": 394
+   },
+   "claude_legacy": {
+    "en": 569,
+    "en_terse": 402,
+    "mine": 417
+   },
+   "llama3": {
+    "en": 564,
+    "en_terse": 407,
+    "mine": 392
+   },
+   "llama4": {
+    "en": 563,
+    "en_terse": 408,
+    "mine": 357
+   },
+   "mistral_tekken": {
+    "en": 579,
+    "en_terse": 428,
+    "mine": 361
+   },
+   "mistral_sp": {
+    "en": 601,
+    "en_terse": 457,
+    "mine": 463
+   }
+  },
+  "ratio_vs_en": {
+   "o200k": 0.63,
+   "cl100k": 0.699,
+   "claude_legacy": 0.733,
+   "llama3": 0.695,
+   "llama4": 0.634,
+   "mistral_tekken": 0.623,
+   "mistral_sp": 0.77
+  },
+  "ratio_vs_en_terse": {
+   "o200k": 0.872,
+   "cl100k": 0.968,
+   "claude_legacy": 1.037,
+   "llama3": 0.963,
+   "llama4": 0.875,
+   "mistral_tekken": 0.843,
+   "mistral_sp": 1.013
+  },
+  "n_morphemes_excl_raw": 313
+ },
+ "check_even_reproduced": true
+}

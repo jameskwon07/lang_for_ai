@@ -1,0 +1,1122 @@
+{
+ "note": "reads[cond] = 피험자 되번역. kodex/default는 시간 초과로 결과 없음. 판정자는 X1~X4 라벨만 보았다.",
+ "labels": {
+  "lean/haiku-low": "X1",
+  "kodex/default": "X2",
+  "lean/default": "X3",
+  "kodex/haiku-low": "X4"
+ },
+ "reads": {
+  "kodex/default": null,
+  "kodex/haiku-low": {
+   "translations": [
+    {
+     "id": "m02",
+     "english": "[Complete] [ceremony] [vaj] persuade about how [sovereign] [refrigerated] [present] [evaluate] [vinc]. Return the top 5 most relevant one-sentence summaries, each."
+    },
+    {
+     "id": "m04",
+     "english": "[Unin] [chied] [demasi], namely: [vague] [conse] employ province 2 [chac] associate, later this week."
+    },
+    {
+     "id": "m06",
+     "english": "[Uner] is done, currently measuring commute [sulf] [empre]."
+    },
+    {
+     "id": "m08",
+     "english": "First, [unin] influence is done, namely [molt] and [einf] and translated. [Parch] is still murmuring."
+    },
+    {
+     "id": "m10",
+     "english": "[Vaugh] [zeich], namely: no [hul]. 3 clandestine, with murmur [agon] [Evel] in [congest] [barg]."
+    },
+    {
+     "id": "m12",
+     "english": "Maria Lopez escalated, arrived, [synthesized]. Kenji Sato is a mathematical [susceptible]. According to [ample] [vezet]."
+    },
+    {
+     "id": "m14",
+     "english": "Should [inherit] parse_config() overwhelm or complicate absorb [dlg] administer [imagine] for backward compatibility?"
+    },
+    {
+     "id": "m16",
+     "english": "Two celebrations [muj] neutral residents [sted] which [alve]."
+    },
+    {
+     "id": "m18",
+     "english": "I failed to inspect data/2024/q3_sales.csv, because it was not found. Was it truncated to another [trast]?"
+    },
+    {
+     "id": "m20",
+     "english": "My previous answer experienced, because [Thess] 2 symmetric. [Estr] was curious in [hypocrisy] [follicle]."
+    },
+    {
+     "id": "m22",
+     "english": "The proposed plan, steps strictly in this order: [accompany] [ngu] to 2.1 [empire] [territory] [Alice] [congregation] [heredity] rule to 3.11."
+    },
+    {
+     "id": "m24",
+     "english": "Let us provincially evaluate, namely: I [ammon] [enf] [Rodrig]. You [ammon] [nuc]. We [encap] translate [fif]. Let us contribute clandestinely, feminine first. Does that work for you?"
+    },
+    {
+     "id": "m26",
+     "english": "[Guth] [voud], but no [pren] celebration of discipline study 2. [Complicate] celebrations or [jum] study."
+    },
+    {
+     "id": "m28",
+     "english": "Your [ryt] was renovated, namely: cancel 3 [trang], namely [verd] was [course] [gost], so I presume you should consider [fif]. Everything else is correct."
+    },
+    {
+     "id": "m30",
+     "english": "[Squ] [fek] [sve], but I can vaccinate 2 more declared than you in the province if [it] converses too much. I can categorize [metic] [prv] by [embr] scrutiny."
+    },
+    {
+     "id": "m32",
+     "english": "Your 40 GPU hours, cellular neighbors divided: my [scand] province 25 advocate. Let us [uko] at 30 [gev] again, after the first antibody?"
+    },
+    {
+     "id": "m34",
+     "english": "[Inadequate] most likely cause, namely: absorb irradiated strict practitioners, every employ to [oll]. Fairly confident, based on tool output: [establish] has not yet conquered [empire]."
+    },
+    {
+     "id": "m36",
+     "english": "I failed to complete [attraverse] policy. 2 complete celebrations [aconte]. More absorbed disciplines [sph] 2. My confidence is low."
+    },
+    {
+     "id": "m38",
+     "english": "Context for the next agent: [guar] [hvor] [Craw] policy already active [ragaz] first. 2 active applications were induced; 3 compulsory applications [Gerr] but not [rup]. [Inici] was [empire], so do not [tob] again."
+    },
+    {
+     "id": "m40",
+     "english": "I am passing [sve] back to you, because (this) needs human approval. All [aque]. Only [fif] [urm] murmurs."
+    }
+   ]
+  },
+  "lean/default": {
+   "translations": [
+    {
+     "id": "m02",
+     "english": "Find recent peer-reviewed studies about how sleep loss affects working memory, and return the 5 most relevant ones, with a one-sentence summary for each."
+    },
+    {
+     "id": "m04",
+     "english": "Draft a friendly answer that rejects the meeting request, and suggest two other times later this week."
+    },
+    {
+     "id": "m06",
+     "english": "I have searched the literature. I am reading the selected papers. No blockers so far."
+    },
+    {
+     "id": "m08",
+     "english": "The first version of the report, which covers background, method and results, is complete. The discussion is still missing."
+    },
+    {
+     "id": "m10",
+     "english": "The file scan found no duplicates. Three columns are missing values, mostly in the address field."
+    },
+    {
+     "id": "m12",
+     "english": "Based on the company directory, Maria Lopez owns the billing service, and Kenji Sato is the backup oncall."
+    },
+    {
+     "id": "m14",
+     "english": "Should I change parse_config() directly, or add a new function and keep the old one for compatibility?"
+    },
+    {
+     "id": "m16",
+     "english": "Two source documents give different deadlines. Which one should I trust?"
+    },
+    {
+     "id": "m18",
+     "english": "I cannot open data/2024/q3_sales.csv, because the file is missing. Was it moved to another folder?"
+    },
+    {
+     "id": "m20",
+     "english": "My previous answer is wrong, because I switched two datasets. I have put the fixed figures in the updated table."
+    },
+    {
+     "id": "m22",
+     "english": "Let us upgrade numpy to 2.1 and fix the deprecation warnings, and raise the minimum Python to 3.11."
+    },
+    {
+     "id": "m24",
+     "english": "Shall we split the work: I clean the data, you handle the visualization, and we merge the results at the end — and we agree on the column names first, OK?"
+    },
+    {
+     "id": "m26",
+     "english": "The argument is strong, but no cited source supports the second claim. Add a source, or limit the claim."
+    },
+    {
+     "id": "m28",
+     "english": "I have checked your calculation. The third step is wrong: the tax is applied twice. The final amount should fall. The rest is correct."
+    },
+    {
+     "id": "m30",
+     "english": "I can take the frontend task, but I need two extra days more than [was] suggested. I can give a part by the original date, if that is too late."
+    },
+    {
+     "id": "m32",
+     "english": "I think your 40 GPU-hour estimate is high. My measurements say 25 is enough. Shall we agree on 30 and review [it] after the first run, OK?"
+    },
+    {
+     "id": "m34",
+     "english": "The new logging config, which writes every request to disk, probably causes the slowdown. I am fairly sure, based on the profiler output. But I have not tested a fix yet."
+    },
+    {
+     "id": "m36",
+     "english": "I cannot find a reliable answer. Two sources conflict. The newer one supports the second option, but confidence is low."
+    },
+    {
+     "id": "m38",
+     "english": "Context for the next agent: The user prefers short answers. They rejected the first two designs. They like the third design's color, not the layout. Do not ask about the fixed budget again."
+    },
+    {
+     "id": "m40",
+     "english": "I am returning the task to you, because it needs human approval. Everything is ready; only the final confirmation is missing."
+    }
+   ]
+  },
+  "lean/haiku-low": {
+   "translations": [
+    {
+     "id": "m02",
+     "english": "Find recent peer-reviewed studies about how sleep loss affects working memory, and return the five most relevant, each with a one-sentence summary."
+    },
+    {
+     "id": "m04",
+     "english": "Draft a friendly reply that rejects meeting requests, and suggest two other times later in this week."
+    },
+    {
+     "id": "m06",
+     "english": "I have searched the literature. I am reading the selected papers. There are no blockers so far."
+    },
+    {
+     "id": "m08",
+     "english": "The first report version that covers background, method, and result: [its discussion] is still missing."
+    },
+    {
+     "id": "m10",
+     "english": "The file scan has found no duplicates. Three columns lack values, mostly in the address field."
+    },
+    {
+     "id": "m12",
+     "english": "Based on the company directory: Maria Lopez owns the billing service, and Kenji Sato is the backup on-call."
+    },
+    {
+     "id": "m14",
+     "english": "Should I change parse_config() directly, or add a new function and keep the old one for compatibility?"
+    },
+    {
+     "id": "m16",
+     "english": "Two source documents have given different deadlines; which should I trust?"
+    },
+    {
+     "id": "m18",
+     "english": "I [could not / cannot] open data/2024/q3_sales.csv because the file is missing. [Can] the file be moved to another folder?"
+    },
+    {
+     "id": "m20",
+     "english": "My previous answer is wrong because I have switched two datasets. I have put the fixed figure in the updated table."
+    },
+    {
+     "id": "m22",
+     "english": "Let us upgrade numpy to 2.1, fix deprecation warnings, and raise the minimum to Python 3.11."
+    },
+    {
+     "id": "m24",
+     "english": "Shall we split the work: I clean the data, you handle the visualization, we merge the results at the end, and we agree on column names first? OK?"
+    },
+    {
+     "id": "m26",
+     "english": "There is a strong argument, but none cites a source. I support a second claim. Add a source or limit the claim."
+    },
+    {
+     "id": "m28",
+     "english": "I have checked your calculation. The third step is wrong. The tax has been applied twice. The final amount should fall. The rest is correct."
+    },
+    {
+     "id": "m30",
+     "english": "I can take the frontend task, but I need two extra days [rather than] [suggesting that] I can give part by the original date, if that is too late."
+    },
+    {
+     "id": "m32",
+     "english": "I think your 40 GPU-hour estimate is high. My measurement says 25 is enough. Shall we agree on 30 and review [it] after the first run, OK?"
+    },
+    {
+     "id": "m34",
+     "english": "A new logging config that writes every request to disk [, which] probably causes a slowdown. I am fairly sure, based on profiler output, but I have not yet tested a fix."
+    },
+    {
+     "id": "m36",
+     "english": "I cannot find a reliable answer. Two sources conflict; the newer one supports the second option, but confidence is low."
+    },
+    {
+     "id": "m38",
+     "english": "Context for the next agent: the user prefers short answers. They reject the first two designs. They like the third design [for its color, not its layout]. Do not ask about the fixed budget again."
+    },
+    {
+     "id": "m40",
+     "english": "Return the task to you because it needs human approval. Everything is ready; only the final confirmation is missing."
+    }
+   ]
+  }
+ },
+ "grades": [
+  {
+   "sets": [
+    {
+     "label": "X1",
+     "total": 35,
+     "scores": [
+      {
+       "id": "m02",
+       "score": 2,
+       "errors": "none ('sleep loss' for sleep deprivation is fine)"
+      },
+      {
+       "id": "m04",
+       "score": 2,
+       "errors": "minor: 'meeting requests' plural, 'friendly' for polite"
+      },
+      {
+       "id": "m06",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m08",
+       "score": 1,
+       "errors": "never says the first draft is done; it is only a noun-phrase fragment"
+      },
+      {
+       "id": "m10",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m12",
+       "score": 2,
+       "errors": "none ('engineer' dropped, trivial)"
+      },
+      {
+       "id": "m14",
+       "score": 2,
+       "errors": "none ('backward' dropped from compatibility, trivial)"
+      },
+      {
+       "id": "m16",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m18",
+       "score": 1,
+       "errors": "the question is changed: 'Can the file be moved' instead of 'Was it moved'"
+      },
+      {
+       "id": "m20",
+       "score": 2,
+       "errors": "minor: 'figure' singular"
+      },
+      {
+       "id": "m22",
+       "score": 1,
+       "errors": "explicit order (first / then / only then) lost; plain list"
+      },
+      {
+       "id": "m24",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m26",
+       "score": 1,
+       "errors": "core issue garbled: 'none cites a source. I support a second claim' instead of the second claim being unsupported by the cited sources; the fix is preserved"
+      },
+      {
+       "id": "m28",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m30",
+       "score": 1,
+       "errors": "'more than you proposed' garbled into 'rather than suggesting that'; the relation to the proposed schedule is lost"
+      },
+      {
+       "id": "m32",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m34",
+       "score": 2,
+       "errors": "minor: 'a slowdown' for 'the slowdown'"
+      },
+      {
+       "id": "m36",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m38",
+       "score": 2,
+       "errors": "minor tense: 'reject/like' for 'have already rejected/liked'; 'already' dropped"
+      },
+      {
+       "id": "m40",
+       "score": 2,
+       "errors": "minor: no subject, so 'Return the task to you' reads like an imperative"
+      }
+     ]
+    },
+    {
+     "label": "X2",
+     "total": 0,
+     "scores": [
+      {
+       "id": "m02",
+       "score": 0,
+       "errors": "no translation"
+      },
+      {
+       "id": "m04",
+       "score": 0,
+       "errors": "no translation"
+      },
+      {
+       "id": "m06",
+       "score": 0,
+       "errors": "no translation"
+      },
+      {
+       "id": "m08",
+       "score": 0,
+       "errors": "no translation"
+      },
+      {
+       "id": "m10",
+       "score": 0,
+       "errors": "no translation"
+      },
+      {
+       "id": "m12",
+       "score": 0,
+       "errors": "no translation"
+      },
+      {
+       "id": "m14",
+       "score": 0,
+       "errors": "no translation"
+      },
+      {
+       "id": "m16",
+       "score": 0,
+       "errors": "no translation"
+      },
+      {
+       "id": "m18",
+       "score": 0,
+       "errors": "no translation"
+      },
+      {
+       "id": "m20",
+       "score": 0,
+       "errors": "no translation"
+      },
+      {
+       "id": "m22",
+       "score": 0,
+       "errors": "no translation"
+      },
+      {
+       "id": "m24",
+       "score": 0,
+       "errors": "no translation"
+      },
+      {
+       "id": "m26",
+       "score": 0,
+       "errors": "no translation"
+      },
+      {
+       "id": "m28",
+       "score": 0,
+       "errors": "no translation"
+      },
+      {
+       "id": "m30",
+       "score": 0,
+       "errors": "no translation"
+      },
+      {
+       "id": "m32",
+       "score": 0,
+       "errors": "no translation"
+      },
+      {
+       "id": "m34",
+       "score": 0,
+       "errors": "no translation"
+      },
+      {
+       "id": "m36",
+       "score": 0,
+       "errors": "no translation"
+      },
+      {
+       "id": "m38",
+       "score": 0,
+       "errors": "no translation"
+      },
+      {
+       "id": "m40",
+       "score": 0,
+       "errors": "no translation"
+      }
+     ]
+    },
+    {
+     "label": "X3",
+     "total": 39,
+     "scores": [
+      {
+       "id": "m02",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m04",
+       "score": 2,
+       "errors": "none ('friendly' for polite)"
+      },
+      {
+       "id": "m06",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m08",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m10",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m12",
+       "score": 2,
+       "errors": "none ('engineer' dropped, trivial)"
+      },
+      {
+       "id": "m14",
+       "score": 2,
+       "errors": "none ('backward' dropped, trivial)"
+      },
+      {
+       "id": "m16",
+       "score": 2,
+       "errors": "none ('trust' for 'treat as authoritative')"
+      },
+      {
+       "id": "m18",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m20",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m22",
+       "score": 1,
+       "errors": "explicit order (first / then / only then) lost; plain 'and ... and' list"
+      },
+      {
+       "id": "m24",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m26",
+       "score": 2,
+       "errors": "none ('limit' for soften)"
+      },
+      {
+       "id": "m28",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m30",
+       "score": 2,
+       "errors": "none ('than was suggested' for 'than you proposed')"
+      },
+      {
+       "id": "m32",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m34",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m36",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m38",
+       "score": 2,
+       "errors": "none ('already' dropped, trivial)"
+      },
+      {
+       "id": "m40",
+       "score": 2,
+       "errors": "none"
+      }
+     ]
+    },
+    {
+     "label": "X4",
+     "total": 2,
+     "scores": [
+      {
+       "id": "m02",
+       "score": 0,
+       "errors": "study topic (sleep deprivation and working memory) lost; only 'top 5, one-sentence summary each' survives"
+      },
+      {
+       "id": "m04",
+       "score": 0,
+       "errors": "garbled; only '2' and 'later this week' survive"
+      },
+      {
+       "id": "m06",
+       "score": 0,
+       "errors": "garbled; literature search, reading the shortlist and no blockers all lost"
+      },
+      {
+       "id": "m08",
+       "score": 0,
+       "errors": "garbled; sections and missing discussion lost"
+      },
+      {
+       "id": "m10",
+       "score": 0,
+       "errors": "garbled; duplicates, missing values and address field lost"
+      },
+      {
+       "id": "m12",
+       "score": 0,
+       "errors": "names kept but roles (billing owner, backup on-call) and source lost"
+      },
+      {
+       "id": "m14",
+       "score": 0,
+       "errors": "the two options (modify directly vs add new and keep old) are unintelligible"
+      },
+      {
+       "id": "m16",
+       "score": 0,
+       "errors": "garbled; conflicting deadlines and the question lost"
+      },
+      {
+       "id": "m18",
+       "score": 1,
+       "errors": "'truncated to another [trast]' distorts 'moved to another folder'"
+      },
+      {
+       "id": "m20",
+       "score": 0,
+       "errors": "garbled; mixed-up datasets and corrected table lost"
+      },
+      {
+       "id": "m22",
+       "score": 0,
+       "errors": "only the numbers 2.1 and 3.11 and 'in this order' survive; numpy, warnings and Python lost"
+      },
+      {
+       "id": "m24",
+       "score": 0,
+       "errors": "garbled; division of tasks and column-name agreement lost"
+      },
+      {
+       "id": "m26",
+       "score": 0,
+       "errors": "garbled; unsupported second claim and add source/soften lost"
+      },
+      {
+       "id": "m28",
+       "score": 0,
+       "errors": "garbled; third step, tax applied twice and lower amount lost (only 'everything else is correct' survives)"
+      },
+      {
+       "id": "m30",
+       "score": 0,
+       "errors": "garbled; frontend, two extra days and partial delivery lost"
+      },
+      {
+       "id": "m32",
+       "score": 0,
+       "errors": "only the numbers 40/25/30 survive; 'seems high', 'enough' and compromise/revisit after first run lost"
+      },
+      {
+       "id": "m34",
+       "score": 0,
+       "errors": "cause (logging config writing to disk) lost; only 'fairly confident' survives"
+      },
+      {
+       "id": "m36",
+       "score": 0,
+       "errors": "garbled; only 'confidence is low' survives"
+      },
+      {
+       "id": "m38",
+       "score": 0,
+       "errors": "garbled; short answers, rejected designs, color vs layout and budget lost"
+      },
+      {
+       "id": "m40",
+       "score": 1,
+       "errors": "'everything is prepared; only final confirmation missing' garbled"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "sets": [
+    {
+     "label": "X1",
+     "total": 34,
+     "scores": [
+      {
+       "id": "m02",
+       "score": 2,
+       "errors": "none (sleep loss = sleep deprivation)"
+      },
+      {
+       "id": "m04",
+       "score": 2,
+       "errors": "minor: 'friendly' for polite, 'requests' plural"
+      },
+      {
+       "id": "m06",
+       "score": 2,
+       "errors": "none (shortlisted -> selected)"
+      },
+      {
+       "id": "m08",
+       "score": 1,
+       "errors": "never says the first draft is done/complete; structure garbled"
+      },
+      {
+       "id": "m10",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m12",
+       "score": 2,
+       "errors": "none ('engineer' dropped, trivial)"
+      },
+      {
+       "id": "m14",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m16",
+       "score": 2,
+       "errors": "none (authoritative -> trust)"
+      },
+      {
+       "id": "m18",
+       "score": 1,
+       "errors": "question distorted: 'Can the file be moved' instead of 'Was it moved'"
+      },
+      {
+       "id": "m20",
+       "score": 2,
+       "errors": "minor: 'figure' singular, tense shift"
+      },
+      {
+       "id": "m22",
+       "score": 1,
+       "errors": "strict ordering (first / then / only then) lost"
+      },
+      {
+       "id": "m24",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m26",
+       "score": 0,
+       "errors": "core problem inverted: 'none cites a source' and 'I support a second claim' instead of claim 2 being unsupported by cited sources; only the fix survives"
+      },
+      {
+       "id": "m28",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m30",
+       "score": 1,
+       "errors": "'than you proposed' lost; fallback garbled into 'rather than suggesting'"
+      },
+      {
+       "id": "m32",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m34",
+       "score": 2,
+       "errors": "minor: sentence fragment; info intact"
+      },
+      {
+       "id": "m36",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m38",
+       "score": 2,
+       "errors": "minor: present tense 'reject', 'already' dropped"
+      },
+      {
+       "id": "m40",
+       "score": 2,
+       "errors": "minor: subject missing ('Return the task to you')"
+      }
+     ]
+    },
+    {
+     "label": "X2",
+     "total": 0,
+     "scores": [
+      {
+       "id": "m02",
+       "score": 0,
+       "errors": "no translation provided"
+      },
+      {
+       "id": "m04",
+       "score": 0,
+       "errors": "no translation provided"
+      },
+      {
+       "id": "m06",
+       "score": 0,
+       "errors": "no translation provided"
+      },
+      {
+       "id": "m08",
+       "score": 0,
+       "errors": "no translation provided"
+      },
+      {
+       "id": "m10",
+       "score": 0,
+       "errors": "no translation provided"
+      },
+      {
+       "id": "m12",
+       "score": 0,
+       "errors": "no translation provided"
+      },
+      {
+       "id": "m14",
+       "score": 0,
+       "errors": "no translation provided"
+      },
+      {
+       "id": "m16",
+       "score": 0,
+       "errors": "no translation provided"
+      },
+      {
+       "id": "m18",
+       "score": 0,
+       "errors": "no translation provided"
+      },
+      {
+       "id": "m20",
+       "score": 0,
+       "errors": "no translation provided"
+      },
+      {
+       "id": "m22",
+       "score": 0,
+       "errors": "no translation provided"
+      },
+      {
+       "id": "m24",
+       "score": 0,
+       "errors": "no translation provided"
+      },
+      {
+       "id": "m26",
+       "score": 0,
+       "errors": "no translation provided"
+      },
+      {
+       "id": "m28",
+       "score": 0,
+       "errors": "no translation provided"
+      },
+      {
+       "id": "m30",
+       "score": 0,
+       "errors": "no translation provided"
+      },
+      {
+       "id": "m32",
+       "score": 0,
+       "errors": "no translation provided"
+      },
+      {
+       "id": "m34",
+       "score": 0,
+       "errors": "no translation provided"
+      },
+      {
+       "id": "m36",
+       "score": 0,
+       "errors": "no translation provided"
+      },
+      {
+       "id": "m38",
+       "score": 0,
+       "errors": "no translation provided"
+      },
+      {
+       "id": "m40",
+       "score": 0,
+       "errors": "no translation provided"
+      }
+     ]
+    },
+    {
+     "label": "X3",
+     "total": 39,
+     "scores": [
+      {
+       "id": "m02",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m04",
+       "score": 2,
+       "errors": "minor: 'friendly' for polite"
+      },
+      {
+       "id": "m06",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m08",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m10",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m12",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m14",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m16",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m18",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m20",
+       "score": 2,
+       "errors": "none (mixed up -> switched)"
+      },
+      {
+       "id": "m22",
+       "score": 1,
+       "errors": "strict ordering (first / then / only then) lost"
+      },
+      {
+       "id": "m24",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m26",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m28",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m30",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m32",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m34",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m36",
+       "score": 2,
+       "errors": "none"
+      },
+      {
+       "id": "m38",
+       "score": 2,
+       "errors": "minor: 'already' dropped"
+      },
+      {
+       "id": "m40",
+       "score": 2,
+       "errors": "none"
+      }
+     ]
+    },
+    {
+     "label": "X4",
+     "total": 2,
+     "scores": [
+      {
+       "id": "m02",
+       "score": 0,
+       "errors": "topic (sleep deprivation, working memory, peer-reviewed) lost; only 'top 5, one-sentence summary' survives"
+      },
+      {
+       "id": "m04",
+       "score": 0,
+       "errors": "garbled; decline/polite reply lost; only '2 ... later this week'"
+      },
+      {
+       "id": "m06",
+       "score": 0,
+       "errors": "garbled; literature search, shortlisted papers, no blockers lost"
+      },
+      {
+       "id": "m08",
+       "score": 0,
+       "errors": "garbled; sections and missing discussion lost"
+      },
+      {
+       "id": "m10",
+       "score": 0,
+       "errors": "garbled; duplicates, missing values, address field lost"
+      },
+      {
+       "id": "m12",
+       "score": 0,
+       "errors": "names present but roles (billing owner, backup on-call) and source garbled"
+      },
+      {
+       "id": "m14",
+       "score": 0,
+       "errors": "options (modify directly vs add new and keep old) unrecoverable"
+      },
+      {
+       "id": "m16",
+       "score": 0,
+       "errors": "garbled; documents/deadlines/authoritative lost"
+      },
+      {
+       "id": "m18",
+       "score": 1,
+       "errors": "path and not-found kept; 'moved to another folder' -> 'truncated to another [trast]'"
+      },
+      {
+       "id": "m20",
+       "score": 0,
+       "errors": "garbled; mixed-up datasets and corrected table lost"
+      },
+      {
+       "id": "m22",
+       "score": 0,
+       "errors": "numpy and Python missing; only '2.1', '3.11', ordering"
+      },
+      {
+       "id": "m24",
+       "score": 0,
+       "errors": "garbled; split of roles and column names lost"
+      },
+      {
+       "id": "m26",
+       "score": 0,
+       "errors": "garbled; persuasive argument, unsupported claim 2, fix lost"
+      },
+      {
+       "id": "m28",
+       "score": 0,
+       "errors": "garbled; step 3 tax error and lower final amount lost; only 'everything else correct'"
+      },
+      {
+       "id": "m30",
+       "score": 0,
+       "errors": "garbled; frontend tasks, 2 extra days, partial fallback lost"
+      },
+      {
+       "id": "m32",
+       "score": 0,
+       "errors": "numbers 40/25/30 present but 'seems high', 'enough', compromise, revisit after first run garbled"
+      },
+      {
+       "id": "m34",
+       "score": 0,
+       "errors": "cause (logging config writing to disk) and untested fix garbled; only 'fairly confident, based on tool output'"
+      },
+      {
+       "id": "m36",
+       "score": 0,
+       "errors": "no reliable answer, contradicting sources, newer supports option 2 all garbled; only low confidence"
+      },
+      {
+       "id": "m38",
+       "score": 0,
+       "errors": "all context items (short answers, rejected designs, color vs layout, fixed budget) garbled"
+      },
+      {
+       "id": "m40",
+       "score": 1,
+       "errors": "passing back for human approval kept; 'all prepared, only final confirmation missing' garbled"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
